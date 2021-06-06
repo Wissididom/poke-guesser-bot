@@ -102,10 +102,9 @@ function addScore(username) {
   .then(leaderboard => {
     console.log(leaderboard)
     console.log(leaderboard[username])
+    // If user doesn't exist, add user & score
+    // Elif user does exist, update score
   })
-  
-  // If user doesn't exist, add user & score
-  // Elif user does exist, update score
 }
 
 function showLeaderboard() {
