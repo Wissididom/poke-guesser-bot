@@ -43,6 +43,13 @@ function checkCommand(command, msg) {
     })
   }
 
+  // TEMPORARY - for debugging purposes only. Remove or add admin check
+  if (command === "which") {
+    db.get("pokemon").then(pokemon => {
+      msg.channel.send(`Current pokemon is: ${pokemon}`)
+    })
+  }  
+
   if (command === "leaderboard") {
     showLeaderboard()
   }
