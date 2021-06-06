@@ -5,7 +5,7 @@ LIBRARIES
 const Discord = require("discord.js")
 const Database = require("@replit/database")
 const keepAlive = require("./server")
-const fetch = require('node-fetch');
+const pokeFetch = require ("./pokemon")
 
 
 /*
@@ -29,6 +29,20 @@ function checkCommand(command, msg) {
     msg.reply("Beep-boop! Poke-guesser-bot is running!")
   }
 
+  // Generate new pokemon
+  if (command === "generate") {
+    console.log("Generating a new pokemon.")
+    // Returns pokemon json object
+    pokeFetch.generatePokemon().then(pokemon => {
+      db.set("pokemon", pokemon.name)
+      console.log(pokemon)
+      pokeFetch.fetchSprite(pokemon.url).then(sprite => {
+        console.log(sprite)
+        msg.channel.send("Today's pokemon is:", {files: [sprite]})
+      })
+    })
+  }
+
   if (command === "leaderboard") {
     showLeaderboard()
   }
@@ -50,12 +64,22 @@ function checkCommand(command, msg) {
 
 // Checks pokemon guess
 function checkGuess(guess, msg) {
-  if (guess.startsWith("catch ")) {
-    pokemon_guess = guess.split("catch ")[1]
-  }
+  
+  console.log(`${msg.author} guessed ${guess}.`)
 
-  // String with variable
-  msg.reply(`User guessed ${pokemon_guess}`)
+  // Checks if the guess is part of the pokemon name
+  db.get("pokemon")
+    // Pokemon name might include type (ex: darumaka-galar) so name is split into array
+    .then(pokemon => {
+      return pokemon.split('-')
+    })
+    // Check if guess matches first element of the array 
+    .then(pokemonArray => {
+      if (pokemonArray[0] === guess) {
+        // Send message that guess is correct
+        msg.channel.send(`${msg.author} correctly guessed ${guess}`)
+      }
+    })
 }
 
 // Create a new leaderboard
@@ -122,9 +146,9 @@ client.on("message", msg => {
     checkCommand(command, msg)
   }
 
-  // Check if user message starts with # indicating guess, call checkGuess
-  if (msg.content.startsWith("$")) {
-    guess = msg.content.split("$")[1]
+  // Check if user message starts with $ indicating guess, call checkGuess
+  if (msg.content.startsWith("$catch ")) {
+    guess = msg.content.split("$catch ")[1]
     checkGuess(guess, msg)
   }
 
