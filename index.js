@@ -13,7 +13,7 @@ IMPORTANT VARIABLES
 */
 
 const client = new Discord.Client()
-const mySecret = process.env['TOKEN']
+const mySecret = process.env['TOKEN2']
 const db = new Database()
 
 /*
