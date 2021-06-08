@@ -133,7 +133,7 @@ function showLeaderboard(msg) {
     })[0]
     let longestUserLength = longestUsername.length
     // Create table headers
-    let table = 'Position | User ' + ''.padEnd(longestUserLength - 'User '.length, ' ') + ' | Score\n'
+    let table = 'POSITION | USER ' + ''.padEnd(longestUserLength - 'USER '.length, ' ') + ' | SCORE\n'
     // Populate table with usernames/scores
     for (let i = 0; i < usernames.length; i++) {
       table += ((i + 1) + '').padEnd('Position '.length, ' ') + '| ' + usernames[i].padEnd(longestUserLength, ' ') + ' | ' + leaderboard[usernames[i]] + '\n'
@@ -142,10 +142,6 @@ function showLeaderboard(msg) {
     msg.channel.send(
       {embed: {
         color: 3447003,
-        fields: [{
-          name:
-          value:
-        }]
         title: 'This month\'s leaderboard',
         description: "```" + table + "```"
       }})
