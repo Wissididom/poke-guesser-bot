@@ -50,14 +50,22 @@ function checkCommand(command, msg) {
     })
   }  
 
+  // Print Leaderboard
   if (command === "leaderboard") {
-    showLeaderboard()
+    showLeaderboard(msg)
   }
 
+  // TEMP COMMAND to add score to user
   if (command.startsWith("addscore-")) {
-    username = command.split('-')[1]
-    console.log(`Inputted username is ${username}`)
-    addScore(username)
+    authorName = command.split('-')[1]
+    console.log(`Inputted username is ${authorName}`)
+    addScore(authorName)
+  }
+
+  // TEMP COMMAND to add score to msg.author
+  if (command.startsWith("addme")) {
+    authorName = msg.author.username
+    addScore(authorName)
   }
   
   // dummyLeaderboard
@@ -83,6 +91,7 @@ function checkGuess(guess, msg) {
     // Check if guess matches first element of the array 
     .then(pokemonArray => {
       if (pokemonArray[0] === guess) {
+        addScore(msg.author.username)
         // Send message that guess is correct
         msg.channel.send(`${msg.author} correctly guessed ${guess}`)
       }
@@ -95,22 +104,51 @@ function newLeaderboard() {
 }
 
 // Add score to user
-function addScore(username) {
-  console.log('Adding score to user')
+function addScore(authorName) {
+  console.log(`Adding score to user: ${authorName}`)
   // Check the leaderboard if username already exists
   db.get("leaderboard")
   .then(leaderboard => {
+    // Add score if user is in leaderboard, add user to leaderboard if not
+    if (authorName in leaderboard) {
+      leaderboard[authorName] += 1
+    } else {
+      leaderboard[authorName] = 1
+    }
+    // Set database with changes
+    db.set("leaderboard", leaderboard)
     console.log(leaderboard)
-    console.log(leaderboard[username])
-    // If user doesn't exist, add user & score
-    // Elif user does exist, update score
   })
 }
 
-function showLeaderboard() {
+function showLeaderboard(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
     console.log(leaderboard)
+    // Get an array of usernames
+    let usernames = Object.keys(leaderboard)
+    // Get the longest username in the array
+    let longestUsername = usernames.sort((a, b) => {
+      return b.length - a.length
+    })[0]
+    let longestUserLength = longestUsername.length
+    // Create table headers
+    let table = 'Position | User ' + ''.padEnd(longestUserLength - 'User '.length, ' ') + ' | Score\n'
+    // Populate table with usernames/scores
+    for (let i = 0; i < usernames.length; i++) {
+      table += ((i + 1) + '').padEnd('Position '.length, ' ') + '| ' + usernames[i].padEnd(longestUserLength, ' ') + ' | ' + leaderboard[usernames[i]] + '\n'
+    }
+    // Output table to channel
+    msg.channel.send(
+      {embed: {
+        color: 3447003,
+        fields: [{
+          name:
+          value:
+        }]
+        title: 'This month\'s leaderboard',
+        description: "```" + table + "```"
+      }})
   })
 }
 
