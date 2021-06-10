@@ -52,14 +52,11 @@ function checkCommand(command, msg) {
 
   // Print Leaderboard
   if (command === "leaderboard") {
-    showLeaderboard(msg);
+    showLeaderboardBackup(msg);
   }
 
-  // TEMP COMMAND to add score to user
-  if (command.startsWith("addscore-")) {
-    authorName = command.split('-')[1];
-    console.log(`Inputted username is ${authorName}`);
-    addScore(authorName);
+  if (command === "leaderboard2") {
+    showLeaderboard(msg);
   }
 
   // TEMP COMMAND to add score to msg.author
@@ -122,6 +119,56 @@ function addScore(authorName) {
 function showLeaderboard(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
+
+    // Create items array
+    let items = Object.keys(leaderboard).map(function(key) {
+      return [key, leaderboard[key]];
+    });
+
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+      return second[1] - first[1];
+    });
+
+    // Create Embed
+    const leaderboardEmbed = new Discord.MessageEmbed()
+    .setTitle('Pokémaster Leaderboard')
+    .setAuthor('Poké-guesser Bot', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
+    .setColor(0x00AE86)
+    .setDescription("These are the top Pokémasters in this channel.")
+    .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
+    .setFooter('By borreLore and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
+
+    // Add fields to Embed
+    for (let i = 0; i < items.length; i++) {
+      console.log(`${items[i][0]}: ${items[i][1]}`)
+      // Outputs the Champion text, first place, and Elite Four text
+      if (i == 0) {
+        leaderboardEmbed.addFields(
+          {name: '---------- CHAMPION ----------', value: 'All hail:'},
+          {name: `${i+1}. ${items[i][0]}`, value: `${items[i][1]} pokémon caught.`},
+          {name: '--------- ELITE FOUR ---------', value: 'The next runnerups are:'}
+        )
+      // Populates the elite four
+      } else if (i > 0 && i < 5) {
+        leaderboardEmbed.addField(`${i+1}. ${items[i][0]}`, `${items[i][1]} pokémon caught.`)
+      } 
+    }
+
+    if (items.length > 5) {
+      console.log('There are more than 5 players.')
+
+    }
+
+    msg.channel.send(leaderboardEmbed);
+
+  })
+}
+
+// Todo: Delete this once no longer needed
+function showLeaderboardBackup(msg) {
+  db.get("leaderboard")
+  .then(leaderboard => {
     console.log(leaderboard);
     // Get an array of usernames
     let usernames = Object.keys(leaderboard);
@@ -149,10 +196,17 @@ function showLeaderboard(msg) {
 // TEMPORARY
 function dummyLeaderboard() {
   const leaderboard = {
-    "user_1": 4,
-    "user_2": 2,
-    "user_3": 5,
-    "user_7": 8
+    "Super_poke_fan#1": 4,
+    "AshKetchup": 2,
+    "Pika-choo-choo": 8,
+    "hunter2": 8, 
+    "bobbyWeerdo": 2,
+    "rebecca_bb": 5,
+    "samantha": 1,
+    "victor-apple": 2,
+    "treeHugger69": 3,
+    "wasn't-me": 1,
+    "#1-Pokemaster": 2,
   };
   
   db.set("leaderboard", leaderboard);
