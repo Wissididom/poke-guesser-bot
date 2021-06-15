@@ -28,13 +28,17 @@ function addScore(authorName) {
 
 /*
 Todo: 
-1. Leaderboard should be functional if empty, and if missing members
+1. (DONE) Leaderboard should be functional if empty, and if missing members
 2. Add field with raw leaderboard for overflowing (more than 5) members on the leaderboard
-3. Transfer to another file
+3. (DONE) Transfer to another file
 */
 function showLeaderboard(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
+
+    // Variables for use in loops
+    let table = '';
+    let longestUserLength = '';
 
     // Create items array
     let items = Object.keys(leaderboard).map(function(key) {
@@ -51,76 +55,117 @@ function showLeaderboard(msg) {
     .setTitle('Pokémaster Leaderboard')
     .setAuthor('Poké-guesser Bot', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
     .setColor(0x00AE86)
-    .setDescription("These are the top Pokémasters in this channel.")
+    .setDescription("Top 20 Pokémasters in this channel.")
     .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
     .setFooter('By borreLore and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
 
     // Add fields to Embed
-    for (let i = 0; i < items.length; i++) {
-      console.log(`${items[i][0]}: ${items[i][1]}`)
-      // Creates the Champion text, adds first place, and Elite Four text
-      if (i == 0) {
+    for (let i = 0; i < Math.max(5, items.length); i++) {
+
+      // Output item in array to console if exists
+      if (i < Math.max(0, items.length)) {
+        console.log(`${items[i][0]}: ${items[i][1]}`);
+      }
+      
+      // If on the first element, and element exists, create champion
+      if (i == 0 && i < items.length) {
         leaderboardEmbed.addFields(
           {name: '---------- CHAMPION ----------', value: 'All hail:'},
           {name: `${i+1}. ${items[i][0]}`, value: `${items[i][1]} pokémon caught.`},
           {name: '--------- ELITE FOUR ---------', value: 'The next runnerups are:'}
+        ) 
+      // If on the first element but element is empty, create TBA
+      } else if (i == 0 && i == items.length) {
+        leaderboardEmbed.addFields(
+          {name: '---------- CHAMPION ----------', value: 'All hail:'},
+          {name: `${i+1}. TBA`, value: 'Position not claimed'},
+          {name: '--------- ELITE FOUR ---------', value: 'The next runnerups are:'}
         )
-      // Adds the elite four
-      } else if (i > 0 && i < 5) {
-        // Adds new elite four member
-        leaderboardEmbed.addField(`${i+1}. ${items[i][0]}`, `${items[i][1]} pokémon caught.`)
-      } 
+      }
+      
+      // If on element 1-4, and element exists, create new elite four member
+      if (i > 0 && i < 5 && i < items.length) {
+        leaderboardEmbed.addField(`${i+1}. ${items[i][0]}`, `${items[i][1]} pokémon caught.`);
+      // If on element 1-4 but element is empty, create TBA
+      }  else if (i > 0 && i < 5 && i >= items.length) {
+        leaderboardEmbed.addField(`${i+1}. TBA`, 'Position not claimed');
+      }
+
+      // Creates table header for overflow leaderboard
+      if (i==5) {
+        // Creates an array of usernames in items starting from index 5
+        const usernames = Array.from(items.slice(5), x => x[0]);
+        // Get the longest username in the array
+        const longestUsername = usernames.sort((a, b) => {
+          return b.length - a.length;
+        })[0];
+        longestUserLength = longestUsername.length;
+        table = 'PLACE | USER ' + ''.padEnd(longestUserLength - 'USER '.length, ' ') + ' | POKEMON\n';
+      }
+
+      // Adds additional users into overflow leaderboard up until 20
+      if (i >= 5 && i < 20) {
+        table += ((i + 1) + '').padEnd('Place '.length, ' ') + '| ' + items[i][0].padEnd(longestUserLength, ' ') + ' | ' + items[i][1] + '\n';
+      }
+
     }
 
-    // Sends the completed Embed
-    msg.channel.send(leaderboardEmbed);
-
-  })
-}
-
-// Todo: Delete this once no longer needed
-function showLeaderboardBackup(msg) {
-  db.get("leaderboard")
-  .then(leaderboard => {
-    console.log(leaderboard);
-    // Get an array of usernames
-    let usernames = Object.keys(leaderboard);
-    // Get the longest username in the array
-    let longestUsername = usernames.sort((a, b) => {
-      return b.length - a.length;
-    })[0];
-    let longestUserLength = longestUsername.length;
-    // Create table headers
-    let table = 'POSITION | USER ' + ''.padEnd(longestUserLength - 'USER '.length, ' ') + ' | SCORE\n';
-    // Populate table with usernames/scores
-    for (let i = 0; i < usernames.length; i++) {
-      table += ((i + 1) + '').padEnd('Position '.length, ' ') + '| ' + usernames[i].padEnd(longestUserLength, ' ') + ' | ' + leaderboard[usernames[i]] + '\n';
+    if (items.length > 5) {
+      leaderboardEmbed.addField('--------- Remaining Competitors ---------', "```" + table + "```")
     }
-    // Output table to channel
-    msg.channel.send(
-      {embed: {
-        color: 3447003,
-        title: 'This month\'s leaderboard',
-        description: "```" + table + "```"
-      }});
-  });
+  
+  // Sends the completed Embed
+  msg.channel.send(leaderboardEmbed);  
+  }) 
 }
 
 // TEMPORARY
 function dummyLeaderboard() {
-  const leaderboard = {};
+  const leaderboard = {
+    "Super_poke_fan#1": 4,
+    "AshKetchup": 2,
+    "Pika-choo-choo": 8,
+    "hunter2": 8, 
+    "bobbyWeerdo": 2,
+    "rebecca_bb": 5,
+    "samantha": 1,
+    "victor-apple": 2,
+    "treeHugger69": 3,
+    "wasn't-me": 1,
+    "#1-Pokemaster": 2,
+    "Poket-Jedi": 7,
+    "#2-Pokemaster": 1,
+    "Jebediah": 5,
+    "Alfred-Jr": 2,
+    "Prof.Oak": 9,
+    "Eleven": 11,
+    "EtchaTheCatcha": 10,
+    "Literally-Jesus": 2,
+    "JoeBlow": 4,
+    "Mr. Woman": 5
+  };
   /*
-  "Super_poke_fan#1": 4,
-  "AshKetchup": 2,
-  "Pika-choo-choo": 8,
-  "hunter2": 8, 
-  "bobbyWeerdo": 2,
-  "rebecca_bb": 5,
-  "samantha": 1,
-  "victor-apple": 2,
-  "treeHugger69": 3,
-  "wasn't-me": 1,
-  "#1-Pokemaster": 2,
+    "Super_poke_fan#1": 4,
+    "AshKetchup": 2,
+    "Pika-choo-choo": 8,
+    "hunter2": 8, 
+    "bobbyWeerdo": 2,
+    "rebecca_bb": 5,
+    "samantha": 1,
+    "victor-apple": 2,
+    "treeHugger69": 3,
+    "wasn't-me": 1,
+    "#1-Pokemaster": 2,
+    "Poket-Jedi": 7,
+    "#2-Pokemaster": 1,
+    "Jebediah": 5,
+    "Alfred-Jr": 2,
+    "Prof.Oak": 9,
+    "Eleven": 11,
+    "EtchaTheCatcha": 10,
+    "Literally-Jesus": 2,
+    "JoeBlow": 4,
+    "Mr. Woman": 5
   */
   
   db.set("leaderboard", leaderboard);
