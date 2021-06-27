@@ -11,6 +11,7 @@ function generatePokemon() {
     .then(json => {
       return json.results;
     })
+    // Return random item from list
     .then(resultList => {
       return resultList[Math.floor(Math.random() * resultList.length)];
     });

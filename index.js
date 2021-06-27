@@ -35,7 +35,6 @@ function checkCommand(command, msg) {
   }
 
   if (command === "configure") {
-    console.log("Configuring bot.")
     configure.configureBot(msg)
   }
 
@@ -68,15 +67,20 @@ function checkCommand(command, msg) {
     leaderBoard.showLeaderboard(msg);
   }
 
+  // TEMPORARY - shows how to access member roles 
   if (command === "role") {
-    console.log(msg.member.roles.cache)
+    console.log(msg.member.roles.cache);
   }
 
+  // TEMPORARY - shows how to access server roles
   if (command === "roles") {
-
-    msg.guild.roles.fetch()
-      .then(roles => {console.log(roles.cache)})
-      .catch(console.error);
+    configure.roles(msg)
+  }
+  
+  if (command.startsWith("role exists ")) {
+    role = msg.content.split("role exists ")[1];
+    roleCheck = configure.roleExists(role, msg);
+    console.log(`The role exists: ${roleCheck}`);
   }
 
   // TEMPORARY - for debugging purposes only. Remove or add admin check
@@ -86,7 +90,7 @@ function checkCommand(command, msg) {
     });
   }
   
-  // dummyLeaderboard
+  // TEMPORARY - dummyLeaderboard
   if (command === "dummy") {
     leaderBoard.dummyLeaderboard();
   }
