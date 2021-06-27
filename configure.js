@@ -23,11 +23,17 @@ function configureBot(msg) {
 }
 
 function showConfig(msg) {
-  db.get("configuration").then(config => {console.log(config)});
-  const message = `Configured: ${config["configured"]}
-  Channels: ${config["channels"]}
-  Roles: ${config["roles"]}`;
-  msg.channel.send(message);
+  db.get("configuration")
+  .then(config => 
+    {console.log(config);
+    const configured = config["configured"];
+    const channels = config["channels"];
+    const roles = config["roles"];
+    const message = `Configured: ${configured}
+Channels: ${channels}
+Roles: ${roles}`;
+    msg.channel.send(message);
+    });
 }
 
 function resetConfig(msg) {
