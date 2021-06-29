@@ -17,9 +17,9 @@ const configure = require("./configure");
 IMPORTANT VARIABLES
 */
 
-const client = new Discord.Client();
-const mySecret = process.env['TOKEN'];
-const db = new Database();
+const client = new Discord.Client();  // Discord Object
+const mySecret = process.env['TOKEN'];  // Discord Token
+const db = new Database();  // Replit Database
 
 /*
 FUNCTIONS
@@ -44,7 +44,6 @@ function checkCommand(command, msg) {
   }
 
   if (command === "reset config") {
-    console.log("Resetting bot configuration.")
     configure.resetConfig(msg)
   }
 
@@ -77,10 +76,10 @@ function checkCommand(command, msg) {
     configure.roles(msg)
   }
   
-  if (command.startsWith("role exists ")) {
-    role = msg.content.split("role exists ")[1];
-    roleCheck = configure.roleExists(role, msg);
-    console.log(`The role exists: ${roleCheck}`);
+  // Adds role to configuration
+  if (command.startsWith("add role ")) {
+    role = msg.content.split("add role ")[1];
+    configure.addRole(role, msg);
   }
 
   // TEMPORARY - for debugging purposes only. Remove or add admin check

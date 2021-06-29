@@ -26,12 +26,7 @@ function addScore(authorName) {
   });
 }
 
-/*
-Todo: 
-1. (DONE) Leaderboard should be functional if empty, and if missing members
-2. Add field with raw leaderboard for overflowing (more than 5) members on the leaderboard
-3. (DONE) Transfer to another file
-*/
+// Shows Leaderboard by creating a new Embed
 function showLeaderboard(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
@@ -53,7 +48,7 @@ function showLeaderboard(msg) {
     // Create Embed
     const leaderboardEmbed = new Discord.MessageEmbed()
     .setTitle('Pokémaster Leaderboard')
-    .setAuthor('Poké-guesser Bot', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
+    .setAuthor('POKé-GUESSER BOT', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
     .setColor(0x00AE86)
     .setDescription("Top 20 Pokémasters in this channel.")
     .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')

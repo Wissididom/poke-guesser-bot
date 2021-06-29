@@ -14,7 +14,49 @@ I fell in love with this idea immediately. I have wanted to build a discord bot 
 
 # Usage
 
-TBA
+## Installation
+
+This bot was intented to run in [replit](https://replit.com) so my installation instructions will be about how to fork this and run it yourself. 
+
+INSTRUCTIONS TBA
+
+## Commands
+
+You can interact with the bot using admin and player commands.
+
+### Admin Commands
+
+Admin commands have the prefix `!`
+
+Full list of admin commands is shown below. Do not include the < > characters.
+
+`!help` : Shows Admin and Player commands.
+
+`!configure`: Shows configure helper
+
+`!add role <role name>`: Adds the role as a bot moderator. The role name must be exactly what it is in Discord, including any emojis. 
+
+`!remove role <role name`: Removes the role from bot moderator.
+
+`!add channel <channel name>`: Adds the channel to list of channels the bot replies to. 
+
+`!remove channel <channel name>`: Removes the channel from list of channels the bot replies to.
+
+`!show config`: Shows bot moderator roles and allowed channels.
+
+`!reset config`: Removes all allowed roles and channels. Bot returns to default configuration where all server members are able to send admin commands, and the bot replies in all channels. **Note:** This default configuration should only be used to configure the bot.
+
+### Player Commands
+
+Player commands have the prefix `$`
+
+Full list of player commands is shown below. Do not include the < > characters. 
+
+`$help`: Shows Admin and Player commands. 
+
+`$catch <pokemon-name>`: Allows player to guess the pokemon. Guessing correctly adds the player to the leaderboard and adds one point.
+
+`$leaderboard`: Shows a leaderboard of top players.
 
 # Technology
 
