@@ -34,12 +34,7 @@ function checkCommand(command, msg) {
     msg.reply("Beep-boop! Poke-guesser-bot is running!");
   }
 
-  if (command === "configure") {
-    configure.configureBot(msg)
-  }
-
   if (command === "show config") {
-    console.log("Showing bot configuration.")
     configure.showConfig(msg)
   }
 
@@ -71,9 +66,14 @@ function checkCommand(command, msg) {
     console.log(msg.member.roles.cache);
   }
 
-  // TEMPORARY - shows how to access server roles
+  // Outputs available roles
   if (command === "roles") {
-    configure.roles(msg)
+    configure.roles(msg);
+  }
+
+  // Outputs available channels
+  if (command === "channels") {
+    configure.channels(msg);
   }
   
   // Adds role to configuration
