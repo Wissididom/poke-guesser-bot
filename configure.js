@@ -1,27 +1,13 @@
 const Discord = require("discord.js");
 const Database = require("@replit/database");
+const util = require("./util");
 
 const db = new Database();
 
 /*
-UTILITIES
+CONFIGURATION UTILITIES
+This section includes utilities related to the configuration, but not specific to roles or channels
 */
-
-// Wraps reply in poke-guesser themed embed
-function embedReply(title, message, msg) {
-
-  // Creates new embedded message
-  const embed = new Discord.MessageEmbed()
-    .setTitle(title)  // Adds title
-    .setAuthor('POKé-GUESSER BOT', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
-    .setColor(0x00AE86)
-    .setDescription(message)  // Adds message
-    .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
-    .setFooter('By borreLore and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
-
-  msg.channel.send(embed);  // Sends the embedded message back to channel
-
-}
 
 // Shows configuration instructions
 function configureBot(msg) {
@@ -75,7 +61,7 @@ function showConfig(msg) {
     ${channelText}`;
 
     // Embeds message
-    embedReply("Configuration Settings:", message, msg);
+    util.embedReply("Configuration Settings:", message, msg);
   });
 }
 
@@ -93,10 +79,15 @@ function resetConfig(msg) {
 
   db.set("configuration", JSON.stringify(configuration));
 
+  // Send message that reset is successful
+  const title = "Reset Successful"
+  const message = "The configuration has been reset. The bot will listen on all channels and accept commands from all roles. Please make sure you configure moderator roles before using this bot."
+  util.embedReply(title, message, msg)
 }
 
 /*
 ROLES
+This section includes any role specific functions
 */
 
 // Outputs server roles (name & id)
@@ -104,17 +95,16 @@ function roles(msg) {
 
   let availableRoles = "";
   msg.guild.roles.cache.each(role => availableRoles += role.name + " - " + role.id + "\n");
-  embedReply("Available Roles", availableRoles, msg);
+  util.embedReply("Available Roles", availableRoles, msg);
 
 }
 
 // Checks if role exists, returns true or false
 function roleExists(roleName, msg) {
 
-  // Todo: Add functionality so that roleName or roleID can be passed to find the role
+  console.log(`Checking if role exists: >${roleName}<`);  // Logging
 
-  console.log(`Checking if role exists: >${roleName}<`);
-
+  // Returns True if role exists
   return msg.guild.roles.cache.some(role => role.name === roleName);
 
 }
@@ -122,8 +112,7 @@ function roleExists(roleName, msg) {
 // Gets role from discord server role cache by name
 function getRole(roleName, msg) {
 
-  // Todo: Add functionality so that roleName or roleID can be passed to get the role
-
+  // Returns the requested role
   return msg.guild.roles.cache.find(role => role.name === roleName);
 
 }
@@ -131,10 +120,10 @@ function getRole(roleName, msg) {
 // Adds role to bot moderator roles
 function addRole(role, msg) {
 
-  // If role exists, try adding to config
+  // If role exists in server
   if (roleExists(role, msg)) { 
 
-    // Role exists
+    // Logging
     console.log("Role exists. Adding to database.");
 
     // Get the configuration from the database
@@ -145,84 +134,264 @@ function addRole(role, msg) {
       // Parse Json into javascript object
       configJson = JSON.parse(configuration);
 
-      // Add role if doesn't exist in configuration
-      // Check if role is in configuration
-      if (configJson.configuration.roles.some(roleItem => roleItem.id == roleObject.id)) {
-        console.log("Role is already in configuration");
-        embedReply("ERROR: Role already added!", `The role >${role}< is already included in the configuration.
+      // If role exists in configuration
+      if (configJson.configuration.roles.some(roleItem => roleItem.id === roleObject.id)) {
+
+        // Don't add role
+
+        console.log("Role is already in configuration");  // Logging
+
+        // Message
+        const title = "ERROR: Role already added!";
+        const message = `The role >${role}< is already included in the configuration.
         
-        Type '!show config' to see the current configuration.`, msg);
+        Type '!show config' to see the current configuration.`;
+        util.embedReply(title, message, msg);
+
+      // If role doesn't exist in configuration
       } else {
+
+        // Create new role array
         var newRole = {
         "name": roleObject.name, 
         "id": roleObject.id
-        };  // Create new role array
+        };
 
         configJson.configuration.roles.push(newRole);  // Adds role to list of roles
 
         db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
 
-        // Outputs confirmation that role was added to server
-        embedReply("New Role Added", `The role has been added sucessfully: 
+        console.log("Role added.");  // Logging
+
+        // Message
+        const title = "New Role Added";
+        const message = `The role has been added sucessfully: 
         
         ${roleObject.name} (ID: ${roleObject.id})
 
-        Type '!show config' to see the configuration.`, msg);
+        Type '!show config' to see the current configuration.`;
+        util.embedReply(title, message, msg);
+
       }
 
     })
 
+  // If role doesn't exist in server
   } else {
 
-    console.log("Role doesn't exists.");
+    // Don't add role
 
-    embedReply("ERROR: Failed to add role!", `The role >${role}< does not exist and could not be added.
-    Type '!roles' to see the available roles.`, msg);
+    console.log("Role doesn't exists.");  // Logging
+
+    // Message
+    const title = "ERROR: Failed to add role!";
+    const message = `The role >${role}< does not exist and could not be added.
+
+    Type '!roles' to see the available roles on this server.`;
+    util.embedReply(title, message, msg);
 
   }
 }
 
-function removeRole(role) {
-  // Check if the role is in the database
+// Remove role from bot moderator roles
+function removeRole(role, msg) {
+  
+  // Get the configuration from the database
+  db.get("configuration").then(configuration => {
 
-  // Remove Role
-  // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
+    // Parse Json into javascript object
+    configJson = JSON.parse(configuration);
 
-  // Send a message
+    // Check if the role is in the database
+    // If role exists in configuration
+    if (configJson.configuration.roles.some(roleItem => roleItem.name === role)) {
+
+      console.log("Role exists in config and can be removed.")  // Logging
+
+      // Find index of this role
+      const index = configJson.configuration.roles.findIndex(item => item.name === role);
+
+      // Remove role from array
+      if (index > -1) {
+        configJson.configuration.roles.splice(index, 1);
+      }
+
+      db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
+
+      console.log("Role has been removed successfully.")  // Logging
+
+      // Message
+      const title = "Role removed from config.";
+      const message = `The role >${role}< was removed from configuration successfully!`;
+      util.embedReply(title, message, msg);
+
+    } else {
+
+      console.log("Role doesn't exist in config.")  // Logging
+
+      const title = "Role not found in config.";
+      const message = `The role >${role}< was not removed from configuration as it could not be found.
+      
+      Type '!show config' to see the roles currently in the configuration.`;
+      util.embedReply(title, message, msg);
+
+    }
+
+  })
 }
+
+/*
+CHANNELS
+This section includes any channel specific functions
+*/
 
 // Outputs server channels (name & id)
 function channels(msg) {
 
   let availableChannels = "";
   msg.guild.channels.cache.each(channel => availableChannels += channel.name + " - " + channel.id + "\n");
-  embedReply("Available Channels", availableChannels, msg);
+  util.embedReply("Available Channels in this Server", availableChannels, msg);
 
 }
 
 // Check if channel exists, return true or false
 function channelExists(channelName, msg) {
-  // Code
+
+  console.log(`Checking if channel exists: >${channelName}<`);  // Logging
+
+  // Returns True if channel exists
+  return msg.guild.channels.cache.some(channel => channel.name === channelName);
+
 }
 
 function getChannel(channelName, msg) {
-  // Code
+
+  // Returns the requested role
+  return msg.guild.channels.cache.find(channel => channel.name === channelName);
+
 }
 
-function addChannel(channel) {
-  // 1. Check if the channel exists first
+// Add channel to bot allowed channels
+function addChannel(channel, msg) {
 
-  // 2. If channel exists, add to config
+  // If channel exists in server
+  if (channelExists(channel, msg)) { 
 
-  // 3. Send a message
+    // Logging
+    console.log("Channel exists. Adding to database.");
+
+    // Get the configuration from the database
+    db.get("configuration").then(configuration => {
+
+      const channelObject = getChannel(channel, msg);  // Get channel object
+
+      // Parse Json into javascript object
+      configJson = JSON.parse(configuration);
+
+      // If channel exists in configuration
+      if (configJson.configuration.channels.some(channelItem => channelItem.id === channelObject.id)) {
+
+        // Don't add channel
+
+        console.log("Channel is already in configuration");  // Logging
+
+        // Message
+        const title = "ERROR: Channel already added!";
+        const message = `The channel >${channel}< is already included in the configuration.
+        
+        Type '!show config' to see the current configuration.`;
+        util.embedReply(title, message, msg);
+
+      // If channel doesn't exist in configuration
+      } else {
+
+        // Create new channel array
+        var newChannel = {
+        "name": channelObject.name, 
+        "id": channelObject.id
+        };
+
+        configJson.configuration.channels.push(newChannel);  // Adds channel to list of channels
+
+        db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
+
+        console.log("Channel added.");  // Logging
+
+        // Message
+        const title = "New Channel Added";
+        const message = `The channel has been added sucessfully: 
+        
+        ${channelObject.name} (ID: ${channelObject.id})
+
+        Type '!show config' to see the current configuration.`;
+        util.embedReply(title, message, msg);
+
+      }
+
+    })
+
+  // If channel doesn't exist in server
+  } else {
+
+    // Don't add channel
+
+    console.log("Channel doesn't exists.");  // Logging
+
+    // Message
+    const title = "ERROR: Failed to add role!";
+    const message = `The role >${role}< does not exist and could not be added.
+
+    Type '!roles' to see the available roles on this server.`;
+    util.embedReply(title, message, msg);
+
+  }
 }
 
-function removeChannel(channel) {
-  // 1. Check if the channel is in the database
+// Remove channel from bot allowed channels
+function removeChannel(channel, msg) {
 
-  // 2. If channel exists, remove
+  // Get the configuration from the database
+  db.get("configuration").then(configuration => {
 
-  // 3. Send a message
+    // Parse Json into javascript object
+    configJson = JSON.parse(configuration);
+
+    // Check if the channel is in the database
+    // If channel exists in configuration
+    if (configJson.configuration.channels.some(channelItem => channelItem.name === channel)) {
+
+      console.log("Channel exists in config and can be removed.")  // Logging
+
+      // Find index of this channel
+      const index = configJson.configuration.channels.findIndex(item => item.name === channel);
+
+      // Remove role from array
+      if (index > -1) {
+        configJson.configuration.channels.splice(index, 1);
+      }
+
+      db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
+
+      console.log("Channel has been removed successfully.")  // Logging
+
+      // Message
+      const title = "Channel removed from config.";
+      const message = `The channel >${channel}< was removed from configuration successfully!`;
+      util.embedReply(title, message, msg);
+
+    } else {
+
+      console.log("Channel doesn't exist in config.")  // Logging
+
+      const title = "Channel not found in config.";
+      const message = `The channel >${channel}< was not removed from configuration as it could not be found.
+      
+      Type '!show config' to see the channels currently in the configuration.`;
+      util.embedReply(title, message, msg);
+
+    }
+
+  })
 }
 
 // Function Exports
@@ -230,6 +399,9 @@ module.exports.configureBot = configureBot;
 module.exports.showConfig = showConfig;
 module.exports.resetConfig = resetConfig;
 module.exports.roles = roles;
-module.exports.channels = channels;
-module.exports.roleExists = roleExists;
 module.exports.addRole = addRole;
+module.exports.removeRole = removeRole;
+module.exports.channels = channels;
+module.exports.addChannel = addChannel;
+module.exports.removeChannel = removeChannel;
+

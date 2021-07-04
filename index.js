@@ -9,6 +9,7 @@ const Database = require("@replit/database");
 IMPORTED FUNCTIONS
 */
 const keepAlive = require("./server");
+const util = require("./util");
 const pokeFetch = require("./pokemon");
 const leaderBoard = require("./leaderboard");
 const configure = require("./configure");
@@ -31,8 +32,14 @@ function checkCommand(command, msg) {
 
   // Check if command is ping, reply with bot status
   if (command === "ping") {
-    msg.reply("Beep-boop! Poke-guesser-bot is running!");
+    const title = "Pong!";
+    const message = "Beep-boop! Poke-guesser-bot is running!";
+    util.embedReply(title, message, msg);
   }
+
+  /*
+  Configuration Utilities
+  */
 
   if (command === "show config") {
     configure.showConfig(msg)
@@ -41,6 +48,57 @@ function checkCommand(command, msg) {
   if (command === "reset config") {
     configure.resetConfig(msg)
   }
+
+  // TEMPORARY - shows how to access member roles 
+  if (command === "role") {
+    console.log(msg.member.roles.cache);
+  }
+
+  /*
+  Configuration Roles
+  */
+
+  // Outputs available roles
+  if (command === "roles") {
+    configure.roles(msg);
+  }
+  
+  // Adds role to configuration
+  if (command.startsWith("add role ")) {
+    role = msg.content.split("add role ")[1];
+    configure.addRole(role, msg);
+  }
+
+  // Removes role from configuration
+  if (command.startsWith("remove role ")) {
+    role = msg.content.split("remove role ")[1];
+    configure.removeRole(role, msg);
+  }
+
+  /*
+  Configuration Channels
+  */
+
+  // Outputs available channels
+  if (command === "channels") {
+    configure.channels(msg);
+  }
+
+  // Adds channel to configuration
+  if (command.startsWith("add channel ")) {
+    channel = msg.content.split("add channel ")[1];
+    configure.addChannel(channel, msg);
+  }
+
+  // Removes channel from configuration
+  if (command.startsWith("remove channel ")) {
+    channel = msg.content.split("remove channel ")[1];
+    configure.removeChannel(channel, msg);
+  }
+
+  /*
+  Generation
+  */
 
   // Generate new pokemon
   if (command === "generate") {
@@ -59,27 +117,6 @@ function checkCommand(command, msg) {
   // Output the leaderboard
   if (command === "leaderboard") {
     leaderBoard.showLeaderboard(msg);
-  }
-
-  // TEMPORARY - shows how to access member roles 
-  if (command === "role") {
-    console.log(msg.member.roles.cache);
-  }
-
-  // Outputs available roles
-  if (command === "roles") {
-    configure.roles(msg);
-  }
-
-  // Outputs available channels
-  if (command === "channels") {
-    configure.channels(msg);
-  }
-  
-  // Adds role to configuration
-  if (command.startsWith("add role ")) {
-    role = msg.content.split("add role ")[1];
-    configure.addRole(role, msg);
   }
 
   // TEMPORARY - for debugging purposes only. Remove or add admin check
