@@ -240,6 +240,25 @@ function removeRole(role, msg) {
   })
 }
 
+function authenticateRole(role, msg) {
+  // Get the configuration from the database
+  db.get("configuration").then(configuration => {
+
+    // Parse Json into javascript object
+    configJson = JSON.parse(configuration);
+
+    // Check if the role is in the database
+    // If role exists in configuration
+    if (configJson.configuration.roles.some(roleItem => roleItem.name === role)) {
+
+      console.log("Role exists in config. User authenticated.")  // Logging
+
+      return true
+
+    }
+  })
+}
+
 /*
 CHANNELS
 This section includes any channel specific functions
@@ -394,6 +413,40 @@ function removeChannel(channel, msg) {
   })
 }
 
+function authenticateChannel(msg) {
+
+  // Get the configuration from the database
+  return db.get("configuration")
+    .then(configuration => {
+
+      // Parse Json into javascript object
+      configJson = JSON.parse(configuration);
+
+      // Check if the channel is in the database
+      if (configJson.configuration.channels.length === 0) {
+
+        console.log("AUTHORIZATION: Channel configuration empty. Authorized."); // Logging
+        
+        // If there are no channels in config, return true
+        return true;
+
+      } else if (configJson.configuration.channels.some(channelItem => channelItem.name === msg.channel.name)) {
+
+        console.log(`AUTHORIZATION: Channel >${msg.channel.name}< found. Authorized.`); // Logging
+
+        // If channel is in configuration, return true, else false
+        return true;
+
+      } else {
+
+        console.log(`AUTHORIZATION: Channel >${msg.channel.name}< NOT found. Forbidden.`); // Logging
+
+        return false;
+
+      }
+  })
+}
+
 // Function Exports
 module.exports.configureBot = configureBot;
 module.exports.showConfig = showConfig;
@@ -404,4 +457,4 @@ module.exports.removeRole = removeRole;
 module.exports.channels = channels;
 module.exports.addChannel = addChannel;
 module.exports.removeChannel = removeChannel;
-
+module.exports.authenticateChannel = authenticateChannel;

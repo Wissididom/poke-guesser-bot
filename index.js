@@ -54,6 +54,10 @@ function checkCommand(command, msg) {
     console.log(msg.member.roles.cache);
   }
 
+  if (command === "channel") {
+    console.log(msg.channel.name)
+  }
+
   /*
   Configuration Roles
   */
@@ -180,19 +184,29 @@ client.on("message", msg => {
   // Returns if message is from bot
   if (msg.author.bot) return;
 
-  // Check if user message starts with ! indicating command, call checkCommand
-  if (msg.content.startsWith("!")) {
-    command = msg.content.split("!")[1];
-    checkCommand(command, msg);
-  }
+  // Returns if channel is not in config
+  configure.authenticateChannel(msg).then(authorized => {
 
-  // Check if user message starts with $ indicating guess, call checkGuess
-  if (msg.content.startsWith("$catch ")) {
-    guess = msg.content.split("$catch ")[1];
-    checkGuess(guess, msg);
-  }
+    if (authorized === false) return;
+
+    // Check if user message starts with ! indicating command, call checkCommand
+    if (msg.content.startsWith("!")) {
+      command = msg.content.split("!")[1];
+      checkCommand(command, msg);
+    }
+
+    // Check if user message starts with $ indicating guess, call checkGuess
+    if (msg.content.startsWith("$catch ")) {
+      guess = msg.content.split("$catch ")[1];
+      checkGuess(guess, msg);
+    }
 
 });
+
+  })
+  
+
+  
 
 /*
 BOT START CODE (login, start server, etc)
