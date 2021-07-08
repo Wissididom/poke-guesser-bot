@@ -111,9 +111,11 @@ function checkCommand(command, msg) {
     pokeFetch.generatePokemon().then(pokemon => {
       db.set("pokemon", pokemon.name);  // Sets current pokemon in database
       console.log(pokemon);
-      pokeFetch.fetchSprite(pokemon.url).then(sprite => {
-        console.log(sprite);
-        msg.channel.send("Today's pokemon is:", {files: [sprite]});  // Sends the sprite to channel
+      pokeFetch.fetchSprite(pokemon.url).then(spriteUrl => {
+        console.log(spriteUrl);
+        const title = "A wild POKEMON appeared!";
+        const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!"
+        util.embedReply(title, message, msg, spriteUrl)
       });
     });
   }
@@ -123,14 +125,14 @@ function checkCommand(command, msg) {
     leaderBoard.showLeaderboard(msg);
   }
 
-  // TEMPORARY - for debugging purposes only. Remove or add admin check
+  // Reveals pokemon
   if (command === "which") {
     db.get("pokemon").then(pokemon => {
       msg.channel.send(`Current pokemon is: ${pokemon}`);
     });
   }
   
-  // TEMPORARY - dummyLeaderboard
+  // DEBUGGING - creates a dummy leaderboard
   if (command === "dummy") {
     leaderBoard.dummyLeaderboard();
   }
@@ -138,44 +140,44 @@ function checkCommand(command, msg) {
 }
 
 // Checks pokemon guess
-function checkGuess(guess, msg) {
-  
-  console.log(`${msg.author} guessed ${guess}.`);
+function playerInput(inputRequest, msg) {
 
-  // Checks if the guess is part of the pokemon name
-  db.get("pokemon")
-    // Pokemon name might include type (ex: darumaka-galar) so name is split into array
-    .then(pokemon => {
-      return pokemon.split('-');
-    })
-    // Check if guess matches first element of the array 
-    .then(pokemonArray => {
-      if (pokemonArray[0] === guess) {
-        leaderBoard.addScore(msg.author.username);
-        // Send message that guess is correct
-        msg.channel.send(`${msg.author} correctly guessed ${guess}`);
-      }
-    });
+  // Player Guess
+  if (inputRequest.startsWith("catch ")) {
+
+    guess = msg.content.split("catch ")[1];
+    
+    console.log(`${msg.author} guessed ${guess}.`);
+
+    // Checks if the guess is part of the pokemon name
+    db.get("pokemon")
+      // Pokemon name might include type (ex: darumaka-galar) so name is split into array
+      .then(pokemon => {
+        return pokemon.split('-');
+      })
+      // Check if guess matches first element of the array 
+      .then(pokemonArray => {
+        if (pokemonArray[0] === guess) {
+          leaderBoard.addScore(msg.author.username);
+          // Send message that guess is correct
+          msg.channel.send(`${msg.author} correctly guessed ${guess}`);
+        }
+      });
+  }
+  
+
 }
 
 /*
-BOT/CONSOLE INTERACTIONS (logging)
+BOT ON
 */
 
 // Outputs console log when bot is logged in
 client.on("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  // Logs if configuration is null
-  db.get("configuration").then(value => {
-    if (value === null) {
-      console.log("Configuration is null.")
-    }
-  })
-})
 
-/*
-BOT MESSAGE LISTENER
-*/
+  console.log(`Logged in as ${client.user.tag}!`);
+
+})
 
 // Reads user messages, interprets commands & guesses, and authenticates channels/roles
 client.on("message", msg => {
@@ -191,30 +193,29 @@ client.on("message", msg => {
     // Check if user message starts with ! indicating command, call checkCommand
     if (msg.content.startsWith("!")) {
       configure.authenticateRole(msg).then(authorized => {
-        console.log(`This user is authorized: ${authorized}`)
+        if (authorized) {
+          command = msg.content.split("!")[1];
+          checkCommand(command, msg);
+        }
       })
-      command = msg.content.split("!")[1];
-      checkCommand(command, msg);
+      
     }
 
     // Check if user message starts with $ indicating guess, call checkGuess
-    if (msg.content.startsWith("$catch ")) {
-      guess = msg.content.split("$catch ")[1];
-      checkGuess(guess, msg);
+    if (msg.content.startsWith("$")) {
+      inputRequest = msg.content.split("$")[1];
+      playerInput(inputRequest, msg);
     }
 
   })
 })
-  
-
-  
 
 /*
 BOT START CODE (login, start server, etc)
 */
 
 // Keeps server alive
-// keepAlive()
+keepAlive()
 
 // Logs in with secret TOKEN
 client.login(mySecret);

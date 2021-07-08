@@ -66,7 +66,7 @@ function showLeaderboard(msg) {
       if (i == 0 && i < items.length) {
         leaderboardEmbed.addFields(
           {name: '---------- CHAMPION ----------', value: 'All hail:'},
-          {name: `${i+1}. ${items[i][0]}`, value: `${items[i][1]} pokémon caught.`},
+          {name: `🏆 ${i+1}. ${items[i][0]}`, value: `${items[i][1]} pokémon caught.`},
           {name: '--------- ELITE FOUR ---------', value: 'The next runnerups are:'}
         ) 
       // If on the first element but element is empty, create TBA
@@ -80,7 +80,7 @@ function showLeaderboard(msg) {
       
       // If on element 1-4, and element exists, create new elite four member
       if (i > 0 && i < 5 && i < items.length) {
-        leaderboardEmbed.addField(`${i+1}. ${items[i][0]}`, `${items[i][1]} pokémon caught.`);
+        leaderboardEmbed.addField(`🏅 ${i+1}. ${items[i][0]}`, `${items[i][1]} pokémon caught.`);
       // If on element 1-4 but element is empty, create TBA
       }  else if (i > 0 && i < 5 && i >= items.length) {
         leaderboardEmbed.addField(`${i+1}. TBA`, 'Position not claimed');
@@ -106,7 +106,7 @@ function showLeaderboard(msg) {
     }
 
     if (items.length > 5) {
-      leaderboardEmbed.addField('--------- Remaining Competitors ---------', "```" + table + "```")
+      leaderboardEmbed.addField('--------- REGION RUNNERUPS ---------', "```" + table + "```")
     }
   
   // Sends the completed Embed
