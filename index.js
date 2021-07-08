@@ -173,12 +173,11 @@ client.on("ready", () => {
   })
 })
 
-
 /*
 BOT MESSAGE LISTENER
 */
 
-// Reads user messages and checks for commands / guesses
+// Reads user messages, interprets commands & guesses, and authenticates channels/roles
 client.on("message", msg => {
 
   // Returns if message is from bot
@@ -191,6 +190,9 @@ client.on("message", msg => {
 
     // Check if user message starts with ! indicating command, call checkCommand
     if (msg.content.startsWith("!")) {
+      configure.authenticateRole(msg).then(authorized => {
+        console.log(`This user is authorized: ${authorized}`)
+      })
       command = msg.content.split("!")[1];
       checkCommand(command, msg);
     }
@@ -201,9 +203,8 @@ client.on("message", msg => {
       checkGuess(guess, msg);
     }
 
-});
-
   })
+})
   
 
   

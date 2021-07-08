@@ -36,10 +36,6 @@ function showConfig(msg) {
     const roles = configJson.configuration.roles;
     const channels = configJson.configuration.channels;
 
-    // Debug
-    console.log(roles);
-    console.log(channels);
-
     // Format roles names and id for easy viewing
     let roleText = ""
     for (let i = 0; i < roles.length; i++) {
@@ -240,22 +236,41 @@ function removeRole(role, msg) {
   })
 }
 
-function authenticateRole(role, msg) {
+// Returns true if user role is in config, or if configuration.roles is empty
+function authenticateRole(msg) {
+
+  // const found = arr1.some(r=> arr2.indexOf(r) >= 0)
+  // msg.member.roles.cache
+
   // Get the configuration from the database
-  db.get("configuration").then(configuration => {
+  return db.get("configuration")
+    .then(configuration => {
 
-    // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+      // Parse Json into javascript object
+      configJson = JSON.parse(configuration);
 
-    // Check if the role is in the database
-    // If role exists in configuration
-    if (configJson.configuration.roles.some(roleItem => roleItem.name === role)) {
+      // Check if the channel is in the database
+      if (configJson.configuration.roles.length === 0) {
 
-      console.log("Role exists in config. User authenticated.")  // Logging
+        console.log("AUTHORIZATION: Role configuration empty. Authorized."); // Logging
+        
+        // If there are no channels in config, return true
+        return true;
 
-      return true
+      } else if (configJson.configuration.roles.some(roleItem => msg.member.roles.cache.has(roleItem.id))) {
 
-    }
+        console.log(`AUTHORIZATION: Role found. Authorized.`); // Logging
+
+        // If channel is in configuration, return true, else false
+        return true;
+
+      } else {
+
+        console.log(`AUTHORIZATION: Role NOT found. Forbidden.`); // Logging
+
+        return false;
+
+      }
   })
 }
 
@@ -413,6 +428,7 @@ function removeChannel(channel, msg) {
   })
 }
 
+// Returns true if channel is in config, or if configuration.channels is empty
 function authenticateChannel(msg) {
 
   // Get the configuration from the database
@@ -454,6 +470,7 @@ module.exports.resetConfig = resetConfig;
 module.exports.roles = roles;
 module.exports.addRole = addRole;
 module.exports.removeRole = removeRole;
+module.exports.authenticateRole = authenticateRole;
 module.exports.channels = channels;
 module.exports.addChannel = addChannel;
 module.exports.removeChannel = removeChannel;
