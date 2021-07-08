@@ -128,6 +128,7 @@ function checkCommand(command, msg) {
   // Reveals pokemon
   if (command === "which") {
     db.get("pokemon").then(pokemon => {
+      console.log(`Admin requested reveal: ${pokemon}`);
       msg.channel.send(`Current pokemon is: ${pokemon}`);
     });
   }
@@ -192,6 +193,7 @@ client.on("message", msg => {
 
     // Check if user message starts with ! indicating command, call checkCommand
     if (msg.content.startsWith("!")) {
+      
       configure.authenticateRole(msg).then(authorized => {
         if (authorized) {
           command = msg.content.split("!")[1];
@@ -215,7 +217,7 @@ BOT START CODE (login, start server, etc)
 */
 
 // Keeps server alive
-keepAlive()
+// keepAlive()
 
 // Logs in with secret TOKEN
 client.login(mySecret);
