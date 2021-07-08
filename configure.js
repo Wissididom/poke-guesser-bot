@@ -198,6 +198,13 @@ function removeRole(role, msg) {
     // Parse Json into javascript object
     configJson = JSON.parse(configuration);
 
+    // Show warning if last role
+    if (configJson.configuration.roles.length === 1) {
+      const title = "Warning: Last role removed";
+      const message = "You have removed the last role and returned to the default settings. It is not recommended to have no role set. Please set at least one role to moderate the bot.";
+      util.embedReply(title, message, msg)
+    }
+
     // Check if the role is in the database
     // If role exists in configuration
     if (configJson.configuration.roles.some(roleItem => roleItem.name === role)) {
@@ -214,13 +221,23 @@ function removeRole(role, msg) {
 
       db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
 
-      console.log("Role has been removed successfully.")  // Logging
-
       // Message
-      const title = "Role removed from config.";
-      const message = `The role >${role}< was removed from configuration successfully!`;
-      util.embedReply(title, message, msg);
-
+      // Show warning if last role
+      if (configJson.configuration.roles.length === 0) {
+        console.log("Last role warning.");
+        const title = "Warning: Last role removed";
+        const message = `The role >${role}< was removed from configuration. 
+        
+        There are no roles set to moderate the bot. It is recommended to have at least one role set.`;
+        util.embedReply(title, message, msg);
+      // Show regular message if not
+      } else {
+        console.log("Role has been removed successfully.")
+        const title = "Role removed from config.";
+        const message = `The role >${role}< was removed from configuration successfully!`;
+        util.embedReply(title, message, msg);
+      }
+      
     } else {
 
       console.log("Role doesn't exist in config.")  // Logging
@@ -238,9 +255,6 @@ function removeRole(role, msg) {
 
 // Returns true if user role is in config, or if configuration.roles is empty
 function authenticateRole(msg) {
-
-  // const found = arr1.some(r=> arr2.indexOf(r) >= 0)
-  // msg.member.roles.cache
 
   // Get the configuration from the database
   return db.get("configuration")
@@ -406,12 +420,22 @@ function removeChannel(channel, msg) {
 
       db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
 
-      console.log("Channel has been removed successfully.")  // Logging
-
       // Message
-      const title = "Channel removed from config.";
-      const message = `The channel >${channel}< was removed from configuration successfully!`;
-      util.embedReply(title, message, msg);
+      // Show warning if last channel
+      if (configJson.configuration.channels.length === 0) {
+        console.log("Last channel warning.");
+        const title = "Warning: Last channel removed";
+        const message = `The channel >${channel}< was removed from configuration. 
+        
+        The bot will respond on every channel on this server. If you don't want this, set at least one channel.`;
+        util.embedReply(title, message, msg);
+      // Show regular message if not
+      } else {
+        console.log("Channel has been removed successfully.")
+        const title = "Channel removed from config.";
+        const message = `The channel >${channel}< was removed from configuration successfully!`;
+        util.embedReply(title, message, msg);
+      }
 
     } else {
 
