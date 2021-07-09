@@ -217,7 +217,7 @@ BOT START CODE (login, start server, etc)
 */
 
 // Keeps server alive
-// keepAlive()
+keepAlive()
 
 // Logs in with secret TOKEN
 client.login(mySecret);

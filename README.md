@@ -22,13 +22,13 @@ INSTRUCTIONS TBA
 
 ## Commands
 
-You can interact with the bot using admin and player commands.
+Poke-guesser bot recognizes commands from Admins and Mods (make sure that you add the role first!) which are for moderating the bot. It also recognizes regular player commands for playing the game.
 
 ### Admin Commands
 
 Admin commands have the prefix `!`
 
-Full list of admin commands is shown below. Do not include the < > characters.
+Full list of admin commands is shown below. Do not type the < > characters.
 
 `!help` : Shows Admin and Player commands.
 
@@ -82,4 +82,4 @@ TBA
 
 # Contributions
 
-TBA
+Contributions aren't being accepted, but feel free to fork this and modify it as per the license.

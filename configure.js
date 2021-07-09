@@ -386,10 +386,10 @@ function addChannel(channel, msg) {
     console.log("Channel doesn't exists.");  // Logging
 
     // Message
-    const title = "ERROR: Failed to add role!";
-    const message = `The role >${role}< does not exist and could not be added.
+    const title = "ERROR: Failed to add channel!";
+    const message = `The channel >${channel}< does not exist and could not be added.
 
-    Type '!roles' to see the available roles on this server.`;
+    Type '!channels' to see the available channels on this server.`;
     util.embedReply(title, message, msg);
 
   }
