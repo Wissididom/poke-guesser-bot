@@ -15,7 +15,7 @@ const leaderBoard = require("./leaderboard");
 const configure = require("./configure");
 
 /*
-IMPORTANT VARIABLES
+OBJECTS AND TOKENS
 */
 
 const client = new Discord.Client();  // Discord Object
@@ -28,7 +28,6 @@ FUNCTIONS
 
 // Checks if a command is valid
 function checkCommand(command, msg) {
-  // Command logic goes here
 
   // Check if command is ping, reply with bot status
   if (command === "ping") {
@@ -41,21 +40,14 @@ function checkCommand(command, msg) {
   Configuration Utilities
   */
 
+  // Displays configuration settings
   if (command === "show config") {
     configure.showConfig(msg)
   }
 
+  // Resets configuration to default settings
   if (command === "reset config") {
     configure.resetConfig(msg)
-  }
-
-  // TEMPORARY - shows how to access member roles 
-  if (command === "role") {
-    console.log(msg.member.roles.cache);
-  }
-
-  if (command === "channel") {
-    console.log(msg.channel.name)
   }
 
   /*
@@ -101,7 +93,7 @@ function checkCommand(command, msg) {
   }
 
   /*
-  Generation
+  Game Controls
   */
 
   // Generate new pokemon
@@ -120,48 +112,59 @@ function checkCommand(command, msg) {
     });
   }
 
-  // Output the leaderboard
-  if (command === "leaderboard") {
-    leaderBoard.showLeaderboard(msg);
-  }
-
   // Reveals pokemon
-  if (command === "which") {
+  if (command === "reveal") {
     db.get("pokemon").then(pokemon => {
       console.log(`Admin requested reveal: ${pokemon}`);
       msg.channel.send(`Current pokemon is: ${pokemon}`);
     });
   }
+
+  // Output the leaderboard
+  if (command === "leaderboard") {
+    leaderBoard.showLeaderboard(msg);
+  }
   
-  // DEBUGGING - creates a dummy leaderboard
+  // DEBUGGING - creates a dummy leaderboard (Overwrites old leaderboard)
   if (command === "dummy") {
     leaderBoard.dummyLeaderboard();
+  }
+
+  if (command === "empty") {
+    leaderBoard.emptyLeaderboard();
   }
 
 }
 
 // Checks pokemon guess
-function playerInput(inputRequest, msg) {
+function checkInput(inputRequest, msg) {
 
   // Player Guess
   if (inputRequest.startsWith("catch ")) {
 
-    guess = msg.content.split("catch ")[1];
+    guess = msg.content.split("catch ")[1];  // Splits at the command, gets pokemon name guess
     
     console.log(`${msg.author} guessed ${guess}.`);
 
     // Checks if the guess is part of the pokemon name
     db.get("pokemon")
-      // Pokemon name might include type (ex: darumaka-galar) so name is split into array
       .then(pokemon => {
+        // Pokemon name might include type (ex: darumaka-galar) so name is split into array
         return pokemon.split('-');
       })
       // Check if guess matches first element of the array 
       .then(pokemonArray => {
         if (pokemonArray[0] === guess) {
+          // Adds score to user who guessed correctly
           leaderBoard.addScore(msg.author.username);
           // Send message that guess is correct
-          msg.channel.send(`${msg.author} correctly guessed ${guess}`);
+          title = `${util.capitalize(pokemonArray[0])} has been caught!`
+          message = `1 point added to ${msg.author}'s score.`
+          util.embedReply(title, message, msg)
+          // Removes pokemon from db
+          db.set("pokemon", "");  // Sets current pokemon to empty string
+        } else if (pokemonArray[0] === ""){
+          console.log("No pokemon set.")
         }
       });
   }
@@ -186,14 +189,16 @@ client.on("message", msg => {
   // Returns if message is from bot
   if (msg.author.bot) return;
 
-  // Returns if channel is not in config
+  // Authenticate if bot is allowed to reply on this channel
   configure.authenticateChannel(msg).then(authorized => {
 
+    // Returns if channel is not in config
     if (authorized === false) return;
 
     // Check if user message starts with ! indicating command, call checkCommand
     if (msg.content.startsWith("!")) {
       
+      // Authenticate if user is authorized
       configure.authenticateRole(msg).then(authorized => {
         if (authorized) {
           command = msg.content.split("!")[1];
@@ -206,7 +211,7 @@ client.on("message", msg => {
     // Check if user message starts with $ indicating guess, call checkGuess
     if (msg.content.startsWith("$")) {
       inputRequest = msg.content.split("$")[1];
-      playerInput(inputRequest, msg);
+      checkInput(inputRequest, msg);
     }
 
   })

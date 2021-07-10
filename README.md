@@ -14,12 +14,6 @@ I fell in love with this idea immediately. I have wanted to build a discord bot 
 
 # Usage
 
-## Installation
-
-This bot was intented to run in [replit](https://replit.com) so my installation instructions will be about how to fork this and run it yourself. 
-
-INSTRUCTIONS TBA
-
 ## Commands
 
 Poke-guesser bot recognizes commands from Admins and Mods (make sure that you add the role first!) which are for moderating the bot. It also recognizes regular player commands for playing the game.
@@ -58,6 +52,12 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 `$leaderboard`: Shows a leaderboard of top players.
 
+# Installation
+
+This bot was intented to run in [replit](https://replit.com) so my installation instructions will be about how to fork this and run it yourself. 
+
+INSTRUCTIONS TBA
+
 # Technology
 
 ## Replit
@@ -78,7 +78,7 @@ This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API 
 
 # License
 
-TBA
+This project is written under the MIT license, as per LICENSE.md.
 
 # Contributions
 

@@ -24,4 +24,10 @@ function embedReply(title, message, msg, image=null) {
 
 }
 
+// Capitalizes first letter
+function capitalize(string){
+  return string[0].toUpperCase() + string.slice(1).toLowerCase();
+}
+
 module.exports.embedReply = embedReply;
+module.exports.capitalize = capitalize;

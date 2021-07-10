@@ -12,11 +12,10 @@ This section includes utilities related to the configuration, but not specific t
 // Shows configuration instructions
 function configureBot(msg) {
 
-  msg.channel.send("Please configure the bot as it has not been configured yet.")
-
   // Asks user to select which roles can administrate bot
 
   // Asks user which channels bot works in
+
 }
 
 // Sends a message to the channel with the server configuration.
@@ -266,21 +265,21 @@ function authenticateRole(msg) {
       // Check if the channel is in the database
       if (configJson.configuration.roles.length === 0) {
 
-        console.log("AUTHORIZATION: Role configuration empty. Authorized."); // Logging
+        console.log("ROLES: Role configuration empty. Authorized."); // Logging
         
         // If there are no channels in config, return true
         return true;
 
       } else if (configJson.configuration.roles.some(roleItem => msg.member.roles.cache.has(roleItem.id))) {
 
-        console.log(`AUTHORIZATION: Role found. Authorized.`); // Logging
+        console.log(`ROLES: Role found. Authorized.`); // Logging
 
         // If channel is in configuration, return true, else false
         return true;
 
       } else {
 
-        console.log(`AUTHORIZATION: Role NOT found. Forbidden.`); // Logging
+        console.log(`ROLES: Role NOT found. Forbidden.`); // Logging
 
         return false;
 
@@ -296,8 +295,21 @@ This section includes any channel specific functions
 // Outputs server channels (name & id)
 function channels(msg) {
 
+  // String representation of available channels in the server
   let availableChannels = "";
-  msg.guild.channels.cache.each(channel => availableChannels += channel.name + " - " + channel.id + "\n");
+
+  // For each channel in the channel cache
+  msg.guild.channels.cache.each(channel => {
+    
+    // If the channel is a text channel 
+    if (channel.type === "text") {
+      // Add it to the available channels
+      availableChannels += channel.name + " - " + channel.id + "\n";
+    } 
+
+  })
+
+  // Message server
   util.embedReply("Available Channels in this Server", availableChannels, msg);
 
 }
@@ -465,21 +477,21 @@ function authenticateChannel(msg) {
       // Check if the channel is in the database
       if (configJson.configuration.channels.length === 0) {
 
-        console.log("AUTHORIZATION: Channel configuration empty. Authorized."); // Logging
+        console.log("CHANNELS: Channel configuration empty. Authorized."); // Logging
         
         // If there are no channels in config, return true
         return true;
 
       } else if (configJson.configuration.channels.some(channelItem => channelItem.name === msg.channel.name)) {
 
-        console.log(`AUTHORIZATION: Channel >${msg.channel.name}< found. Authorized.`); // Logging
+        console.log(`CHANNELS: Channel >${msg.channel.name}< found. Authorized.`); // Logging
 
         // If channel is in configuration, return true, else false
         return true;
 
       } else {
 
-        console.log(`AUTHORIZATION: Channel >${msg.channel.name}< NOT found. Forbidden.`); // Logging
+        console.log(`CHANNELS: Channel >${msg.channel.name}< NOT found. Forbidden.`); // Logging
 
         return false;
 

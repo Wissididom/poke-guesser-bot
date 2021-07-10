@@ -114,7 +114,7 @@ function showLeaderboard(msg) {
   }) 
 }
 
-// TEMPORARY
+// DEBUGGING
 function dummyLeaderboard() {
   const leaderboard = {
     "Super_poke_fan#1": 4,
@@ -167,7 +167,17 @@ function dummyLeaderboard() {
   console.log('Generated dummy leaderboard.')
 }
 
+// Empties leaderboard
+function emptyLeaderboard() {
+  
+  const leaderboard = {};
+  db.set("leaderboard", leaderboard);
+  console.log('Generated dummy leaderboard.')
+
+}
+
 // Exports each function separately
 module.exports.addScore = addScore;
 module.exports.showLeaderboard = showLeaderboard;
 module.exports.dummyLeaderboard = dummyLeaderboard;
+module.exports.emptyLeaderboard = emptyLeaderboard;
