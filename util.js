@@ -1,4 +1,7 @@
 const Discord = require("discord.js");
+const Database = require("@replit/database");
+
+const db = new Database();
 
 /*
 UTILITIES
@@ -9,23 +12,49 @@ function checkDatabase() {
   // Check if database has been instantiated
   db.get("instantiated")
   .then(instantiated => {
-    if (instantiated === true) {
-      // pass
-    } else {
-      instantiateDatabase()  // Set Database Keys
-    }
-  }
 
-  // instantiated === true
-  // If null, run instantiateDatabase
+    console.log(`Instantiated: ${instantiated}`);
+
+    if (instantiated === true) {
+
+      console.log("Database is ready.");
+
+    } else if (instantiated === null) {
+
+      instantiateDatabase();  // Set Database Keys
+
+    } else {
+
+      console.log("ERROR: Unexpected error occurred when performing startup check on database.")
+
+    }
+  })
 }
 
 // Set first values in database
 function instantiateDatabase() {
-  // Set blank configuration (reset config)
+
+  console.log("Instantiating database for the first time.");
+
+  // Set blank configuration
+  const configuration = {
+    "configuration": {
+      "channels": [],
+      "roles": []
+    }
+  };
+
+  db.set("configuration", JSON.stringify(configuration));
+
   // Set blank pokemon
-  // Set first leaderboard
+  db.set("pokemon", "");
+
+  // Set blank leaderboard
+  db.set("leaderboard", {});
+
   // Set instantiated to True
+  db.set("instantiated", true);
+
 }
 
 // Wraps reply in poke-guesser themed embed

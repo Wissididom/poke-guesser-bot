@@ -19,8 +19,9 @@ OBJECTS AND TOKENS
 */
 
 const client = new Discord.Client();  // Discord Object
-const mySecret = process.env['TOKEN'];  // Discord Token
 const db = new Database();  // Replit Database
+
+const mySecret = process.env['TOKEN'];  // Discord Token
 
 /*
 ADMIN AND PLAYER COMMANDS
@@ -126,9 +127,29 @@ function checkCommand(command, msg) {
   // Reveals pokemon
   if (command === "reveal") {
     db.get("pokemon").then(pokemon => {
-      console.log(`Admin requested reveal: ${pokemon}`);
-      msg.channel.send(`Current pokemon is: ${pokemon}`);
-      db.set("pokemon", "");  // Sets current pokemon to empty string
+
+      // If no pokemon is set
+      if (pokemon === "") {
+
+        console.log("Admin requested reveal, but no pokemon is currently set.")
+
+        // Message
+        title = "There is no pokemon to reveal";
+        message = "You have to explore to find a pokemon. Type \`!explore\` to find a new pokemon.";
+        util.embedReply(title, message, msg);
+
+      // If pokemon is set
+      } else {
+
+        console.log(`Admin requested reveal: ${pokemon}`);
+
+        // Message
+        title = "Pokemon escaped!";
+        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon)} as it fled.`;
+        util.embedReply(title, message, msg);
+
+        db.set("pokemon", "");  // Sets current pokemon to empty string
+      }
     });
   }
 
@@ -212,8 +233,6 @@ client.on("ready", () => {
 
   console.log(`Logged in as ${client.user.tag}!`);  // Logging
 
-  util.checkDatabase();  // Check database on start (prevents null errors)
-
 })
 
 // Reads user messages, interprets commands & guesses, and authenticates channels/roles
@@ -254,8 +273,19 @@ client.on("message", msg => {
 BOT START CODE (login, start server, etc)
 */
 
-// Keeps server alive
-keepAlive()
+if (mySecret === undefined) {
 
-// Logs in with secret TOKEN
-client.login(mySecret);
+  console.log("TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.")
+
+} else {
+
+  // Check database on start (prevents null errors)
+  util.checkDatabase();
+
+  // Keeps server alive
+  keepAlive()
+
+  // Logs in with secret TOKEN
+  client.login(mySecret);
+
+}

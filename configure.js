@@ -9,15 +9,6 @@ CONFIGURATION UTILITIES
 This section includes utilities related to the configuration, but not specific to roles or channels
 */
 
-// Shows configuration instructions
-function configureBot(msg) {
-
-  // Asks user to select which roles can administrate bot
-
-  // Asks user which channels bot works in
-
-}
-
 // Sends a message to the channel with the server configuration.
 function showConfig(msg) {
   
@@ -498,7 +489,6 @@ function authenticateChannel(msg) {
 }
 
 // Function Exports
-module.exports.configureBot = configureBot;
 module.exports.showConfig = showConfig;
 module.exports.resetConfig = resetConfig;
 module.exports.roles = roles;
