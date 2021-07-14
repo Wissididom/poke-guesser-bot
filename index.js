@@ -211,7 +211,8 @@ BOT ON
 client.on("ready", () => {
 
   console.log(`Logged in as ${client.user.tag}!`);  // Logging
-  util.checkDatabase();  // Check database on start
+
+  util.checkDatabase();  // Check database on start (prevents null errors)
 
 })
 

@@ -7,6 +7,15 @@ UTILITIES
 // Check Replit database on start to make sure no values are set as null
 function checkDatabase() {
   // Check if database has been instantiated
+  db.get("instantiated")
+  .then(instantiated => {
+    if (instantiated === true) {
+      // pass
+    } else {
+      instantiateDatabase()  // Set Database Keys
+    }
+  }
+
   // instantiated === true
   // If null, run instantiateDatabase
 }

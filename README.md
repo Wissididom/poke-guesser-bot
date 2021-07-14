@@ -56,7 +56,7 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 ## Setup Discord Bot
 
-This step is important if you haven't done this before. Before you can use this repo, you need to login to the Discord Developer Portal and create a bot, then add the bot into the correct server. Follow the instructions below:
+In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
 
 1. Login to the Discord Developer portal and create a bot using [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#keeping-your-token-safe).
 
@@ -120,6 +120,6 @@ Contributions aren't being accepted as this was a short-term project, but feel f
 
 # Additional Credit
 
-Replit Cover Image by [Louise McSharry](https://pixabay.com/users/2funki4wheelz-2863996/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1513925) from [Pixabay](https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1513925)
+Replit Cover Image by [PIRO4D](https://pixabay.com/users/piro4d-2707530/) from [Pixabay](https://pixabay.com)
 
 Leaderboard Image by [Aurelia Candeloro](www.instagram.com/aurelia.borealis)
