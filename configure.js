@@ -76,7 +76,9 @@ function resetConfig(msg) {
 
   // Send message that reset is successful
   const title = "Reset Successful"
-  const message = "The configuration has been reset. The bot will listen on all channels and accept commands from all roles. Please make sure you configure moderator roles before using this bot."
+  const message = `The configuration has been reset. The bot will listen on all channels and accept commands from all roles. It is recommended to configure moderator roles before using this bot.
+  
+  Type \`!help\` to see how to configure the bot.`
   util.embedReply(title, message, msg)
 }
 
@@ -134,13 +136,13 @@ function addRole(role, msg) {
 
         // Don't add role
 
-        console.log("Role is already in configuration");  // Logging
+        console.log("Failed to add role: already in configuration");  // Logging
 
         // Message
         const title = "ERROR: Role already added!";
         const message = `The role >${role}< is already included in the configuration.
         
-        Type '!show config' to see the current configuration.`;
+        Type \`!show config\` to see the current configuration.`;
         util.embedReply(title, message, msg);
 
       // If role doesn't exist in configuration
@@ -156,7 +158,7 @@ function addRole(role, msg) {
 
         db.set("configuration", JSON.stringify(configJson));  // Sets the updated list into database
 
-        console.log("Role added.");  // Logging
+        console.log("Role added successfully.");  // Logging
 
         // Message
         const title = "New Role Added";
@@ -164,7 +166,7 @@ function addRole(role, msg) {
         
         ${roleObject.name} (ID: ${roleObject.id})
 
-        Type '!show config' to see the current configuration.`;
+        Type \`!show config\` to see the current configuration.`;
         util.embedReply(title, message, msg);
 
       }
@@ -176,13 +178,13 @@ function addRole(role, msg) {
 
     // Don't add role
 
-    console.log("Role doesn't exists.");  // Logging
+    console.log("Failed to add role: doesn't exist.");  // Logging
 
     // Message
     const title = "ERROR: Failed to add role!";
     const message = `The role >${role}< does not exist and could not be added.
 
-    Type '!roles' to see the available roles on this server.`;
+    Type \`!roles\` to see the available roles on this server.`;
     util.embedReply(title, message, msg);
 
   }
@@ -197,18 +199,11 @@ function removeRole(role, msg) {
     // Parse Json into javascript object
     configJson = JSON.parse(configuration);
 
-    // Show warning if last role
-    if (configJson.configuration.roles.length === 1) {
-      const title = "Warning: Last role removed";
-      const message = "You have removed the last role and returned to the default settings. It is not recommended to have no role set. Please set at least one role to moderate the bot.";
-      util.embedReply(title, message, msg)
-    }
-
     // Check if the role is in the database
     // If role exists in configuration
     if (configJson.configuration.roles.some(roleItem => roleItem.name === role)) {
 
-      console.log("Role exists in config and can be removed.")  // Logging
+      console.log("Role exists in configuration and can be removed.")  // Logging
 
       // Find index of this role
       const index = configJson.configuration.roles.findIndex(item => item.name === role);
@@ -223,28 +218,30 @@ function removeRole(role, msg) {
       // Message
       // Show warning if last role
       if (configJson.configuration.roles.length === 0) {
-        console.log("Last role warning.");
+        console.log("Warning: Last role removed.");
         const title = "Warning: Last role removed";
         const message = `The role >${role}< was removed from configuration. 
         
-        There are no roles set to moderate the bot. It is recommended to have at least one role set.`;
+        There are no roles set to moderate the bot. It is recommended to set at least one role.
+        
+        Type \`!help\` to see how to add roles.`;
         util.embedReply(title, message, msg);
       // Show regular message if not
       } else {
-        console.log("Role has been removed successfully.")
-        const title = "Role removed from config.";
+        console.log("Role removed successfully.")
+        const title = "Role removed from configuration.";
         const message = `The role >${role}< was removed from configuration successfully!`;
         util.embedReply(title, message, msg);
       }
       
     } else {
 
-      console.log("Role doesn't exist in config.")  // Logging
+      console.log("Failed to remove role: doesn't exist in configuration.")  // Logging
 
-      const title = "Role not found in config.";
-      const message = `The role >${role}< was not removed from configuration as it could not be found.
+      const title = "ERROR: Failed to remove role!";
+      const message = `The role >${role}< is missing from the configuration and could not be removed.
       
-      Type '!show config' to see the roles currently in the configuration.`;
+      Type \`!show config\` to see the roles currently in the configuration.`;
       util.embedReply(title, message, msg);
 
     }
@@ -352,14 +349,13 @@ function addChannel(channel, msg) {
       if (configJson.configuration.channels.some(channelItem => channelItem.id === channelObject.id)) {
 
         // Don't add channel
-
-        console.log("Channel is already in configuration");  // Logging
+        console.log("Failed to add channel: already in configuration.");  // Logging
 
         // Message
         const title = "ERROR: Channel already added!";
-        const message = `The channel >${channel}< is already included in the configuration.
+        const message = `The channel >${channel}< is already in the configuration.
         
-        Type '!show config' to see the current configuration.`;
+        Type \`!show config\` to see the current configuration.`;
         util.embedReply(title, message, msg);
 
       // If channel doesn't exist in configuration
@@ -383,7 +379,7 @@ function addChannel(channel, msg) {
         
         ${channelObject.name} (ID: ${channelObject.id})
 
-        Type '!show config' to see the current configuration.`;
+        Type \`!show config\` to see the current configuration.`;
         util.embedReply(title, message, msg);
 
       }
@@ -395,13 +391,13 @@ function addChannel(channel, msg) {
 
     // Don't add channel
 
-    console.log("Channel doesn't exists.");  // Logging
+    console.log("Failed to add channel: doesn't exist.");  // Logging
 
     // Message
     const title = "ERROR: Failed to add channel!";
     const message = `The channel >${channel}< does not exist and could not be added.
 
-    Type '!channels' to see the available channels on this server.`;
+    Type \`!channels\` to see the available channels on this server.`;
     util.embedReply(title, message, msg);
 
   }
@@ -420,7 +416,7 @@ function removeChannel(channel, msg) {
     // If channel exists in configuration
     if (configJson.configuration.channels.some(channelItem => channelItem.name === channel)) {
 
-      console.log("Channel exists in config and can be removed.")  // Logging
+      console.log("Channel exists in configuration and can be removed.")  // Logging
 
       // Find index of this channel
       const index = configJson.configuration.channels.findIndex(item => item.name === channel);
@@ -435,28 +431,30 @@ function removeChannel(channel, msg) {
       // Message
       // Show warning if last channel
       if (configJson.configuration.channels.length === 0) {
-        console.log("Last channel warning.");
+        console.log("Warning: Last channel removed.");
         const title = "Warning: Last channel removed";
         const message = `The channel >${channel}< was removed from configuration. 
         
-        The bot will respond on every channel on this server. If you don't want this, set at least one channel.`;
+        The bot will respond on every channel on this server. If you don't want this, set at least one channel.
+        
+        Type \`!help\` to see how to add channels.`;
         util.embedReply(title, message, msg);
       // Show regular message if not
       } else {
         console.log("Channel has been removed successfully.")
-        const title = "Channel removed from config.";
+        const title = "Channel removed from configuration";
         const message = `The channel >${channel}< was removed from configuration successfully!`;
         util.embedReply(title, message, msg);
       }
 
     } else {
 
-      console.log("Channel doesn't exist in config.")  // Logging
+      console.log("Failed to remove channel: doesn't exist in configuration.")  // Logging
 
-      const title = "Channel not found in config.";
-      const message = `The channel >${channel}< was not removed from configuration as it could not be found.
+      const title = "ERROR: Could not remove channel!";
+      const message = `The channel >${channel}< is missing from the configuration and could not be removed.
       
-      Type '!show config' to see the channels currently in the configuration.`;
+      Type \`!show config\` to see the channels currently in the configuration.`;
       util.embedReply(title, message, msg);
 
     }

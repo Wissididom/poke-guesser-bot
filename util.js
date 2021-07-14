@@ -4,6 +4,21 @@ const Discord = require("discord.js");
 UTILITIES
 */
 
+// Check Replit database on start to make sure no values are set as null
+function checkDatabase() {
+  // Check if database has been instantiated
+  // instantiated === true
+  // If null, run instantiateDatabase
+}
+
+// Set first values in database
+function instantiateDatabase() {
+  // Set blank configuration (reset config)
+  // Set blank pokemon
+  // Set first leaderboard
+  // Set instantiated to True
+}
+
 // Wraps reply in poke-guesser themed embed
 function embedReply(title, message, msg, image=null) {
 
@@ -24,10 +39,81 @@ function embedReply(title, message, msg, image=null) {
 
 }
 
-// Capitalizes first letter
+// Capitalizes first letter of pokemon name
 function capitalize(string){
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
 
+// Sends an embedded message with the Admin Help Instructions
+function adminHelp(msg) {
+
+  const title = "Admin Help";
+  const message = `Bot moderation instructions and commands:
+
+  - GAME PLAY -
+  
+  \`!explore\` - Generates a new pokemon
+  \`!reveal\` - Reveals the pokemon and resets it so it cannot be guessed
+
+  - FIRST TIME SETUP -
+
+  Make sure you have set at least one role before using this bot. If you want the bot to only reply in one or two channels, make sure you set those channels as well.
+
+  \`!configure\` - Shows the configuration instructions`;
+
+  embedReply(title, message, msg);
+}
+
+// Sends an embedded message with the Configuration Help Instructions
+function configurationHelp(msg) {
+
+  const title = "Configuration Help";
+  const message = `It is not recommended to use the bot without configuring roles and channels first.
+
+  See below how to add and remove roles and channels. It is recommended to copy and paste the role/channel name from the discord settings as the spelling & emojis in the names have to be exact.
+
+  - CONFIGURATION -
+
+  \`!show config\` - Shows the currently set roles and channels
+  \`!reset config\` - Removes the currently set roles and channels and returns to default configuration
+
+  - ROLES -
+  
+  These are discord server roles which are allowed to moderate the bot. If no roles are set, any user can moderate the bot, which is NOT recommended!
+
+  \`!add role <role name>\` - Adds new role to configuration
+  \`!remove role <role name>\` - Removes role from configuration
+  
+  - CHANNELS -
+  
+  These are the channels the bot is allowed to reply on. If no channels are set, bot replies on all text channels.
+  
+  \`!add channel <channel name>\` - Adds new channel to configuration
+  \`!remove channel <channel name>\` - Removes channel from configuration`;
+
+  embedReply(title, message, msg);
+}
+
+// Sends an embedded message with the Player Help Instructions
+function playerHelp(msg) {
+  
+  const title = "Player Help";
+  const message = `Welcome to Poké-Guesser ${msg.author}!
+
+  The player commands are below:
+
+  - GAME PLAY -
+
+  \`$catch <pokémon name>\` - Guess the pokémon. If you guess correctly, your score increases by 1!
+  \`$leaderboard\` - Displays the leaderboard.`;
+
+  embedReply(title, message, msg);
+
+}
+
+module.exports.checkDatabase = checkDatabase;
 module.exports.embedReply = embedReply;
 module.exports.capitalize = capitalize;
+module.exports.adminHelp = adminHelp;
+module.exports.configurationHelp = configurationHelp;
+module.exports.playerHelp = playerHelp;

@@ -23,17 +23,27 @@ const mySecret = process.env['TOKEN'];  // Discord Token
 const db = new Database();  // Replit Database
 
 /*
-FUNCTIONS
+ADMIN AND PLAYER COMMANDS
 */
 
-// Checks if a command is valid
+// Checks command, calls appropriate function
 function checkCommand(command, msg) {
 
-  // Check if command is ping, reply with bot status
+  // If command is ping, reply with bot status
   if (command === "ping") {
     const title = "Pong!";
     const message = "Beep-boop! Poke-guesser-bot is running!";
     util.embedReply(title, message, msg);
+  }
+
+  // Admin Help
+  if (command === "help") {
+    util.adminHelp(msg);
+  }
+
+  // Configuration Help
+  if (command === "configure") {
+    util.configurationHelp(msg);
   }
 
   /*
@@ -54,7 +64,7 @@ function checkCommand(command, msg) {
   Configuration Roles
   */
 
-  // Outputs available roles
+  // Replies to channel with available roles
   if (command === "roles") {
     configure.roles(msg);
   }
@@ -75,7 +85,7 @@ function checkCommand(command, msg) {
   Configuration Channels
   */
 
-  // Outputs available channels
+  // Replies to channel with available text channels
   if (command === "channels") {
     configure.channels(msg);
   }
@@ -97,12 +107,13 @@ function checkCommand(command, msg) {
   */
 
   // Generate new pokemon
-  if (command === "generate") {
+  if (command === "explore") {
     console.log("Generating a new pokemon.");
     // Returns pokemon json object
     pokeFetch.generatePokemon().then(pokemon => {
       db.set("pokemon", pokemon.name);  // Sets current pokemon in database
       console.log(pokemon);
+      // Gets sprite url, and replies to the channel with newly generated pokemon
       pokeFetch.fetchSprite(pokemon.url).then(spriteUrl => {
         console.log(spriteUrl);
         const title = "A wild POKEMON appeared!";
@@ -117,6 +128,7 @@ function checkCommand(command, msg) {
     db.get("pokemon").then(pokemon => {
       console.log(`Admin requested reveal: ${pokemon}`);
       msg.channel.send(`Current pokemon is: ${pokemon}`);
+      db.set("pokemon", "");  // Sets current pokemon to empty string
     });
   }
 
@@ -125,11 +137,12 @@ function checkCommand(command, msg) {
     leaderBoard.showLeaderboard(msg);
   }
   
-  // DEBUGGING - creates a dummy leaderboard (Overwrites old leaderboard)
+  // DEBUGGING - creates a dummy leaderboard with made up usernames
   if (command === "dummy") {
     leaderBoard.dummyLeaderboard();
   }
 
+  // DEBUGGING - resets leaderboard to default (empty) values
   if (command === "empty") {
     leaderBoard.emptyLeaderboard();
   }
@@ -138,6 +151,13 @@ function checkCommand(command, msg) {
 
 // Checks pokemon guess
 function checkInput(inputRequest, msg) {
+
+  // Player Help
+  if (inputRequest === "help") {
+
+    util.playerHelp(msg);
+
+  }
 
   // Player Guess
   if (inputRequest.startsWith("catch ")) {
@@ -149,26 +169,37 @@ function checkInput(inputRequest, msg) {
     // Checks if the guess is part of the pokemon name
     db.get("pokemon")
       .then(pokemon => {
+
         // Pokemon name might include type (ex: darumaka-galar) so name is split into array
         return pokemon.split('-');
+
       })
       // Check if guess matches first element of the array 
       .then(pokemonArray => {
         if (pokemonArray[0] === guess) {
+
           // Adds score to user who guessed correctly
           leaderBoard.addScore(msg.author.username);
           // Send message that guess is correct
-          title = `${util.capitalize(pokemonArray[0])} has been caught!`
-          message = `1 point added to ${msg.author}'s score.`
+          title = `${util.capitalize(pokemonArray[0])} has been caught!`;
+          message = `1 point added to ${msg.author}'s score.`;
           util.embedReply(title, message, msg)
-          // Removes pokemon from db
           db.set("pokemon", "");  // Sets current pokemon to empty string
+
         } else if (pokemonArray[0] === ""){
-          console.log("No pokemon set.")
+
+          console.log("No pokemon set.");
+
         }
-      });
+      })
   }
-  
+
+  // Display Leaderboard
+  if (inputRequest === "leaderboard") {
+
+  leaderBoard.showLeaderboard(msg);
+
+  }
 
 }
 
@@ -179,7 +210,8 @@ BOT ON
 // Outputs console log when bot is logged in
 client.on("ready", () => {
 
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user.tag}!`);  // Logging
+  util.checkDatabase();  // Check database on start
 
 })
 
