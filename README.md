@@ -2,15 +2,11 @@
 
 The Poké-guesser Bot is a discord bot which selects random pokémon and asks the user to guess the pokémon name. The bot automatically tracks the score of participating users. It also recognizes a number of admin commands, and player commands such as catching pokémon, and displaying the leaderboard. 
 
-## Progress
-
-This bot project is currently in progress. It is currently able to generate new pokémon, message the discord server, understand guesses, commands, and has a functional leaderboard. There are still a few kinks to be ironed out, including presenting the leaderboard in a nicer way, and adding functionality for the bot to operate in a single channel, and differentiate admin status or roles. 
-
 ## Background
 
-This bot was built thanks to one of my friends, Pokketmuse, who reached out to me about this idea. She is a Twitch streamer who has a discord channel where she runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game she manually operated. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. Her goal was to practice convert this manual game into a bot, and to practice JavaScript at the same time.
+A few months ago, one of my friends Pokketmuse reached out to me about a coding idea. She is a Twitch streamer who has a discord server where she runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game she ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. She wanted a bot that could automate this process.
 
-I fell in love with this idea immediately. I have wanted to build a discord bot for a very long time. I also have wanted to apply my JavaScript knowledge for a while as well, but never had a good opportunity. This project gave me an opportunity to kill two birds with one stone, so I got to work right away!
+I fell in love with this idea immediately. I have wanted to build a discord bot for a very long time. I also have wanted to apply my JavaScript knowledge for a while as well as I have not completed any javascript projects yet. This project gave me an opportunity to kill two birds with one stone!
 
 # Usage
 
@@ -54,6 +50,24 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 # Installation
 
+## Forking and Running Bot using Replit
+
+This bot was intented to run in [replit](https://replit.com) so my installation instructions will be about how to fork this and run it yourself using Replit. 
+
+**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first.*
+
+1. Go to the Replit link for the project: https://replit.com/@GeorgeKhan/poke-guesser-bot
+
+3. Click Fork to fork it to your own Replit account.
+
+![replit-3](images/replit-3.png)
+
+4. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret. 
+
+![replit-4](images/replit-4.png)
+
+5. Click the **Run** button at the top of the Replit page to start the bot.
+
 ## Setup Discord Bot
 
 In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
@@ -72,19 +86,6 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 5. Click copy above the bot permissions, and paste it into your browser.
 
 6. Choose a server to invite the bot to, then click authorize.
-
-## Replit
-
-This bot was intented to run in [replit](https://replit.com) so my installation instructions will be about how to fork this and run it yourself using Replit. 
-
-1. Go to the Replit link for the project: https://replit.com/@GeorgeKhan/poke-guesser-bot
-
-3. Click Fork to fork it to your own Replit account.
- ![replit-2](images/replit-2.png)
-
-4. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret. 
-
-5. Click Run to start the bot. 
 
 ## Running locally
 
