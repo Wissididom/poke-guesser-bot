@@ -157,6 +157,11 @@ function checkCommand(command, msg) {
   if (command === "leaderboard") {
     leaderBoard.showLeaderboard(msg);
   }
+
+  // Start a new championship
+  if (command === "new championship") {
+    leaderBoard.newChampionship(msg);
+  }
   
   // DEBUGGING - creates a dummy leaderboard with made up usernames
   if (command === "dummy") {
@@ -277,7 +282,9 @@ BOT START CODE (login, start server, etc)
 
 if (mySecret === undefined) {
 
-  console.log("TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.")
+  console.log("TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.");
+
+  process.kill(process.pid, 'SIGTERM');  // Kill Bot
 
 } else {
 

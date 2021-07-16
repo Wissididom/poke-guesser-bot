@@ -4,11 +4,6 @@ const Database = require("@replit/database");
 const util = require("./util");
 const db = new Database();
 
-// Pending function transfer// Create a new leaderboard
-function newLeaderboard() {
-  console.log('Creating new leaderboard');
-}
-
 // Add score to user
 function addScore(authorName) {
   console.log(`Adding score to user: ${authorName}`);
@@ -29,6 +24,7 @@ function addScore(authorName) {
 
 // Shows Leaderboard by creating a new Embed
 function showLeaderboard(msg) {
+
   db.get("leaderboard")
   .then(leaderboard => {
 
@@ -111,8 +107,51 @@ function showLeaderboard(msg) {
     }
   
   // Sends the completed Embed
-  msg.channel.send(leaderboardEmbed);  
+  msg.channel.send(leaderboardEmbed);
+
   }) 
+}
+
+// Formally resets leaderboard and announces the end of the championship
+function newChampionship(msg) {
+
+  // Output message that the championship has ended and x is the victor
+  db.get("leaderboard")
+  .then(leaderboard => {
+
+    // Output leaderboard
+    showLeaderboard(msg);
+
+    // Create items array
+    let items = Object.keys(leaderboard).map(function(key) {
+      return [key, leaderboard[key]];
+    })
+
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+      return second[1] - first[1];
+    })
+
+    // Determine winner of championship and output message
+    const winner = items[0][0];
+
+    return winner;
+  })
+  .then(winner => {
+    // Output Championship Victor
+    const title = "Champion Decided!";
+    const message = `As the Championship draws to a close, the victor stands out from the rest of the competitors!
+    
+    ${winner}
+    
+    is presented with the Pokemon Championship trophy in front of thousands of screaming fans.
+    
+    The new Championship begins!`;
+    util.embedReply(title, message, msg);
+
+    // Erase leaderboard
+    emptyLeaderboard(msg);
+  })
 }
 
 // DEBUGGING
@@ -179,14 +218,17 @@ function emptyLeaderboard(msg) {
   db.set("leaderboard", leaderboard);
   console.log('Generated dummy leaderboard.');
 
+  /*
   title = "Leaderboard Reset!";
   message = "The leaderboard has been emptied. Make sure you grab a copy of the last leaderboard if you want to save a copy!";
   util.embedReply(title, message, msg);
+  */
 
 }
 
 // Exports each function separately
 module.exports.addScore = addScore;
 module.exports.showLeaderboard = showLeaderboard;
+module.exports.newChampionship = newChampionship;
 module.exports.dummyLeaderboard = dummyLeaderboard;
 module.exports.emptyLeaderboard = emptyLeaderboard;
