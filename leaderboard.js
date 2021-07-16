@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const Database = require("@replit/database");
 
+const util = require("./util");
 const db = new Database();
 
 // Pending function transfer// Create a new leaderboard
@@ -115,7 +116,7 @@ function showLeaderboard(msg) {
 }
 
 // DEBUGGING
-function dummyLeaderboard() {
+function dummyLeaderboard(msg) {
   const leaderboard = {
     "Super_poke_fan#1": 4,
     "AshKetchup": 2,
@@ -165,14 +166,22 @@ function dummyLeaderboard() {
   
   db.set("leaderboard", leaderboard);
   console.log('Generated dummy leaderboard.')
+
+  title = "Dummy Leaderboard Generated!";
+  message = "A dummy leaderboard with fake players has been generated!";
+  util.embedReply(title, message, msg);
 }
 
 // Empties leaderboard
-function emptyLeaderboard() {
+function emptyLeaderboard(msg) {
   
   const leaderboard = {};
   db.set("leaderboard", leaderboard);
-  console.log('Generated dummy leaderboard.')
+  console.log('Generated dummy leaderboard.');
+
+  title = "Leaderboard Reset!";
+  message = "The leaderboard has been emptied. Make sure you grab a copy of the last leaderboard if you want to save a copy!";
+  util.embedReply(title, message, msg);
 
 }
 

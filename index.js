@@ -160,12 +160,12 @@ function checkCommand(command, msg) {
   
   // DEBUGGING - creates a dummy leaderboard with made up usernames
   if (command === "dummy") {
-    leaderBoard.dummyLeaderboard();
+    leaderBoard.dummyLeaderboard(msg);
   }
 
   // DEBUGGING - resets leaderboard to default (empty) values
   if (command === "empty") {
-    leaderBoard.emptyLeaderboard();
+    leaderBoard.emptyLeaderboard(msg);
   }
 
 }
@@ -203,7 +203,9 @@ function checkInput(inputRequest, msg) {
           leaderBoard.addScore(msg.author.username);
           // Send message that guess is correct
           title = `${util.capitalize(pokemonArray[0])} has been caught!`;
-          message = `1 point added to ${msg.author}'s score.`;
+          message = `1 point added to ${msg.author}'s score.
+          
+          Type \`$leaderboard\` to see the updated leaderboard!`;
           util.embedReply(title, message, msg)
           db.set("pokemon", "");  // Sets current pokemon to empty string
 

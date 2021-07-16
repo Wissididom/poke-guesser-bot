@@ -52,7 +52,7 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 ## Forking and Running Bot using Replit
 
-This bot was intented to run in [replit](https://replit.com) so my installation instructions will be about how to fork this and run it yourself using Replit. 
+This bot was intented to run in [replit](https://replit.com) so my installation instructions will cover this method.
 
 **Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first.*
 
@@ -72,15 +72,18 @@ This bot was intented to run in [replit](https://replit.com) so my installation 
 
 In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
 
-1. Login to the Discord Developer portal and create a bot using [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#keeping-your-token-safe).
+1. Login to the Discord Developer portal and create a bot using [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
 2. Copy the token by clicking the copy button. Save this for a future step.
+
 ![bot-2](images/bot-2.png)
 
 3. Click the OAuth2 button, then click bot.
+
 ![bot-3](images/bot-3.png)
 
 4. Scroll down to the bot permissions. Select the permissions from the below screenshot.
+
 ![bot-4](images/bot-4.png)
 
 5. Click copy above the bot permissions, and paste it into your browser.
@@ -95,7 +98,7 @@ I wont go into too much detail for this as I haven't ran it this way, but you ju
 
 ## Replit
 
-We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot is intended to be ran straight from Replit so that it is hosted in the cloud.
+We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot is intended to be ran straight from Replit so that it is hosted in the cloud. 
 
 ## node.js
 
@@ -107,7 +110,7 @@ All interactions with discord were handled thanks to the [discord.js](https://di
 
 ## API
 
-This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API was not only easy to use, but provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot. 
+This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot. 
 
 # Contributions
 
