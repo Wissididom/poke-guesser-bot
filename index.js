@@ -241,6 +241,8 @@ function checkInput(inputRequest, msg) {
 
 /*
 BOT ON
+
+This section runs when the bot is logged in and listening for commands. First, it writes a log to the console indicating it is logged in. Next, it listens on the server and determines whether a message starts with ! or $ before calling either the Admin checkCommand function, or the User checkInput function.
 */
 
 // Outputs console log when bot is logged in
@@ -286,6 +288,8 @@ client.on("message", msg => {
 
 /*
 BOT START CODE (login, start server, etc)
+
+This section checks if there is a TOKEN secret and uses it to login if it is found. If not, the bot outputs a log to the console and terminates.
 */
 
 if (mySecret === undefined) {
