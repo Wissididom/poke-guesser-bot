@@ -146,6 +146,7 @@ function playerHelp(msg) {
   - GAME PLAY -
 
   \`$catch <pokémon name>\` - Guess the pokémon. If you guess correctly, your score increases by 1!
+  \`$position\` - See your current position.
   \`$leaderboard\` - Displays the leaderboard.`;
 
   embedReply(title, message, msg);

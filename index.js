@@ -210,6 +210,7 @@ function checkInput(inputRequest, msg) {
           title = `${util.capitalize(pokemonArray[0])} has been caught!`;
           message = `1 point added to ${msg.author}'s score.
           
+          Type \`$position\` to see your current position &
           Type \`$leaderboard\` to see the updated leaderboard!`;
           util.embedReply(title, message, msg)
           db.set("pokemon", "");  // Sets current pokemon to empty string
@@ -226,6 +227,13 @@ function checkInput(inputRequest, msg) {
   if (inputRequest === "leaderboard") {
 
   leaderBoard.showLeaderboard(msg);
+
+  }
+
+  // Display Position
+  if (inputRequest === "position") {
+
+  leaderBoard.position(msg);
 
   }
 

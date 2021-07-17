@@ -54,6 +54,8 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 `$catch <pokémon-name>`: Allows player to guess the pokémon. Guessing correctly adds the player to the leaderboard and adds one point.
 
+`$position`: See your current position.
+
 `$leaderboard`: Shows a leaderboard of top players.
 
 # Installation

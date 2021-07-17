@@ -112,6 +112,39 @@ function showLeaderboard(msg) {
   }) 
 }
 
+// Shows User Position
+function position(msg) {
+
+  db.get("leaderboard")
+  .then(leaderboard => {
+
+    // Create items array
+    let items = Object.keys(leaderboard).map(function(key) {
+      return [key, leaderboard[key]];
+    });
+
+    // Sort the array based on the second element
+    items.sort(function(first, second) {
+      return second[1] - first[1];
+    });
+
+    // Create new array with just names
+    const userNames = Array.from(items, user => user[0]);
+  
+    // Find position of message author
+    const userPosition = userNames.indexOf(msg.author.username) + 1;
+
+    if (userPosition === 0) {
+      console.log("User is not on the leaderboard.");
+      msg.reply("You are currently not on the leaderboard. You must guess at least one pokemon first!");
+    } else {
+      console.log(`User position: ${userPosition}`);
+      msg.reply(`Your current position is: ${userPosition}`);
+    }
+
+  })
+}
+
 // Formally resets leaderboard and announces the end of the championship
 function newChampionship(msg) {
 
@@ -214,19 +247,14 @@ function emptyLeaderboard(msg) {
   
   const leaderboard = {};
   db.set("leaderboard", leaderboard);
-  console.log('Generated dummy leaderboard.');
-
-  /*
-  title = "Leaderboard Reset!";
-  message = "The leaderboard has been emptied. Make sure you grab a copy of the last leaderboard if you want to save a copy!";
-  util.embedReply(title, message, msg);
-  */
+  console.log('Emptied leaderboard.');
 
 }
 
 // Exports each function separately
 module.exports.addScore = addScore;
 module.exports.showLeaderboard = showLeaderboard;
+module.exports.position = position;
 module.exports.newChampionship = newChampionship;
 module.exports.dummyLeaderboard = dummyLeaderboard;
 module.exports.emptyLeaderboard = emptyLeaderboard;
