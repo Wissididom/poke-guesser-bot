@@ -304,7 +304,7 @@ if (mySecret === undefined) {
   util.checkDatabase();
 
   // Keeps server alive
-  keepAlive()
+  keepAlive();
 
   // Logs in with secret TOKEN
   client.login(mySecret);
