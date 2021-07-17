@@ -18,9 +18,17 @@ Poke-guesser bot recognizes commands from Admins and Mods (make sure that you ad
 
 Admin commands have the prefix `!`
 
-Full list of admin commands is shown below. Do not type the < > characters.
+Full list of admin commands is shown below. Do not type the < > characters. 
 
-`!help` : Shows Admin and Player commands.
+#### Gameplay
+
+`!help`: Shows Admin commands.
+
+`!leaderboard`: Shows a leaderboard of top players.
+
+`!new championship`: (caution) Outputs the Leaderboard one last time, reveals winner, and starts new championship with a blank leaderboard.
+
+#### Configuration
 
 `!configure`: Shows configure helper.
 

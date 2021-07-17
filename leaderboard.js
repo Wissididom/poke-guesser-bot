@@ -132,25 +132,23 @@ function newChampionship(msg) {
       return second[1] - first[1];
     })
 
-    // Determine winner of championship and output message
-    const winner = items[0][0];
+    const winner = items[0][0];  // Determine winner of championship and output message
+    var delayInMilliseconds = 500;  // 0.5 seconds
 
-    return winner;
-  })
-  .then(winner => {
-    // Output Championship Victor
-    const title = "Champion Decided!";
-    const message = `As the Championship draws to a close, the victor stands out from the rest of the competitors!
-    
-    ${winner}
-    
-    is presented with the Pokemon Championship trophy in front of thousands of screaming fans.
-    
-    The new Championship begins!`;
-    util.embedReply(title, message, msg);
+    // Output Championship Victor with delay to allow leaderboard to send first
+    setTimeout(function() {
+      const title = "Champion Decided!";
+      const message = `As the Championship draws to a close, the victor stands out from the rest of the competitors!
+      
+      ${winner}
+      
+      is presented with the Pokémon Championship trophy in front of thousands of screaming fans, and the championship begins anew!`;
+      const image = "https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png"
+      util.embedReply(title, message, msg, image);
 
-    // Erase leaderboard
-    emptyLeaderboard(msg);
+      // Erase leaderboard
+      emptyLeaderboard(msg);
+    }, delayInMilliseconds);
   })
 }
 

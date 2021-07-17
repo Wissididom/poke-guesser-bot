@@ -92,6 +92,9 @@ function adminHelp(msg) {
   
   \`!explore\` - Generates a new pokemon
   \`!reveal\` - Reveals the pokemon and resets it so it cannot be guessed
+  \`!leaderboard\` - Shows the current Leaderboard
+  \`!new championship\` - (caution) Outputs the Leaderboard one last time, reveals winner, and starts new championship with a blank leaderboard
+
 
   - FIRST TIME SETUP -
 
