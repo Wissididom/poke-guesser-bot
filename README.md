@@ -108,7 +108,11 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 
 ## Running locally
 
-I wont go into too much detail for this as I haven't ran it this way, but you just need to fork the repo and run the index.js file if you want to run this locally. 
+This bot was written to run on Replit and utilize the Replit Secrets (Environment Variables). I didn't look into this too much to see how well it works in just nodeJS and outside of Replit. 
+
+If running the `index.js` file doesn't work or outputs errors about the TOKEN missing, you will need to update the code to use your local TOKEN variable. 
+
+As this wasn't intended to run locally, I haven't tested this so I can't go into too much detail about how to run the bot this way.
 
 # Technology
 
