@@ -2,6 +2,12 @@
 
 The Poké-guesser Bot is a discord bot which selects random pokémon and asks the user to guess the pokémon name. The bot automatically tracks the score of participating users. It also recognizes a number of admin commands, and player commands such as catching pokémon, and displaying the leaderboard. 
 
+## Repos
+
+1. Github - https://github.com/GeorgeCiesinski/poke-guesser-bot
+
+2. Replit - https://replit.com/@GeorgeKhan/poke-guesser-bot
+
 ## Background
 
 A few months ago, one of my friends Pokketmuse reached out to me about a coding idea. She is a Twitch streamer who has a discord server where she runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game she ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. She wanted a bot that could automate this process.
