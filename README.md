@@ -146,6 +146,8 @@ If your change adds a feature, please include proof that the feature is working 
 
 # Additional Credit
 
+Code Contributions by [Wissididom](https://github.com/Wissididom)
+
 Replit Cover Image by [PIRO4D](https://pixabay.com/users/piro4d-2707530/) from [Pixabay](https://pixabay.com)
 
 Leaderboard Image by [Aurelia Candeloro](www.instagram.com/aurelia.borealis)
