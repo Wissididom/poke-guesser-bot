@@ -202,7 +202,7 @@ function checkInput(inputRequest, msg) {
       })
       // Check if guess matches first element of the array 
       .then(pokemonArray => {
-        if (pokemonArray[0] === guess) {
+        if (pokemonArray[0].toLowerCase() === guess.toLowerCase()) {
 
           // Adds score to user who guessed correctly
           leaderBoard.addScore(msg.author.username);
