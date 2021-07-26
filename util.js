@@ -70,7 +70,9 @@ function embedReply(title, message, msg, image=null) {
     .setFooter('By borreLore and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
 
   if (image) {
-    embed.setImage(image)
+    const attachment = new Discord.MessageAttachment(image, 'pokemon.png');
+    embed.attachFiles(attachment);
+    embed.setImage('attachment://pokemon.png');
   }
 
   msg.channel.send(embed);  // Sends the embedded message back to channel
