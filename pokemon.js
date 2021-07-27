@@ -30,6 +30,28 @@ function fetchSprite(url) {
     });
 }
 
+// Fetches the pokemon's names in different languages
+function fetchNames(nameOrId) {
+  return fetch(`https://pokeapi.co/api/v2/pokemon-species/${nameOrId}/`)
+  // Parse to json
+  .then(res => res.json())
+  // Get names as array
+  .then(json => json.names)
+  // Format names
+  .then(names => {
+    let resultNames = [];
+    for (let i = 0; i < names.length; i++) {
+      resultNames.push({
+        languageName: names[i].language.name,
+        languageUrl: names[i].language.url,
+        name: names[i].name
+      });
+    }
+    return resultNames;
+  });
+}
+
 // Exports each function separately
 module.exports.generatePokemon = generatePokemon;
 module.exports.fetchSprite = fetchSprite;
+module.exports.fetchNames = fetchNames;

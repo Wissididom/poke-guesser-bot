@@ -202,25 +202,31 @@ function checkInput(inputRequest, msg) {
       })
       // Check if guess matches first element of the array 
       .then(pokemonArray => {
-        if (pokemonArray[0].toLowerCase() === guess.toLowerCase()) {
-
-          // Adds score to user who guessed correctly
-          leaderBoard.addScore(msg.author.username);
-          // Send message that guess is correct
-          title = `${util.capitalize(pokemonArray[0])} has been caught!`;
-          message = `1 point added to ${msg.author}'s score.
-          
-          Type \`$position\` to see your current position &
-          Type \`$leaderboard\` to see the updated leaderboard!`;
-          util.embedReply(title, message, msg)
-          db.set("pokemon", "");  // Sets current pokemon to empty string
-
-        } else if (pokemonArray[0] === ""){
-
+        if (pokemonArray[0] === "") {
           console.log("No pokemon set.");
-
+          return;
         }
-      })
+        pokeFetch.fetchNames(pokemonArray[0].toLowerCase()).then(names => {
+          console.log(`Guess: ${guess}`);
+          for (let i = 0; i < names.length; i++) {
+            if (names[i].name.toLowerCase() === guess.toLowerCase()) {
+              leaderBoard.addScore(msg.author.username);
+              // Send message that guess is correct
+              if (pokemonArray[0].toLowerCase() === names[i].name.toLowerCase())
+                title = `${util.capitalize(names[i].name)} has been caught!`;
+              else
+                title = `${util.capitalize(pokemonArray[0])} (${util.capitalize(names[i].name)}) has been caught!`;
+              message = `1 point added to ${msg.author}'s score.'
+              
+              Type \`$position\` to see your current position &
+              Type \`$leaderboard\` to see the updated leaderboard!`;
+              util.embedReply(title, message, msg);
+              db.set("pokemon", ""); // Sets current pokemon to empty string
+              break; // To avoid scoring multiple times
+            }
+          }
+        });
+      });
   }
 
   // Display Leaderboard
