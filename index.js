@@ -232,14 +232,14 @@ function checkInput(inputRequest, msg) {
   // Display Leaderboard
   if (inputRequest === "leaderboard") {
 
-  leaderBoard.showLeaderboard(msg);
+    leaderBoard.showLeaderboard(msg);
 
   }
 
   // Display Position
   if (inputRequest === "position") {
 
-  leaderBoard.position(msg);
+    leaderBoard.position(msg);
 
   }
 
