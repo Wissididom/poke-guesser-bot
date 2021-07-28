@@ -133,7 +133,7 @@ function position(msg) {
 
     const firstMention = msg.mentions.users.first();
     if (firstMention) { // !== undefined && !== null
-      // Find position of message author
+      // Find position of mentioned user
       const userPosition = userNames.indexOf(firstMention.username) + 1;
       replyPosition(msg, firstMention.username, userPosition, true);
     } else {
@@ -268,10 +268,12 @@ function emptyLeaderboard(msg) {
 
 }
 
+// Finds the GuildMember by User-ID
 function findMember(message, id) {
   return message.guild.members.cache.get(id);
 }
 
+// Finds the User by User-ID
 function findUser(message, id) {
   return findMember(message, id).user;
 }
@@ -283,5 +285,3 @@ module.exports.position = position;
 module.exports.newChampionship = newChampionship;
 module.exports.dummyLeaderboard = dummyLeaderboard;
 module.exports.emptyLeaderboard = emptyLeaderboard;
-module.exports.findMember = findMember;
-module.exports.findUser = findUser;
