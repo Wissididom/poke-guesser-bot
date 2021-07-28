@@ -268,6 +268,14 @@ function emptyLeaderboard(msg) {
 
 }
 
+function findMember(message, id) {
+  return message.guild.members.cache.get(id);
+}
+
+function findUser(message, id) {
+  return findMember(message, id).user;
+}
+
 // Exports each function separately
 module.exports.addScore = addScore;
 module.exports.showLeaderboard = showLeaderboard;
@@ -275,3 +283,5 @@ module.exports.position = position;
 module.exports.newChampionship = newChampionship;
 module.exports.dummyLeaderboard = dummyLeaderboard;
 module.exports.emptyLeaderboard = emptyLeaderboard;
+module.exports.findMember = findMember;
+module.exports.findUser = findUser;
