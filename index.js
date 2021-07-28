@@ -237,7 +237,7 @@ function checkInput(inputRequest, msg) {
   }
 
   // Display Position
-  if (inputRequest === "position") {
+  if (inputRequest.startsWith("position")) {
 
   leaderBoard.position(msg);
 

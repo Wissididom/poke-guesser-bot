@@ -130,19 +130,36 @@ function position(msg) {
 
     // Create new array with just names
     const userNames = Array.from(items, user => user[0]);
-  
-    // Find position of message author
-    const userPosition = userNames.indexOf(msg.author.username) + 1;
 
-    if (userPosition === 0) {
-      console.log("User is not on the leaderboard.");
-      msg.reply("You are currently not on the leaderboard. You must guess at least one pokemon first!");
+    const firstMention = msg.mentions.users.first();
+    if (firstMention) { // !== undefined && !== null
+      // Find position of mentioned user
+      const userPosition = userNames.indexOf(firstMention.username) + 1;
+      replyPosition(msg, firstMention.username, userPosition, true);
     } else {
-      console.log(`User position: ${userPosition}`);
+      // Find position of message author
+      const userPosition = userNames.indexOf(msg.author.username) + 1;
+      replyPosition(msg, msg.author.username, userPosition, false);
+    }
+  })
+}
+
+function replyPosition(msg, userName, userPosition, mention) {
+  if (userPosition === 0) {
+    console.log(`${userName} is not on the leaderboard.`);
+    if (mention) {
+      msg.reply(`${userName} is currently not on the leaderboard. ${userName} must guess at least one pokemon first!`);
+    } else {
+      msg.reply("You are currently not on the leaderboard. You must guess at least one pokemon first!");
+    }
+  } else {
+    console.log(`${userName}'s position: ${userPosition}`);
+    if (mention) {
+      msg.reply(`${userName}'s current position is: ${userPosition}`);
+    } else {
       msg.reply(`Your current position is: ${userPosition}`);
     }
-
-  })
+  }
 }
 
 // Formally resets leaderboard and announces the end of the championship
@@ -249,6 +266,16 @@ function emptyLeaderboard(msg) {
   db.set("leaderboard", leaderboard);
   console.log('Emptied leaderboard.');
 
+}
+
+// Finds the GuildMember by User-ID
+function findMember(message, id) {
+  return message.guild.members.cache.get(id);
+}
+
+// Finds the User by User-ID
+function findUser(message, id) {
+  return findMember(message, id).user;
 }
 
 // Exports each function separately
