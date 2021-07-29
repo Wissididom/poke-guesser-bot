@@ -67,7 +67,7 @@ function embedReply(title, message, msg, image=null) {
     .setColor(0x00AE86)
     .setDescription(message)  // Adds message
     .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
-    .setFooter('By borreLore and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
+    .setFooter('By borreLore, Wissididom and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
 
   if (image) {
     const attachment = new Discord.MessageAttachment(image, 'pokemon.png');
