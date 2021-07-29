@@ -47,6 +47,7 @@ function fetchNames(nameOrId) {
         name: names[i].name
       });
     }
+    console.log(resultNames)
     return resultNames;
   });
 }

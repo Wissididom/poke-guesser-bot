@@ -30,6 +30,23 @@ ADMIN AND PLAYER COMMANDS
 // Checks command, calls appropriate function
 function checkCommand(command, msg) {
 
+  // DEBUGGING - Finds username
+  if (command.startsWith("find user ")) {
+    userId = msg.content.split("find user ")[1];
+    user = leaderBoard.findUser(msg, userId);
+    if (user) {
+      msg.reply(user.username);
+    } else {
+      msg.reply("User not found.");
+    }
+    
+  }
+
+  // DEBUGGING - Adds fake user to leaderboard
+  if (command === "fake") {
+    leaderBoard.debugFakeScore(msg);
+  }
+
   // If command is ping, reply with bot status
   if (command === "ping") {
     const title = "Pong!";
@@ -210,7 +227,8 @@ function checkInput(inputRequest, msg) {
           console.log(`Guess: ${guess}`);
           for (let i = 0; i < names.length; i++) {
             if (names[i].name.toLowerCase() === guess.toLowerCase()) {
-              leaderBoard.addScore(msg.author.username);
+              // Send msg to addScore - id will be extrapolated
+              leaderBoard.addScore(msg);
               // Send message that guess is correct
               if (pokemonArray[0].toLowerCase() === names[i].name.toLowerCase())
                 title = `${util.capitalize(names[i].name)} has been caught!`;
