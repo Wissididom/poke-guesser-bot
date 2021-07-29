@@ -55,10 +55,22 @@ function debugFakeScore(msg) {
   })
 }
 
+// Sanitizes and outputs leaderboard in order
+async function debugLeaderboard(msg) {
+    try {
+        // Sanitizes leaderboard, awaits for resolve
+        await sanitizeLeaderboard(msg);
+        // Generates leaderboard, awaits for resolve
+        await generateLeaderboard(msg);
+    } catch(e) {
+        console.log(e);
+        throw e;      // let caller know the promise was rejected with this reason
+    }
+}
+
 // Shows Leaderboard by creating a new Embed
 function showLeaderboard(msg) {
 
-  // Remove any non-existent users from leaderboard (banned, left server, etc)
   sanitizeLeaderboard(msg);
 
   // Retrieve leaderboard from database
@@ -161,18 +173,18 @@ function sanitizeLeaderboard(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
     // Iterate through leaderboard object
-    console.log(leaderboard);
     for (const [key, value] of Object.entries(leaderboard)) {
-      console.log([key, value])
       // Retrieve user from guild
       userObj = findUser(msg, key);
       // If user object is null, delete the key from leaderboard
       if (userObj === null) {
         console.log(`Removing key from leaderboard: ${key}`)
-        delete leaderboard.key;
+        delete leaderboard[key];
       }
     }
-    // Set database with changes
+    return leaderboard;
+  })
+  .then(leaderboard => {
     db.set("leaderboard", leaderboard);
   })
 }
