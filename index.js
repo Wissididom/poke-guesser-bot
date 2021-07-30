@@ -175,6 +175,11 @@ function checkCommand(command, msg) {
     leaderBoard.showLeaderboard(msg);
   }
 
+    // Output the leaderboard with debug
+  if (command === "leaderboard debug") {
+    leaderBoard.showLeaderboard(msg, true);
+  }
+
   // Start a new championship
   if (command === "new championship") {
     leaderBoard.newChampionship(msg);

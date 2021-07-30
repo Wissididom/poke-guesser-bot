@@ -39,10 +39,10 @@ function addScore(msg) {
   })
 }
 
-// Add score to fake user
+// DEBUGGING - Add score to fake user
 function debugFakeScore(msg) {
 
-  // Check the leaderboard if id already exists
+  // Add a fake user to the leaderboard
   db.get("leaderboard")
   .then(leaderboard => {
 
@@ -55,37 +55,67 @@ function debugFakeScore(msg) {
   })
 }
 
-// Sanitizes and outputs leaderboard in order
-async function debugLeaderboard(msg) {
-    try {
-        // Sanitizes leaderboard, awaits for resolve
-        await sanitizeLeaderboard(msg);
-        // Generates leaderboard, awaits for resolve
-        await generateLeaderboard(msg);
-    } catch(e) {
-        console.log(e);
-        throw e;      // let caller know the promise was rejected with this reason
+// Sanitizes leaderboard by removing non-existent users which might break other functions
+function sanitizeLeaderboard(msg, leaderboard) {
+  // Returns a promise
+  return new Promise(function(resolve, reject) {
+    // Iterate through leaderboard object
+    for (const [userId, score] of Object.entries(leaderboard)) {
+      // Retrieve user from guild
+      userObj = findUser(msg, userId);
+      // If user object is null, delete the key from leaderboard
+      if (userObj === null) {
+        console.log(`Removing User ID ${userId} from leaderboard.`)
+        delete leaderboard[userId];
+      }
+      // Resolves promise and returns leaderboard once fake users removed
+      resolve(leaderboard);
     }
+  });
+}
+
+function generateLeaderboard() {
+  let leaderboard = {}
+  for (i=0; i<20; i++) {
+    let userName = `user${i+1}`;
+    let score = Math.floor(Math.random() * 10);
+    leaderboard[userName] = score;
+  }
+  return leaderboard;
 }
 
 // Shows Leaderboard by creating a new Embed
-function showLeaderboard(msg) {
-
-  sanitizeLeaderboard(msg);
+function showLeaderboard(msg, debug=false) {
 
   // Retrieve leaderboard from database
   db.get("leaderboard")
   .then(leaderboard => {
 
+    console.log(leaderboard);
+
+    // Checks if debugging has been passed
+    if (!debug) {
+      sanitizedLeaderboard = sanitizeLeaderboard(msg, leaderboard);
+    } else {
+      // Generates debug leaderboard
+      sanitizedLeaderboard = generateLeaderboard();
+    }
+
+    return sanitizedLeaderboard;
+  })
+  .then(sanitizedLeaderboard => {
+
+    console.log(sanitizedLeaderboard);
+
     // Variables for use in loops
     let table = '';
     let longestUserLength = '';
-    let username = '';
+    let userName = '';
     let score = '';
 
     // Create items array
-    let items = Object.keys(leaderboard).map(function(key) {
-      return [key, leaderboard[key]];
+    let items = Object.keys(sanitizedLeaderboard).map(function(key) {
+      return [key, sanitizedLeaderboard[key]];
     });
 
     // Sort the array based on the score (second element)
@@ -107,8 +137,13 @@ function showLeaderboard(msg) {
 
       // If iteration number is less than or equal to length of array
       if (i < Math.max(0, items.length)) {
-        // Set username & score from data in item
-        userName = findUser(msg, items[i][0]).username;
+        if (!debug) {
+          // Set username & score from data in item
+          userName = findUser(msg, items[i][0]).username;
+        } else {
+          // Debug username
+          userName = items[i][0];
+        }
         score = items[i][1];
         // Output item in array to console if exists
         console.log(`${userName}: ${score}`);
@@ -141,7 +176,11 @@ function showLeaderboard(msg) {
       // Creates table header for overflow leaderboard
       if (i==5) {
         // Creates an array of usernames in items starting from index 5
-        const usernames = Array.from(items.slice(5), x => findUsername(msg, x[0]));
+        if (!debug) {
+          usernames = Array.from(items.slice(5), x => findUser(msg, x[0]));
+        } else {
+          usernames = Array.from(items.slice(5), x => x[0]);
+        }
         // Get the longest username in the array
         const longestUsername = usernames.sort((a, b) => {
           return b.length - a.length;
@@ -164,29 +203,10 @@ function showLeaderboard(msg) {
   // Sends the completed Embed
   msg.channel.send(leaderboardEmbed);
 
-  }) 
-}
+  // Update leaderboard with sanitized leaderboard
+  db.set("leaderboard", sanitizedLeaderboard);
 
-// Sanitizes leaderboard by removing non-existent users which might break other functions
-function sanitizeLeaderboard(msg) {
-  // Retrieve leaderboard from database
-  db.get("leaderboard")
-  .then(leaderboard => {
-    // Iterate through leaderboard object
-    for (const [key, value] of Object.entries(leaderboard)) {
-      // Retrieve user from guild
-      userObj = findUser(msg, key);
-      // If user object is null, delete the key from leaderboard
-      if (userObj === null) {
-        console.log(`Removing key from leaderboard: ${key}`)
-        delete leaderboard[key];
-      }
-    }
-    return leaderboard;
-  })
-  .then(leaderboard => {
-    db.set("leaderboard", leaderboard);
-  })
+  });
 }
 
 // Shows User Position
@@ -307,8 +327,9 @@ function findUser(message, id) {
   // If member found, return member, else return null
   if (member) {
     return member.user;
+    console.log(`User ID ${id} found in guild.`)
   } else {
-    console.log(`User ID ${id} not found in guild.`)
+    console.log(`WARNING: User ID ${id} not found in guild.`)
     return null
   }
 }
