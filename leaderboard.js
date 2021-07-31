@@ -4,43 +4,119 @@ const Database = require("@replit/database");
 const util = require("./util");
 const db = new Database();
 
+/*
+LEADERBOARD
+
+The leaderboard is a dictionary stored in the replit database under the "leaderboard" key. 
+
+leaderboard = {
+  "user1.id": score, 
+  "user2.id": score
+}
+
+Each row represents a user. The key is the id of the user in discord, and the value is the user's score
+*/
+
 // Add score to user
-function addScore(authorName) {
-  console.log(`Adding score to user: ${authorName}`);
-  // Check the leaderboard if username already exists
+function addScore(msg) {
+
+  // Get userId from msg
+  userId = msg.author.id;
+  console.log(`leaderboard.addScore received userId: ${userId}`)
+  console.log(`Adding score to user: ${findUser(msg, userId).username}`);
+
+  // Check the leaderboard if id already exists
   db.get("leaderboard")
   .then(leaderboard => {
     // Add score if user is in leaderboard, add user to leaderboard if not
-    if (authorName in leaderboard) {
-      leaderboard[authorName] += 1;
+    if (userId in leaderboard) {
+      leaderboard[userId] += 1;
     } else {
-      leaderboard[authorName] = 1;
+      leaderboard[userId] = 1;
     }
     // Set database with changes
     db.set("leaderboard", leaderboard);
-    console.log(leaderboard);
+  })
+}
+
+// Sanitizes leaderboard by removing non-existent users which might break other functions
+function sanitizeLeaderboard(msg, leaderboard) {
+  // Returns a promise
+  return new Promise(function(resolve, reject) {
+    // Iterate through leaderboard object
+    for (const [userId, score] of Object.entries(leaderboard)) {
+      // Retrieve user from guild, or null if doesn't exist
+      userObj = findUser(msg, userId);
+      objLength = Object.keys(leaderboard).length;
+      // If user object is null, delete the key from leaderboard
+      if (userObj === null) {
+        console.log(`Removing User ID ${userId} from leaderboard.`);
+        delete leaderboard[userId];
+      }
+    }
+    // Resolves promise and returns leaderboard once fake users removed
+    resolve(leaderboard);
   });
 }
 
-// Shows Leaderboard by creating a new Embed
-function showLeaderboard(msg) {
+// DEBUGGING - Adds dummy users to leaderboard - for testing leaderboard embed with different numbers of users
+function generateLeaderboard(leaderboard) {
+  for (i=0; i<20; i++) {
+    let userName = `user${i+1}`;
+    let score = Math.floor(Math.random() * 10);
+    leaderboard[userName] = score;
+  }
+  return leaderboard;
+}
 
+// Shows Leaderboard by creating a new Embed
+function showLeaderboard(msg, debug=false) {
+  /*
+  Dynamically generates leaderboard embed depending on the number of users:
+  1) 0 users: Generates empty leaderboard with champion and elite four slots showing TBA
+  2) 1 user: Only champion is generated, elite four are TBA, and no overflow leaderboard is generated
+  3) 2-5 users: Champion is generated, and remaining users fill the elite four slots. No overflow leaderboard is generated
+  4) 5+ users: First five users fill the Champion and elite four slots. Remaining users (up to 20) fill the overflow leaderboard
+
+  Function is called using:
+  1) !leaderboard/$leaderboard: outputs regular leaderboard 
+  2) !leaderboard debug: generates a dummy leaderboard with 20 randomly generated user/scores. 
+  */
+
+  // Retrieve leaderboard from database
   db.get("leaderboard")
   .then(leaderboard => {
+    // Checks if debugging has been passed
+    if (!debug) {
+      sanitizedLeaderboard = sanitizeLeaderboard(msg, leaderboard);
+    } else {
+      // Generates debug leaderboard
+      sanitizedLeaderboard = generateLeaderboard(leaderboard);
+    }
+
+    return sanitizedLeaderboard;
+  })
+  .then(sanitizedLeaderboard => {
+
+    console.log(sanitizedLeaderboard);
 
     // Variables for use in loops
     let table = '';
     let longestUserLength = '';
+    let userName = '';
+    let score = '';
 
     // Create items array
-    let items = Object.keys(leaderboard).map(function(key) {
-      return [key, leaderboard[key]];
+    let items = Object.keys(sanitizedLeaderboard).map(function(key) {
+      return [key, sanitizedLeaderboard[key]];
     });
 
-    // Sort the array based on the second element
+    // Sort the array based on the score (second element)
     items.sort(function(first, second) {
       return second[1] - first[1];
     });
+
+    console.log(items)
 
     // Create Embed
     const leaderboardEmbed = new Discord.MessageEmbed()
@@ -53,17 +129,29 @@ function showLeaderboard(msg) {
 
     // Add fields to Embed
     for (let i = 0; i < Math.max(5, items.length); i++) {
-
-      // Output item in array to console if exists
+      // If iteration number is less than or equal to length of array
       if (i < Math.max(0, items.length)) {
-        console.log(`${items[i][0]}: ${items[i][1]}`);
+
+        // Get userObject
+        userObject = findUser(msg, items[i][0]);
+        // If userObject, set username
+        if (userObject) {
+          userName = userObject.username;
+        } else {
+          userName = items[i][0];
+        }
+
+
+        score = items[i][1];
+        // Output item in array to console if exists
+        console.log(`${userName}: ${score}`);
       }
       
       // If on the first element, and element exists, create champion
       if (i == 0 && i < items.length) {
         leaderboardEmbed.addFields(
           {name: '---------- CHAMPION ----------', value: 'All hail:'},
-          {name: `🏆 ${i+1}. ${items[i][0]}`, value: `${items[i][1]} pokémon caught.`},
+          {name: `🏆 ${i+1}. ${userName}`, value: `${score} pokémon caught.`},
           {name: '--------- ELITE FOUR ---------', value: 'The next runnerups are:'}
         ) 
       // If on the first element but element is empty, create TBA
@@ -77,7 +165,7 @@ function showLeaderboard(msg) {
       
       // If on element 1-4, and element exists, create new elite four member
       if (i > 0 && i < 5 && i < items.length) {
-        leaderboardEmbed.addField(`🏅 ${i+1}. ${items[i][0]}`, `${items[i][1]} pokémon caught.`);
+        leaderboardEmbed.addField(`🏅 ${i+1}. ${userName}`, `${score} pokémon caught.`);
       // If on element 1-4 but element is empty, create TBA
       }  else if (i > 0 && i < 5 && i >= items.length) {
         leaderboardEmbed.addField(`${i+1}. TBA`, 'Position not claimed');
@@ -86,7 +174,11 @@ function showLeaderboard(msg) {
       // Creates table header for overflow leaderboard
       if (i==5) {
         // Creates an array of usernames in items starting from index 5
-        const usernames = Array.from(items.slice(5), x => x[0]);
+        if (!debug) {
+          usernames = Array.from(items.slice(5), x => findUser(msg, x[0]));
+        } else {
+          usernames = Array.from(items.slice(5), x => x[0]);
+        }
         // Get the longest username in the array
         const longestUsername = usernames.sort((a, b) => {
           return b.length - a.length;
@@ -97,7 +189,7 @@ function showLeaderboard(msg) {
 
       // Adds additional users into overflow leaderboard up until 20
       if (i >= 5 && i < 20) {
-        table += ((i + 1) + '').padEnd('Place '.length, ' ') + '| ' + items[i][0].padEnd(longestUserLength, ' ') + ' | ' + items[i][1] + '\n';
+        table += ((i + 1) + '').padEnd('Place '.length, ' ') + '| ' + userName.padEnd(longestUserLength, ' ') + ' | ' + score + '\n';
       }
 
     }
@@ -109,7 +201,10 @@ function showLeaderboard(msg) {
   // Sends the completed Embed
   msg.channel.send(leaderboardEmbed);
 
-  }) 
+  // Update leaderboard with sanitized leaderboard
+  db.set("leaderboard", sanitizedLeaderboard);
+
+  });
 }
 
 // Shows User Position
@@ -182,7 +277,8 @@ function newChampionship(msg) {
       return second[1] - first[1];
     })
 
-    const winner = items[0][0];  // Determine winner of championship and output message
+    const winner = findUser(msg, items[0][0]);  // Determine winner of championship
+    const finalScore = items[0][1];  // Determine winner's final score
     var delayInMilliseconds = 500;  // 0.5 seconds
 
     // Output Championship Victor with delay to allow leaderboard to send first
@@ -192,7 +288,13 @@ function newChampionship(msg) {
       
       ${winner}
       
-      is presented with the Pokémon Championship trophy in front of thousands of screaming fans, and the championship begins anew!`;
+      has been declared the top Pokémon Master in the region for catching a grand total of 
+      
+      ${finalScore} Pokémon 
+      
+      and is presented with the Pokémon Championship trophy in front of thousands of screaming fans.
+      
+      The championship begins anew!`;
       const image = "https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png"
       util.embedReply(title, message, msg, image);
 
@@ -200,63 +302,6 @@ function newChampionship(msg) {
       emptyLeaderboard(msg);
     }, delayInMilliseconds);
   })
-}
-
-// DEBUGGING
-function dummyLeaderboard(msg) {
-  const leaderboard = {
-    "Super_poke_fan#1": 4,
-    "AshKetchup": 2,
-    "Pika-choo-choo": 8,
-    "hunter2": 8, 
-    "bobbyWeerdo": 2,
-    "rebecca_bb": 5,
-    "samantha": 1,
-    "victor-apple": 2,
-    "treeHugger69": 3,
-    "wasn't-me": 1,
-    "#1-Pokemaster": 2,
-    "Poket-Jedi": 7,
-    "#2-Pokemaster": 1,
-    "Jebediah": 5,
-    "Alfred-Jr": 2,
-    "Prof.Oak": 9,
-    "Eleven": 11,
-    "EtchaTheCatcha": 10,
-    "Literally-Jesus": 2,
-    "JoeBlow": 4,
-    "Mr. Woman": 5
-  };
-  /*
-    "Super_poke_fan#1": 4,
-    "AshKetchup": 2,
-    "Pika-choo-choo": 8,
-    "hunter2": 8, 
-    "bobbyWeerdo": 2,
-    "rebecca_bb": 5,
-    "samantha": 1,
-    "victor-apple": 2,
-    "treeHugger69": 3,
-    "wasn't-me": 1,
-    "#1-Pokemaster": 2,
-    "Poket-Jedi": 7,
-    "#2-Pokemaster": 1,
-    "Jebediah": 5,
-    "Alfred-Jr": 2,
-    "Prof.Oak": 9,
-    "Eleven": 11,
-    "EtchaTheCatcha": 10,
-    "Literally-Jesus": 2,
-    "JoeBlow": 4,
-    "Mr. Woman": 5
-  */
-  
-  db.set("leaderboard", leaderboard);
-  console.log('Generated dummy leaderboard.')
-
-  title = "Dummy Leaderboard Generated!";
-  message = "A dummy leaderboard with fake players has been generated!";
-  util.embedReply(title, message, msg);
 }
 
 // Empties leaderboard
@@ -270,12 +315,21 @@ function emptyLeaderboard(msg) {
 
 // Finds the GuildMember by User-ID
 function findMember(message, id) {
+  // Return member or undefined if not found
   return message.guild.members.cache.get(id);
 }
 
 // Finds the User by User-ID
 function findUser(message, id) {
-  return findMember(message, id).user;
+  member = findMember(message, id);
+  // If member found, return member, else return null
+  if (member) {
+    return member.user;
+    console.log(`User ID ${id} found in guild.`)
+  } else {
+    console.log(`WARNING: User ID ${id} not found in guild.`)
+    return null
+  }
 }
 
 // Exports each function separately
@@ -283,5 +337,4 @@ module.exports.addScore = addScore;
 module.exports.showLeaderboard = showLeaderboard;
 module.exports.position = position;
 module.exports.newChampionship = newChampionship;
-module.exports.dummyLeaderboard = dummyLeaderboard;
 module.exports.emptyLeaderboard = emptyLeaderboard;

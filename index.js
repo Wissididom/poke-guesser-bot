@@ -158,6 +158,11 @@ function checkCommand(command, msg) {
     leaderBoard.showLeaderboard(msg);
   }
 
+    // Output the leaderboard with debug
+  if (command === "leaderboard debug") {
+    leaderBoard.showLeaderboard(msg, true);
+  }
+
   // Start a new championship
   if (command === "new championship") {
     leaderBoard.newChampionship(msg);
@@ -210,7 +215,8 @@ function checkInput(inputRequest, msg) {
           console.log(`Guess: ${guess}`);
           for (let i = 0; i < names.length; i++) {
             if (names[i].name.toLowerCase() === guess.toLowerCase()) {
-              leaderBoard.addScore(msg.author.username);
+              // Send msg to addScore - id will be extrapolated
+              leaderBoard.addScore(msg);
               // Send message that guess is correct
               if (pokemonArray[0].toLowerCase() === names[i].name.toLowerCase())
                 title = `${util.capitalize(names[i].name)} has been caught!`;
