@@ -346,8 +346,8 @@ function findUser(message, id) {
   member = findMember(message, id);
   // If member found, return member, else return null
   if (member) {
-    return member.user;
     console.log(`User ID ${id} found in guild.`);
+    return member.user;
   } else {
     console.log(`WARNING: User ID ${id} not found in guild.`);
     return null
