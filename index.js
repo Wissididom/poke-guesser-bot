@@ -30,23 +30,6 @@ ADMIN AND PLAYER COMMANDS
 // Checks command, calls appropriate function
 function checkCommand(command, msg) {
 
-  // DEBUGGING - Finds username
-  if (command.startsWith("find user ")) {
-    userId = msg.content.split("find user ")[1];
-    user = leaderBoard.findUser(msg, userId);
-    if (user) {
-      msg.reply(user.username);
-    } else {
-      msg.reply("User not found.");
-    }
-    
-  }
-
-  // DEBUGGING - Adds fake user to leaderboard
-  if (command === "fake") {
-    leaderBoard.debugFakeScore(msg);
-  }
-
   // If command is ping, reply with bot status
   if (command === "ping") {
     const title = "Pong!";
