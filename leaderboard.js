@@ -39,43 +39,28 @@ function addScore(msg) {
   })
 }
 
-// DEBUGGING - Add score to fake user
-function debugFakeScore(msg) {
-
-  // Add a fake user to the leaderboard
-  db.get("leaderboard")
-  .then(leaderboard => {
-
-    console.log("Adding fake score.");
-
-    leaderboard["12345"] = 1;
-
-    // Set database with changes
-    db.set("leaderboard", leaderboard);
-  })
-}
-
 // Sanitizes leaderboard by removing non-existent users which might break other functions
 function sanitizeLeaderboard(msg, leaderboard) {
   // Returns a promise
   return new Promise(function(resolve, reject) {
     // Iterate through leaderboard object
     for (const [userId, score] of Object.entries(leaderboard)) {
-      // Retrieve user from guild
+      // Retrieve user from guild, or null if doesn't exist
       userObj = findUser(msg, userId);
+      objLength = Object.keys(leaderboard).length;
       // If user object is null, delete the key from leaderboard
       if (userObj === null) {
-        console.log(`Removing User ID ${userId} from leaderboard.`)
+        console.log(`Removing User ID ${userId} from leaderboard.`);
         delete leaderboard[userId];
       }
-      // Resolves promise and returns leaderboard once fake users removed
-      resolve(leaderboard);
     }
+    // Resolves promise and returns leaderboard once fake users removed
+    resolve(leaderboard);
   });
 }
 
-function generateLeaderboard() {
-  let leaderboard = {}
+// DEBUGGING - Adds dummy users to leaderboard - for testing leaderboard embed with different numbers of users
+function generateLeaderboard(leaderboard) {
   for (i=0; i<20; i++) {
     let userName = `user${i+1}`;
     let score = Math.floor(Math.random() * 10);
@@ -86,19 +71,27 @@ function generateLeaderboard() {
 
 // Shows Leaderboard by creating a new Embed
 function showLeaderboard(msg, debug=false) {
+  /*
+  Dynamically generates leaderboard embed depending on the number of users:
+  1) 0 users: Generates empty leaderboard with champion and elite four slots showing TBA
+  2) 1 user: Only champion is generated, elite four are TBA, and no overflow leaderboard is generated
+  3) 2-5 users: Champion is generated, and remaining users fill the elite four slots. No overflow leaderboard is generated
+  4) 5+ users: First five users fill the Champion and elite four slots. Remaining users (up to 20) fill the overflow leaderboard
+
+  Function is called using:
+  1) !leaderboard/$leaderboard: outputs regular leaderboard 
+  2) !leaderboard debug: generates a dummy leaderboard with 20 randomly generated user/scores. 
+  */
 
   // Retrieve leaderboard from database
   db.get("leaderboard")
   .then(leaderboard => {
-
-    console.log(leaderboard);
-
     // Checks if debugging has been passed
     if (!debug) {
       sanitizedLeaderboard = sanitizeLeaderboard(msg, leaderboard);
     } else {
       // Generates debug leaderboard
-      sanitizedLeaderboard = generateLeaderboard();
+      sanitizedLeaderboard = generateLeaderboard(leaderboard);
     }
 
     return sanitizedLeaderboard;
@@ -123,6 +116,8 @@ function showLeaderboard(msg, debug=false) {
       return second[1] - first[1];
     });
 
+    console.log(items)
+
     // Create Embed
     const leaderboardEmbed = new Discord.MessageEmbed()
     .setTitle('Pokémaster Leaderboard')
@@ -134,16 +129,19 @@ function showLeaderboard(msg, debug=false) {
 
     // Add fields to Embed
     for (let i = 0; i < Math.max(5, items.length); i++) {
-
       // If iteration number is less than or equal to length of array
       if (i < Math.max(0, items.length)) {
-        if (!debug) {
-          // Set username & score from data in item
-          userName = findUser(msg, items[i][0]).username;
+
+        // Get userObject
+        userObject = findUser(msg, items[i][0]);
+        // If userObject, set username
+        if (userObject) {
+          userName = userObject.username;
         } else {
-          // Debug username
           userName = items[i][0];
         }
+
+
         score = items[i][1];
         // Output item in array to console if exists
         console.log(`${userName}: ${score}`);
@@ -340,6 +338,3 @@ module.exports.showLeaderboard = showLeaderboard;
 module.exports.position = position;
 module.exports.newChampionship = newChampionship;
 module.exports.emptyLeaderboard = emptyLeaderboard;
-// Debugging, remove
-module.exports.findUser = findUser;
-module.exports.debugFakeScore = debugFakeScore;
