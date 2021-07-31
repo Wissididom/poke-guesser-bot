@@ -29,6 +29,8 @@ function addScore(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
     // Add score if user is in leaderboard, add user to leaderboard if not
+    if (!leaderboard)
+      leaderboard = [];
     if (userId in leaderboard) {
       leaderboard[userId] += 1;
     } else {
@@ -86,6 +88,10 @@ function showLeaderboard(msg, debug=false) {
   // Retrieve leaderboard from database
   db.get("leaderboard")
   .then(leaderboard => {
+    if (!leaderboard) {
+      msg.reply('The Leaderboard has not yet been initialized!');
+      return;
+    }
     // Checks if debugging has been passed
     if (!debug) {
       sanitizedLeaderboard = sanitizeLeaderboard(msg, leaderboard);
@@ -99,6 +105,11 @@ function showLeaderboard(msg, debug=false) {
   .then(sanitizedLeaderboard => {
 
     console.log(sanitizedLeaderboard);
+
+    if (!sanitizedLeaderboard) {
+      // Not sending Error Message, because it already got sent in the earlier .then
+      return;
+    }
 
     // Variables for use in loops
     let table = '';
@@ -213,6 +224,11 @@ function position(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
 
+    if (!leaderboard) {
+      msg.reply('The Leaderboard has not yet been initialized!');
+      return;
+    }
+
     // Create items array
     let items = Object.keys(leaderboard).map(function(key) {
       return [key, leaderboard[key]];
@@ -223,17 +239,18 @@ function position(msg) {
       return second[1] - first[1];
     });
 
-    // Create new array with just names
-    const userNames = Array.from(items, user => user[0]);
+    // Create new array with just ids
+    const userIds = Array.from(items, user => user[0]);
+    console.log(JSON.stringify(userIds));
 
     const firstMention = msg.mentions.users.first();
     if (firstMention) { // !== undefined && !== null
       // Find position of mentioned user
-      const userPosition = userNames.indexOf(firstMention.username) + 1;
+      const userPosition = userIds.indexOf(firstMention.id) + 1;
       replyPosition(msg, firstMention.username, userPosition, true);
     } else {
       // Find position of message author
-      const userPosition = userNames.indexOf(msg.author.username) + 1;
+      const userPosition = userIds.indexOf(msg.author.id) + 1;
       replyPosition(msg, msg.author.username, userPosition, false);
     }
   })
@@ -264,6 +281,11 @@ function newChampionship(msg) {
   db.get("leaderboard")
   .then(leaderboard => {
 
+    if (!leaderboard) {
+      msg.reply('The Leaderboard has not yet been initialized!');
+      return;
+    }
+
     // Output leaderboard
     showLeaderboard(msg);
 
@@ -277,8 +299,8 @@ function newChampionship(msg) {
       return second[1] - first[1];
     })
 
-    const winner = findUser(msg, items[0][0]);  // Determine winner of championship
-    const finalScore = items[0][1];  // Determine winner's final score
+    const winner = items[0] ? findUser(msg, items[0][0]): null;  // Determine winner of championship
+    const finalScore = items[0] ? items[0][1] : 0;  // Determine winner's final score
     var delayInMilliseconds = 500;  // 0.5 seconds
 
     // Output Championship Victor with delay to allow leaderboard to send first
@@ -286,7 +308,7 @@ function newChampionship(msg) {
       const title = "Champion Decided!";
       const message = `As the Championship draws to a close, the victor stands out from the rest of the competitors!
       
-      ${winner}
+      ${winner ? winner : 'No one'}
       
       has been declared the top Pokémon Master in the region for catching a grand total of 
       
@@ -325,9 +347,9 @@ function findUser(message, id) {
   // If member found, return member, else return null
   if (member) {
     return member.user;
-    console.log(`User ID ${id} found in guild.`)
+    console.log(`User ID ${id} found in guild.`);
   } else {
-    console.log(`WARNING: User ID ${id} not found in guild.`)
+    console.log(`WARNING: User ID ${id} not found in guild.`);
     return null
   }
 }
