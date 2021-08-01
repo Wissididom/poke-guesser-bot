@@ -206,7 +206,7 @@ function showLeaderboard(msg, debug=false) {
     }
 
     if (items.length > 5) {
-      leaderboardEmbed.addField('--------- REGION RUNNERUPS ---------', "```" + table + "```")
+      leaderboardEmbed.addField('--------- RUNNERUPS ---------', "```" + table + "```")
     }
   
   // Sends the completed Embed
