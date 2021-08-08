@@ -337,7 +337,7 @@ function emptyLeaderboard(msg) {
 
 function addUser(message) {
   const authorId = message.author.id;
-  // Transforms from "!addscore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and  is the userId and splits at the "-"
+  // Transforms from "!addscore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and is the userId and splits at the "-"
   const info = message.content.replace(/!addscore +<@!?(\d+)> *(\d+)?/g, '$1-$2').split('-');
   // info[0]: userId
   // info[1]: score
@@ -376,7 +376,7 @@ function addUser(message) {
 }
 
 function removeUser(message) {
-  // Transforms from "!removescore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and  is the userId and splits at the "-"
+  // Transforms from "!removescore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and is the userId and splits at the "-"
   const info = message.content.replace(/!removescore +<@!?(\d+)> *(\d+)?/g, '$1-$2').split('-');
   // info[0]: userId
   // info[1]: score
