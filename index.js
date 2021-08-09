@@ -178,6 +178,15 @@ function checkCommand(command, msg) {
     leaderBoard.emptyLeaderboard(msg);
   }
 
+  // Adds score to leaderboard or updates their current score
+  if (command.startsWith("addscore ")) { // This is different from the issue #17 because else Rythm or MEE6 think they are meant
+    leaderBoard.addUser(msg);
+  }
+
+  // Removes score from leaderboard
+  if (command.startsWith("removescore ")) { // This is different from the issue #17 because else Rythm or MEE6 think they are meant
+    leaderBoard.removeUser(msg);
+  }
 }
 
 // Checks pokemon guess
