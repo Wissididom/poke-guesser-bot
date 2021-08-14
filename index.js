@@ -112,8 +112,14 @@ function checkCommand(command, msg) {
     console.log("Generating a new pokemon.");
     // Returns pokemon json object
     pokeFetch.generatePokemon().then(pokemon => {
-      db.set("pokemon", pokemon.name);  // Sets current pokemon in database
-      console.log(pokemon);
+      let pokemonNames = [pokemon.name.split('-')[0].toLowerCase()];
+      pokeFetch.fetchNames(pokemonNames[0]).then(names => {
+        for (let name of names) {
+          pokemonNames.push(name); // available properties: name, languageName and languageUrl
+        }
+        db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
+        console.log(JSON.stringify(names));
+      });
       // Gets sprite url, and replies to the channel with newly generated pokemon
       pokeFetch.fetchSprite(pokemon.url).then(spriteUrl => {
         console.log(spriteUrl);
@@ -140,12 +146,25 @@ function checkCommand(command, msg) {
 
       // If pokemon is set
       } else {
+        let pokemonNames = [pokemon[0]];
+        for (let i = 1; i < pokemon.length; i++) {
+          let lowercaseName = pokemon[i].name.toLowerCase();
+          if (!pokemonNames.includes(lowercaseName))
+            pokemonNames.push(lowercaseName.toLowerCase());
+        }
 
-        console.log(`Admin requested reveal: ${pokemon}`);
+        let inBrackets = '';
+        for (let i = 1; i < pokemonNames.length; i++) {
+          if (inBrackets == '')
+            inBrackets = util.capitalize(pokemonNames[i]);
+          else
+            inBrackets += ', ' + util.capitalize(pokemonNames[i]);
+        }
+        console.log(`Admin requested reveal: ${pokemon[0]} (${inBrackets})`);
 
         // Message
         title = "Pokemon escaped!";
-        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon)} as it fled.`;
+        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[0])} (${inBrackets}) as it fled.`;
         util.embedReply(title, message, msg);
 
         db.set("pokemon", "");  // Sets current pokemon to empty string
@@ -208,39 +227,28 @@ function checkInput(inputRequest, msg) {
 
     // Checks if the guess is part of the pokemon name
     db.get("pokemon")
+      // Check if guess matches any element of the array 
       .then(pokemon => {
-
-        // Pokemon name might include type (ex: darumaka-galar) so name is split into array
-        return pokemon.split('-');
-
-      })
-      // Check if guess matches first element of the array 
-      .then(pokemonArray => {
-        if (pokemonArray[0] === "") {
+        if (pokemon === "") {
           console.log("No pokemon set.");
           return;
         }
-        pokeFetch.fetchNames(pokemonArray[0].toLowerCase()).then(names => {
-          console.log(`Guess: ${guess}`);
-          for (let i = 0; i < names.length; i++) {
-            if (names[i].name.toLowerCase() === guess.toLowerCase()) {
-              // Send msg to addScore - id will be extrapolated
-              leaderBoard.addScore(msg);
-              // Send message that guess is correct
-              if (pokemonArray[0].toLowerCase() === names[i].name.toLowerCase())
-                title = `${util.capitalize(names[i].name)} has been caught!`;
-              else
-                title = `${util.capitalize(pokemonArray[0])} (${util.capitalize(names[i].name)}) has been caught!`;
-              message = `1 point added to ${msg.author}'s score.'
-              
-              Type \`$position\` to see your current position &
-              Type \`$leaderboard\` to see the updated leaderboard!`;
-              util.embedReply(title, message, msg);
-              db.set("pokemon", ""); // Sets current pokemon to empty string
-              break; // To avoid scoring multiple times
-            }
+        console.log(`Guess: ${guess}`);
+        for (let i = 0; i < pokemon.length; i++) {
+          if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
+            // Send msg to addScore - id will be extrapolated
+            leaderBoard.addScore(msg);
+            // Send message that guess is correct
+            title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+            message = `1 point added to ${msg.author}'s score.'
+            
+            Type \`$position\` to see your current position &
+            Type \`$leaderboard\` to see the updated leaderboard!`;
+            util.embedReply(title, message, msg);
+            db.set("pokemon", ""); // Sets current pokemon to empty string
+            break; // To avoid scoring multiple times
           }
-        });
+        }
       });
   }
 
