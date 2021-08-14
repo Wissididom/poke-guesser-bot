@@ -239,7 +239,10 @@ function checkInput(inputRequest, msg) {
             // Send msg to addScore - id will be extrapolated
             leaderBoard.addScore(msg);
             // Send message that guess is correct
-            title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+            if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[0].toLowerCase())
+              title = `${util.capitalize(pokemon[0])} has been caught!`;
+            else
+              title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
             message = `1 point added to ${msg.author}'s score.'
             
             Type \`$position\` to see your current position &
