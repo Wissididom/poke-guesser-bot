@@ -38,7 +38,7 @@ function addScore(msg) {
     }
     // Set database with changes
     db.set("leaderboard", leaderboard);
-  })
+  });
 }
 
 // Sanitizes leaderboard by removing non-existent users which might break other functions
@@ -335,6 +335,97 @@ function emptyLeaderboard(msg) {
 
 }
 
+function addUser(message) {
+  const authorId = message.author.id;
+  // Transforms from "!addscore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and is the userId and splits at the "-"
+  const info = message.content.replace(/!addscore +<@!?(\d+)> *(\d+)?/g, '$1-$2').split('-');
+  // info[0]: userId
+  // info[1]: score
+  db.get("leaderboard")
+  .then(leaderboard => {
+    if (!leaderboard)
+      leaderboard = [];
+    if (info[0]) {
+      // mention exists
+      if (info[1]) {
+        // score given -> add to players score
+        let score = parseInt(info[1]);
+        if (info[0] in leaderboard) {
+          leaderboard[info[0]] += score;
+          message.reply(`Added ${score} points to <@!${info[0]}>'s score!`);
+        } else {
+          leaderboard[info[0]] = score;
+          message.reply(`Set <@!${info[0]}>'s score to ${score}!`);
+        }
+      } else {
+        // score omitted -> error message if user exists else add to leaderboard with 0 points
+        if (info[0] in leaderboard) {
+          message.reply(`<@!${info[0]}> already exists on the leaderboard. Please specify how much points should be added!`);
+        } else {
+          leaderboard[info[0]] = 0;
+          message.reply(`<@!${info[0]}> added to leaderboard with 0 points`);
+        }
+      }
+      // Set database with changes
+      db.set("leaderboard", leaderboard);
+    } else {
+      // mention does not exist
+      message.reply('Please use !addscore <@user> [<score>]');
+    }
+  });
+}
+
+function removeUser(message) {
+  // Transforms from "!removescore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and is the userId and splits at the "-"
+  const info = message.content.replace(/!removescore +<@!?(\d+)> *(\d+)?/g, '$1-$2').split('-');
+  // info[0]: userId
+  // info[1]: score
+  db.get("leaderboard")
+  .then(leaderboard => {
+    if (!leaderboard)
+      leaderboard = [];
+    if (info[0]) {
+      // mention exists
+      if (info[1]) {
+        // score given -> subtract score (removing if substract would go negative)
+        let score = parseInt(info[1]);
+        if (info[0] in leaderboard) {
+          leaderboard[info[0]] -= score;
+          if (leaderboard[info[0]] < 0) {
+            delete leaderboard[info[0]];
+            message.reply(`Removed <@!${info[0]}>'s score!`);
+          } else {
+            message.reply(`Removed ${score} points from <@!${info[0]}>'s score!`);
+          }
+        } else {
+          message.reply(`<@!${info[0]}> does not exist on the leaderboard!`);
+        }
+      } else {
+        // score omitted -> removing user from leaderboard if existing on leaderboard
+        if (info[0] in leaderboard) {
+          delete leaderboard[info[0]];
+          message.reply(`Removed <@!${info[0]}>'s score!`);
+        } else {
+          message.reply(`<@!${info[0]}> does not exist on the leaderboard!`);
+        }
+      }
+      // Set database with changes
+      db.set("leaderboard", leaderboard);
+    } else {
+      // mention does not exist
+      message.reply('Please use !removescore <@user> [<score>]');
+    }
+  });
+  if (info[0]) {
+    if (info[1]) {
+      // score given -> subtract score (removing if substract would go negative)
+    } else {
+      // score omitted -> removing player completely
+    }
+  }
+  console.log(`removeUser: ${info[1] ? 'true' : 'false'}`);
+}
+
 // Finds the GuildMember by User-ID
 function findMember(message, id) {
   // Return member or undefined if not found
@@ -360,3 +451,5 @@ module.exports.showLeaderboard = showLeaderboard;
 module.exports.position = position;
 module.exports.newChampionship = newChampionship;
 module.exports.emptyLeaderboard = emptyLeaderboard;
+module.exports.addUser = addUser;
+module.exports.removeUser = removeUser;

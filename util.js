@@ -96,6 +96,10 @@ function adminHelp(msg) {
   \`!reveal\` - Reveals the pokemon and resets it so it cannot be guessed
   \`!leaderboard\` - Shows the current Leaderboard
   \`!new championship\` - (caution) Outputs the Leaderboard one last time, reveals winner, and starts new championship with a blank leaderboard
+  \`!addscore <@user> <score>\` - Sets the score of user if it is not on the leaderboard, adds the score to the user's current score if the user exists on the leaderboard.
+  \`!addscore <@user>\` - Adds the user to the leaderboard with 0 points (Sends error message, if the user already is on the leaderboard).
+  \`!removescore <@user> <score>\` - Subtracts the given score from the user's current score (Removing the whole user if the score would go negative).
+  \`!removescore <@user>\` - Removes the user from the leaderboard.
 
 
   - FIRST TIME SETUP -
