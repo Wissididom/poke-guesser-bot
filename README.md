@@ -16,6 +16,32 @@ A few months ago, one of my friends Pokketmuse reached out to me about a coding 
 
 I fell in love with this idea immediately. I have wanted to build a discord bot for a very long time. I also have wanted to apply my JavaScript knowledge for a while as well as I have not completed any javascript projects yet. This project gave me an opportunity to kill two birds with one stone!
 
+# Features
+
+## Admin Role Configuration
+
+You can set one or more roles to administrate the bot. Setting no roles leaves admin commands and controls open for all server users.
+
+## Channel configuration
+
+You can set which channels the bot is allowed to reply in. Setting no channels allows the bot to listen and reply on all channels.
+
+## Multi-language Support
+
+Poké-guesser Bot supports guesses containing pokemon names in other languages as supported by Poké-API. This makes it great for an international discord server with players from many different regions.
+
+## Dynamic Leaderboard
+
+Poké-guesser Bot keeps track of scores and generates a nice looking leaderboard 
+
+## Player commands
+
+Besides the usual admin commands, there are also many player commands which can be used to get the leaderboard, get their own or another player's score, guess pokemon, and more. 
+
+## Hosted by YOU on Replit
+
+Thanks to this bot being written in Replit, you can clone this and run it yourself so you know exactly what this bot is doing. You can also make any custom modifications you want!
+
 # Usage
 
 ## Commands
@@ -35,6 +61,18 @@ Full list of admin commands is shown below. Do not type the < > characters.
 `!leaderboard`: Shows a leaderboard of top players.
 
 `!new championship`: (caution) Outputs the Leaderboard one last time, reveals winner, and starts new championship with a blank leaderboard.
+
+#### Score and leaderboard correction
+
+*Note: The below commands require you to use @user mentions*
+
+`!addscore <@user>`: (caution) Adds the user to the leaderboard with 0 points. Cannot be used if the user is already on leaderboard.
+
+`addscore <@user> <score>`: (caution) Adds the user to the leaderboard and sets their score.
+
+`!removescore <@user>`: (caution) Removes the user from the leaderboard.
+
+`!removescore <@user> <score>`: (caution) Subtracts the given score from the user's current score.
 
 #### Configuration
 
@@ -62,9 +100,13 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 `$catch <pokémon-name>`: Allows player to guess the pokémon. Guessing correctly adds the player to the leaderboard and adds one point.
 
+`$leaderboard`: Shows a leaderboard of top players.
+
 `$position`: See your current position.
 
-`$leaderboard`: Shows a leaderboard of top players.
+*Note: The below command requires you to use @user mentions*
+
+`$position <@user>`: See another user's position.
 
 # Installation
 
