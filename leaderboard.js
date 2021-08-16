@@ -1,3 +1,4 @@
+
 const Discord = require("discord.js");
 const Database = require("@replit/database");
 
@@ -195,12 +196,12 @@ function showLeaderboard(msg, debug=false) {
           return b.length - a.length;
         })[0];
         longestUserLength = longestUsername.length;
-        table = 'PLACE | USER ' + ''.padEnd(longestUserLength - 'USER '.length, ' ') + ' | POKEMON\n';
       }
 
       // Adds additional users into overflow leaderboard up until 20
+      // Pad first column to fit double digits, second column by longest username
       if (i >= 5 && i < 20) {
-        table += ((i + 1) + '').padEnd('Place '.length, ' ') + '| ' + userName.padEnd(longestUserLength, ' ') + ' | ' + score + '\n';
+        table += ((i + 1) + '').padEnd('00 '.length, ' ') + '| ' + userName.padEnd(longestUserLength, ' ') + ' | ' + score + '\n';
       }
 
     }
