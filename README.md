@@ -192,4 +192,4 @@ Code Contributions by [Wissididom](https://github.com/Wissididom)
 
 Replit Cover Image by [PIRO4D](https://pixabay.com/users/piro4d-2707530/) from [Pixabay](https://pixabay.com)
 
-Leaderboard Image by [Aurelia Candeloro](www.instagram.com/aurelia.borealis)
+Leaderboard Image by [Aurelia Candeloro](https://www.instagram.com/aurelia.borealis)
