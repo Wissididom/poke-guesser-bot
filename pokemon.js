@@ -1,5 +1,11 @@
 const fetch = require("node-fetch");
 
+/*
+Functions that call PokéAPI
+
+https://pokeapi.co/docs/v2
+*/
+
 function generatePokemon() {
   // Fetch json of all available pokemon up to a limit of 2000 (~1200 avilable)
   return fetch('https://pokeapi.co/api/v2/pokemon/?limit=2000')
@@ -26,7 +32,7 @@ function fetchSprite(url) {
     })
     // returns the url of the sprite
     .then(json => {
-      return json.sprites.front_default;
+      return json.sprites;
     });
 }
 
