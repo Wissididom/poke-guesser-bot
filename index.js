@@ -15,7 +15,7 @@ const leaderBoard = require("./leaderboard");
 const configure = require("./configure");
 
 /*
-OBJECTS AND TOKENS
+OBJECTS, TOKENS, GLOBAL VARIABLES
 */
 
 const client = new Discord.Client();  // Discord Object
@@ -23,8 +23,14 @@ const db = new Database();  // Replit Database
 
 const mySecret = process.env['TOKEN'];  // Discord Token
 
+let guessEntered = false;
+
 /*
-ADMIN AND PLAYER COMMANDS
+ADMIN COMMANDS
+
+checkCommand() checks any command inputted after !
+
+Any functions called by checkCommand() should either be organized in one of the imported files, or should be placed below checkCommand() if it doesn't belong in the other files. 
 */
 
 // Checks command, calls appropriate function
@@ -158,7 +164,7 @@ function checkCommand(command, msg) {
           if (!pokemonNames.includes(lowercaseName))
             pokemonNames.push(lowercaseName.toLowerCase());
         }
-        
+
         let inBrackets = '';
         for (let i = 1; i < pokemonNames.length; i++) {
           if (inBrackets == '')
@@ -214,6 +220,14 @@ function checkCommand(command, msg) {
   }
 }
 
+/*
+PLAYER COMMANDS
+
+checkInput() checks any command inputted after $
+
+Any functions called by checkInput() should either be organized in one of the imported files, or should be placed below checkInput() if it doesn't belong in the other files. 
+*/
+
 // Checks pokemon guess
 function checkInput(inputRequest, msg) {
 
@@ -225,23 +239,30 @@ function checkInput(inputRequest, msg) {
   }
 
   // Player Guess
-  if (inputRequest.startsWith("catch ")) {
+  if (inputRequest.startsWith("catch ") && guessEntered === false) {
+
+    guessEntered = true;  // Lock catch until complete
 
     guess = msg.content.split("catch ")[1];  // Splits at the command, gets pokemon name guess
     
     console.log(`${msg.author} guessed ${guess}.`);
 
     // Checks if the guess is part of the pokemon name
-    db.get("pokemon")
-      // Check if guess matches any element of the array 
-      .then(pokemon => {
-        if (pokemon === "") {
-          console.log("No pokemon set.");
-          return;
-        }
-        console.log(`Guess: ${guess}`);
-        for (let i = 0; i < pokemon.length; i++) {
-          if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
+    db.get("pokemon").then(pokemon => {
+      // Check if guess matches any element of the array
+      // If no pokemon set 
+      if (pokemon === "") {
+        console.log("No pokemon set.");
+        guessEntered = false;  // Reset guessEntered
+        return;
+      }
+      // Loop through pokemon names and check against guess
+      for (let i = 0; i < pokemon.length; i++) {
+        if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
+
+          db.set("pokemon", ""); // Sets current pokemon to empty string
+
+          db.get("artwork").then(artwork => {
             // Send msg to addScore - id will be extrapolated
             leaderBoard.addScore(msg);
             // Send message that guess is correct
@@ -251,14 +272,17 @@ function checkInput(inputRequest, msg) {
               title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
             message = `1 point added to ${msg.author}'s score.'
             
-            Type \`$position\` to see your current position &
-            Type \`$leaderboard\` to see the updated leaderboard!`;
-            util.embedReply(title, message, msg);
-            db.set("pokemon", ""); // Sets current pokemon to empty string
-            break; // To avoid scoring multiple times
-          }
+            \`$position\`: see your current position
+            \`$leaderboard\`: see the updated leaderboard`;
+            util.embedReply(title, message, msg, artwork);
+            
+          });
+          
+          guessEntered = false;  // Reset guessEntered
+          break; // To avoid scoring multiple times
         }
-      });
+      }
+    });
   }
 
   // Display Leaderboard
