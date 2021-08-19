@@ -244,16 +244,16 @@ function checkInput(inputRequest, msg) {
     guessEntered = true;  // Lock catch until complete
 
     guess = msg.content.split("catch ")[1];  // Splits at the command, gets pokemon name guess
-    
     console.log(`${msg.author} guessed ${guess}.`);
 
     // Checks if the guess is part of the pokemon name
     db.get("pokemon").then(pokemon => {
-      // Check if guess matches any element of the array
       // If no pokemon set 
       if (pokemon === "") {
         console.log("No pokemon set.");
+
         guessEntered = false;  // Reset guessEntered
+
         return;
       }
       // Loop through pokemon names and check against guess
@@ -275,7 +275,6 @@ function checkInput(inputRequest, msg) {
             \`$position\`: see your current position
             \`$leaderboard\`: see the updated leaderboard`;
             util.embedReply(title, message, msg, artwork);
-            
           });
           
           guessEntered = false;  // Reset guessEntered
