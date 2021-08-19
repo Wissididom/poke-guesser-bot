@@ -118,11 +118,17 @@ function checkCommand(command, msg) {
           pokemonNames.push(name); // available properties: name, languageName and languageUrl
         }
         db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
-        console.log(JSON.stringify(names));
       });
       // Gets sprite url, and replies to the channel with newly generated pokemon
-      pokeFetch.fetchSprite(pokemon.url).then(spriteUrl => {
+      pokeFetch.fetchSprite(pokemon.url).then(sprites => {
+        // Extract sprite and official artwork
+        const spriteUrl = sprites.front_default;
+        const officialArtUrl = sprites.other['official-artwork'].front_default;
         console.log(spriteUrl);
+        console.log(officialArtUrl);
+        // Set official artwork url in database
+        db.set("artwork", officialArtUrl); // Sets current pokemon (different languages) names in database
+        // Send message with generated pokemon to channel
         const title = "A wild POKEMON appeared!";
         const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!"
         util.embedReply(title, message, msg, spriteUrl)
@@ -152,7 +158,7 @@ function checkCommand(command, msg) {
           if (!pokemonNames.includes(lowercaseName))
             pokemonNames.push(lowercaseName.toLowerCase());
         }
-
+        
         let inBrackets = '';
         for (let i = 1; i < pokemonNames.length; i++) {
           if (inBrackets == '')
