@@ -133,8 +133,7 @@ function checkCommand(command, msg) {
         console.log(spriteUrl);
         console.log(officialArtUrl);
         // Set official artwork url in database
-        db.set("artwork", officialArtUrl); // Sets current pokemon (different languages) names in database
-        // Send message with generated pokemon to channel
+        db.set("artwork", officialArtUrl); // Sets official art url in database
         const title = "A wild POKEMON appeared!";
         const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!"
         util.embedReply(title, message, msg, spriteUrl)
