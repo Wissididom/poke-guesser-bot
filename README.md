@@ -118,15 +118,15 @@ This bot was intented to run in [replit](https://replit.com) so my installation 
 
 1. Go to the Replit link for the project: https://replit.com/@GeorgeKhan/poke-guesser-bot
 
-3. Click Fork to fork it to your own Replit account.
+2. Click Fork to fork it to your own Replit account.
 
 ![replit-3](images/replit-3.png)
 
-4. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret. 
+3. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret. 
 
 ![replit-4](images/replit-4.png)
 
-5. Click the **Run** button at the top of the Replit page to start the bot.
+4. Click the **Run** button at the top of the Replit page to start the bot.
 
 ## Setup Discord Bot
 
