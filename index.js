@@ -129,6 +129,11 @@ function checkCommand(command, msg) {
       pokeFetch.fetchSprite(pokemon.url).then(sprites => {
         // Extract sprite and official artwork
         const spriteUrl = sprites.front_default;
+        if (!spriteUrl) {
+          console.log(`Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`);
+          checkCommand(command, msg);
+          return;
+        }
         const officialArtUrl = sprites.other['official-artwork'].front_default;
         console.log(spriteUrl);
         console.log(officialArtUrl);
