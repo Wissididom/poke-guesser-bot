@@ -130,7 +130,7 @@ function checkCommand(command, msg) {
         // Extract sprite and official artwork
         const spriteUrl = sprites.front_default;
         if (!spriteUrl) {
-          console.log(`Redoing the explore because i got a ${pokemon.name} without a front sprite`);
+          console.log(`Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`);
           checkCommand(command, msg);
           return;
         }
