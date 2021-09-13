@@ -13,6 +13,7 @@ const util = require("./util");
 const pokeFetch = require("./pokemon");
 const leaderBoard = require("./leaderboard");
 const configure = require("./configure");
+const disadvantages = require("./disadvantages");
 
 /*
 OBJECTS, TOKENS, GLOBAL VARIABLES
@@ -140,8 +141,9 @@ function checkCommand(command, msg) {
         // Set official artwork url in database
         db.set("artwork", officialArtUrl); // Sets official art url in database
         const title = "A wild POKEMON appeared!";
-        const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!"
-        util.embedReply(title, message, msg, spriteUrl)
+        const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
+        util.embedReply(title, message, msg, spriteUrl);
+        db.set("lastExplore", Date.now());
       });
     });
   }
@@ -222,6 +224,47 @@ function checkCommand(command, msg) {
   if (command.startsWith("removescore ")) { // This is different from the issue #17 because else Rythm or MEE6 think they are meant
     leaderBoard.removeUser(msg);
   }
+
+  // Sets a delay before guessing
+  if (command.startsWith("delay ")) {
+    const info = msg.content.replace(/!delay +<@!?(\d+)> *(\d+)?/g, '$1-$2').split('-');
+    const userId = info[0];
+    if (parseInt(info[1]) === NaN) {
+      // [<hours>h][<minutes>m][<seconds>s]
+      // Source: https://codereview.stackexchange.com/questions/224931/convert-a-string-like-4h53m12s-to-a-total-number-of-seconds-in-javascript/224948
+      const {groups: {h = 0, m = 0, s = 0}} = /(?<h>\d*)h(?<m>\d*)m(?<s>\d*)/i.exec(info[1]);
+      disadvantages.setDelay(userId, parseInt(h), parseInt(m), parseInt(s));
+    } else {
+      // Seconds
+      disadvantages.setDelay(userId, 0, 0, parseInt(info[1]));
+    }
+    util.embedReply('Delay Set', `The Delay of <@!${userId}> was set to ` + info[1] + ' seconds', msg);
+  }
+
+  // Unsets a delay for the specified user
+  if (command.startsWith("undelay ")) {
+    const info = msg.content.replace(/!undelay +<@!?(\d+)> */g, '$1');
+    const userId = info;
+    disadvantages.unsetDelay(userId);
+    util.embedReply('Delay Unset', `The Delay of <@!${userId}> was removed`, msg);
+  }
+
+  // Unsets a delay for the specified user
+  if (command.startsWith("showdelay ")) {
+    const userId = msg.content.replace(/!showdelay +<@!?(\d+)> */g, '$1');
+    disadvantages.getDelayInSeconds(userId).then(delaySeconds => {
+      if (delaySeconds < 0) {
+        util.embedReply('Show Delay', `<@!${userId}> doesn't have a delay!`, msg);
+      } else {
+        let totalSeconds = delaySeconds;
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+        util.embedReply('Show Delay', `The Delay of <@!${userId}> is ${hours}h${minutes}m${seconds}s (Total: ${delaySeconds} Seconds)`, msg);
+      }
+    });
+  }
 }
 
 /*
@@ -250,41 +293,51 @@ function checkInput(inputRequest, msg) {
     guess = msg.content.split("catch ")[1];  // Splits at the command, gets pokemon name guess
     console.log(`${msg.author} guessed ${guess}.`);
 
-    // Checks if the guess is part of the pokemon name
-    db.get("pokemon").then(pokemon => {
-      // If no pokemon set 
-      if (pokemon === "") {
-        console.log("No pokemon set.");
-
-        guessEntered = false;  // Reset guessEntered
-
+    let promises = [disadvantages.getDelayInSeconds(msg.author.id), db.get("lastExplore")];
+    Promise.all(promises).then(([delay, lastExplore]) => {
+      console.log(`delay:${delay};lastExplore:${lastExplore}`);
+      if (Date.now() - lastExplore < delay * 1000) {
+        util.embedReply('Delayed', 'You are delayed for another ' + ((delay * 1000 - (Date.now() - lastExplore)) / 1000) + ' Seconds!', msg);
+        msg.delete();
+        guessEntered = false;
         return;
       }
-      // Loop through pokemon names and check against guess
-      for (let i = 0; i < pokemon.length; i++) {
-        if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
+      // Checks if the guess is part of the pokemon name
+      db.get("pokemon").then(pokemon => {
+        // If no pokemon set 
+        if (pokemon === "") {
+          console.log("No pokemon set.");
 
-          db.set("pokemon", ""); // Sets current pokemon to empty string
-
-          db.get("artwork").then(artwork => {
-            // Send msg to addScore - id will be extrapolated
-            leaderBoard.addScore(msg);
-            // Send message that guess is correct
-            if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[0].toLowerCase())
-              title = `${util.capitalize(pokemon[0])} has been caught!`;
-            else
-              title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
-            message = `1 point added to ${msg.author}'s score.'
-            
-            \`$position\`: see your current position
-            \`$leaderboard\`: see the updated leaderboard`;
-            util.embedReply(title, message, msg, artwork);
-          });
-          
           guessEntered = false;  // Reset guessEntered
-          break; // To avoid scoring multiple times
+
+          return;
         }
-      }
+        // Loop through pokemon names and check against guess
+        for (let i = 0; i < pokemon.length; i++) {
+          if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
+
+            db.set("pokemon", ""); // Sets current pokemon to empty string
+
+            db.get("artwork").then(artwork => {
+              // Send msg to addScore - id will be extrapolated
+              leaderBoard.addScore(msg);
+              // Send message that guess is correct
+              if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[0].toLowerCase())
+                title = `${util.capitalize(pokemon[0])} has been caught!`;
+              else
+                title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+              message = `1 point added to ${msg.author}'s score.'
+              
+              \`$position\`: see your current position
+              \`$leaderboard\`: see the updated leaderboard`;
+              util.embedReply(title, message, msg, artwork);
+            });
+            
+            guessEntered = false;  // Reset guessEntered
+            break; // To avoid scoring multiple times
+          }
+        }
+      });
     });
   }
 
