@@ -119,31 +119,38 @@ function checkCommand(command, msg) {
     console.log("Generating a new pokemon.");
     // Returns pokemon json object
     pokeFetch.generatePokemon().then(pokemon => {
-      let pokemonNames = [pokemon.name.split('-')[0].toLowerCase()];
+      // Set first item to pokedex id
+      let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, '$1')];
       pokeFetch.fetchNames(pokemonNames[0]).then(names => {
-        for (let name of names) {
-          pokemonNames.push(name); // available properties: name, languageName and languageUrl
-        }
-        db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
-      });
-      // Gets sprite url, and replies to the channel with newly generated pokemon
-      pokeFetch.fetchSprite(pokemon.url).then(sprites => {
-        // Extract sprite and official artwork
-        const spriteUrl = sprites.front_default;
-        if (!spriteUrl) {
-          console.log(`Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`);
+        if (!names) {
+          console.log(`Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`);
           checkCommand(command, msg);
           return;
         }
-        const officialArtUrl = sprites.other['official-artwork'].front_default;
-        console.log(spriteUrl);
-        console.log(officialArtUrl);
-        // Set official artwork url in database
-        db.set("artwork", officialArtUrl); // Sets official art url in database
-        const title = "A wild POKEMON appeared!";
-        const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
-        util.embedReply(title, message, msg, spriteUrl);
-        db.set("lastExplore", Date.now());
+        for (let name of names) {
+          pokemonNames.push(name); // available properties: name, languageName and languageUrl
+        }
+        console.log(pokemonNames);
+        db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
+        // Gets sprite url, and replies to the channel with newly generated pokemon
+        pokeFetch.fetchSprite(pokemon.url).then(sprites => {
+          // Extract sprite and official artwork
+          const spriteUrl = sprites.front_default;
+          if (!spriteUrl) {
+            console.log(`Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`);
+            checkCommand(command, msg);
+            return;
+          }
+          const officialArtUrl = sprites.other['official-artwork'].front_default;
+          console.log(spriteUrl);
+          console.log(officialArtUrl);
+          // Set official artwork url in database
+          db.set("artwork", officialArtUrl); // Sets official art url in database
+          const title = "A wild POKEMON appeared!";
+          const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
+          util.embedReply(title, message, msg, spriteUrl);
+          db.set("lastExplore", Date.now());
+        });
       });
     });
   }
@@ -171,18 +178,26 @@ function checkCommand(command, msg) {
             pokemonNames.push(lowercaseName.toLowerCase());
         }
 
+        let englishIndex = 0; // Find english index
+        for (let i = 1; i < pokemon.length; i++) {
+          if (pokemon[i].languageName === 'en')
+            englishIndex = i;
+        }
+
+        // build string to put in between brackets
         let inBrackets = '';
-        for (let i = 1; i < pokemonNames.length; i++) {
+        for (let i = 0; i < pokemonNames.length; i++) {
           if (inBrackets == '')
             inBrackets = util.capitalize(pokemonNames[i]);
           else
             inBrackets += ', ' + util.capitalize(pokemonNames[i]);
         }
-        console.log(`Admin requested reveal: ${pokemon[0]} (${inBrackets})`);
+
+        console.log(`Admin requested reveal: ${pokemon[englishIndex].name} (${inBrackets})`);
 
         // Message
         title = "Pokemon escaped!";
-        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[0])} (${inBrackets}) as it fled.`;
+        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
         util.embedReply(title, message, msg);
 
         db.set("pokemon", "");  // Sets current pokemon to empty string
@@ -321,11 +336,17 @@ function checkInput(inputRequest, msg) {
             db.get("artwork").then(artwork => {
               // Send msg to addScore - id will be extrapolated
               leaderBoard.addScore(msg);
+              // Find english index
+              let englishIndex = 1;
+              for (let i = 0; i < pokemon.length; i++) {
+                if (pokemon[i].languageName === 'en')
+                  englishIndex = i;
+              }
               // Send message that guess is correct
-              if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[0].toLowerCase())
-                title = `${util.capitalize(pokemon[0])} has been caught!`;
+              if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[englishIndex].name.toLowerCase())
+                title = `${util.capitalize(pokemon[englishIndex].name)} has been caught!`;
               else
-                title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+                title = `${util.capitalize(pokemon[englishIndex].name)} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
               message = `1 point added to ${msg.author}'s score.'
               
               \`$position\`: see your current position
