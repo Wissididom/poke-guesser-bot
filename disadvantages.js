@@ -28,7 +28,7 @@ function unsetDelay(userId) {
   db.get("delays").then(delays => {
     if (!delays)
       delays = {};
-    // Unset userId to the specific amount of seconds
+    // Unset userId
     delete delays[userId];
     console.log('deleted:' + JSON.stringify(delays));
     // Set database with changes
@@ -36,8 +36,46 @@ function unsetDelay(userId) {
   });
 }
 
+async function getTimeout(userId) {
+  return await db.get("timeouts").then(timeouts => {
+    if (!timeouts)
+      return null;
+    return userId in timeouts ? timeouts[userId] : null;
+  });
+}
+
+function setTimeout(userId, startDateTime, endDateTime) {
+  console.log(`disadvantages.setTimeout received userId: ${userId}, ${startDateTime} - ${endDateTime}`);
+  db.get("timeouts").then(timeouts => {
+    if (!timeouts)
+      timeouts = {};
+    // Sets userId to the specific start and end date and time
+    timeouts[userId] = {
+      start: startDateTime,
+      end: endDateTime
+    }
+    console.log('timeouts:' + JSON.stringify(timeouts));
+    // Set database with changes
+    db.set("timeouts", timeouts);
+  });
+}
+
+function unsetTimeout(userId) {
+  console.log(`disadvantages.unsetTimeout received userId: ${userId}`);
+  db.get("timeouts").then(timeouts => {
+    if (!timeouts)
+      timeouts = {};
+    // Unset userId
+    delete timeouts[userId];
+    console.log('deleted:' + JSON.stringify(timeouts));
+    // Set database with changes
+    db.set("timeouts", timeouts);
+  });
+}
+
 module.exports.getDelayInSeconds = getDelayInSeconds;
 module.exports.setDelay = setDelay;
 module.exports.unsetDelay = unsetDelay;
-// module.exports.setTimeout = setTimeout;
-// module.exports.unsetTimeout = unsetTimeout;
+module.exports.getTimeout = getTimeout;
+module.exports.setTimeout = setTimeout;
+module.exports.unsetTimeout = unsetTimeout;
