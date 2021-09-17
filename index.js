@@ -299,7 +299,11 @@ function checkCommand(command, msg) {
   if (command.startsWith("showtimeout ")) {
     const userId = msg.content.replace(/!showtimeout +<@!?(\d+)> */g, '$1');
     disadvantages.getTimeout(userId).then(timeout => {
-      // TODO
+      if (timeout) {
+        util.embedReply('Show Timeout', `The Timeout of <@!${userId}> is starting at ${timeout.start} and ending at ${timeout.start} (both in UTC)`, msg);
+      } else {
+        util.embedReply('Show Timeout', `The User <@!${userId}> doesn't have a timeout!`, msg);
+      }
     });
   }
 }
