@@ -53,8 +53,10 @@ function fetchNames(nameOrId) {
         name: names[i].name
       });
     }
-    console.log(resultNames)
     return resultNames;
+  }).catch(err => {
+    // For example id 10220 gives back Not Found (404)
+    return null;
   });
 }
 

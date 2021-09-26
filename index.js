@@ -13,6 +13,7 @@ const util = require("./util");
 const pokeFetch = require("./pokemon");
 const leaderBoard = require("./leaderboard");
 const configure = require("./configure");
+const disadvantages = require("./disadvantages");
 
 /*
 OBJECTS, TOKENS, GLOBAL VARIABLES
@@ -118,25 +119,38 @@ function checkCommand(command, msg) {
     console.log("Generating a new pokemon.");
     // Returns pokemon json object
     pokeFetch.generatePokemon().then(pokemon => {
-      let pokemonNames = [pokemon.name.split('-')[0].toLowerCase()];
+      // Set first item to pokedex id
+      let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, '$1')];
       pokeFetch.fetchNames(pokemonNames[0]).then(names => {
+        if (!names) {
+          console.log(`Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`);
+          checkCommand(command, msg);
+          return;
+        }
         for (let name of names) {
           pokemonNames.push(name); // available properties: name, languageName and languageUrl
         }
+        console.log(pokemonNames);
         db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
-      });
-      // Gets sprite url, and replies to the channel with newly generated pokemon
-      pokeFetch.fetchSprite(pokemon.url).then(sprites => {
-        // Extract sprite and official artwork
-        const spriteUrl = sprites.front_default;
-        const officialArtUrl = sprites.other['official-artwork'].front_default;
-        console.log(spriteUrl);
-        console.log(officialArtUrl);
-        // Set official artwork url in database
-        db.set("artwork", officialArtUrl); // Sets official art url in database
-        const title = "A wild POKEMON appeared!";
-        const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!"
-        util.embedReply(title, message, msg, spriteUrl)
+        // Gets sprite url, and replies to the channel with newly generated pokemon
+        pokeFetch.fetchSprite(pokemon.url).then(sprites => {
+          // Extract sprite and official artwork
+          const spriteUrl = sprites.front_default;
+          if (!spriteUrl) {
+            console.log(`Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`);
+            checkCommand(command, msg);
+            return;
+          }
+          const officialArtUrl = sprites.other['official-artwork'].front_default;
+          console.log(spriteUrl);
+          console.log(officialArtUrl);
+          // Set official artwork url in database
+          db.set("artwork", officialArtUrl); // Sets official art url in database
+          const title = "A wild POKEMON appeared!";
+          const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
+          util.embedReply(title, message, msg, spriteUrl);
+          db.set("lastExplore", Date.now());
+        });
       });
     });
   }
@@ -164,18 +178,26 @@ function checkCommand(command, msg) {
             pokemonNames.push(lowercaseName.toLowerCase());
         }
 
+        let englishIndex = 0; // Find english index
+        for (let i = 1; i < pokemon.length; i++) {
+          if (pokemon[i].languageName === 'en')
+            englishIndex = i;
+        }
+
+        // build string to put in between brackets
         let inBrackets = '';
-        for (let i = 1; i < pokemonNames.length; i++) {
+        for (let i = 0; i < pokemonNames.length; i++) {
           if (inBrackets == '')
             inBrackets = util.capitalize(pokemonNames[i]);
           else
             inBrackets += ', ' + util.capitalize(pokemonNames[i]);
         }
-        console.log(`Admin requested reveal: ${pokemon[0]} (${inBrackets})`);
+
+        console.log(`Admin requested reveal: ${pokemon[englishIndex].name} (${inBrackets})`);
 
         // Message
         title = "Pokemon escaped!";
-        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[0])} (${inBrackets}) as it fled.`;
+        message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
         util.embedReply(title, message, msg);
 
         db.set("pokemon", "");  // Sets current pokemon to empty string
@@ -217,6 +239,73 @@ function checkCommand(command, msg) {
   if (command.startsWith("removescore ")) { // This is different from the issue #17 because else Rythm or MEE6 think they are meant
     leaderBoard.removeUser(msg);
   }
+
+  // Sets a delay before guessing
+  if (command.startsWith("delay ")) {
+    const info = msg.content.replace(/!delay +<@!?(\d+)> *(\d+)?/g, '$1-$2').split('-');
+    const userId = info[0];
+    if (parseInt(info[1]) === NaN) {
+      // [<hours>h][<minutes>m][<seconds>s]
+      // Source: https://codereview.stackexchange.com/questions/224931/convert-a-string-like-4h53m12s-to-a-total-number-of-seconds-in-javascript/224948
+      const {groups: {h = 0, m = 0, s = 0}} = /(?<h>\d*)h(?<m>\d*)m(?<s>\d*)/i.exec(info[1]);
+      disadvantages.setDelay(userId, parseInt(h), parseInt(m), parseInt(s));
+    } else {
+      // Seconds
+      disadvantages.setDelay(userId, 0, 0, parseInt(info[1]));
+    }
+    util.embedReply('Delay Set', `The Delay of <@!${userId}> was set to ` + info[1] + ' seconds', msg);
+  }
+
+  // Unsets a delay for the specified user
+  if (command.startsWith("undelay ")) {
+    const info = msg.content.replace(/!undelay +<@!?(\d+)> */g, '$1');
+    const userId = info;
+    disadvantages.unsetDelay(userId);
+    util.embedReply('Delay Unset', `The Delay of <@!${userId}> was removed`, msg);
+  }
+
+  // Unsets a delay for the specified user
+  if (command.startsWith("showdelay ")) {
+    const userId = msg.content.replace(/!showdelay +<@!?(\d+)> */g, '$1');
+    disadvantages.getDelayInSeconds(userId).then(delaySeconds => {
+      if (delaySeconds < 0) {
+        util.embedReply('Show Delay', `<@!${userId}> doesn't have a delay!`, msg);
+      } else {
+        let totalSeconds = delaySeconds;
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+        util.embedReply('Show Delay', `The Delay of <@!${userId}> is ${hours}h${minutes}m${seconds}s (Total: ${delaySeconds} Seconds)`, msg);
+      }
+    });
+  }
+
+  if (command.startsWith("timeout ")) {
+    const info = msg.content.replace(/!timeout +<@!?(\d+)> +([\d\/]+) +([\d\/]+) */g, '$1-$2-$3').split('-');
+    const userId = info[0];
+    const startDateTime = info[1];
+    const endDateTime = info[2];
+    disadvantages.setTimeout(userId, startDateTime, endDateTime);
+    util.embedReply('Timeout Set', `The Timeout of <@!${userId}> is starting at ${startDateTime} and ending at ${endDateTime} (both in UTC)`, msg);
+  }
+
+  if (command.startsWith("untimeout ")) {
+    const userId = msg.content.replace(/!untimeout +<@!?(\d+)> */g, '$1');
+    disadvantages.unsetTimeout(userId);
+    util.embedReply('Timeout Unset', `The Timeout of <@!${userId}> was removed`, msg);
+  }
+
+  if (command.startsWith("showtimeout ")) {
+    const userId = msg.content.replace(/!showtimeout +<@!?(\d+)> */g, '$1');
+    disadvantages.getTimeout(userId).then(timeout => {
+      if (timeout) {
+        util.embedReply('Show Timeout', `The Timeout of <@!${userId}> is starting at ${timeout.start} and ending at ${timeout.start} (both in UTC)`, msg);
+      } else {
+        util.embedReply('Show Timeout', `The User <@!${userId}> doesn't have a timeout!`, msg);
+      }
+    });
+  }
 }
 
 /*
@@ -245,41 +334,104 @@ function checkInput(inputRequest, msg) {
     guess = msg.content.split("catch ")[1];  // Splits at the command, gets pokemon name guess
     console.log(`${msg.author} guessed ${guess}.`);
 
-    // Checks if the guess is part of the pokemon name
-    db.get("pokemon").then(pokemon => {
-      // If no pokemon set 
-      if (pokemon === "") {
-        console.log("No pokemon set.");
-
-        guessEntered = false;  // Reset guessEntered
-
+    let promises = [disadvantages.getDelayInSeconds(msg.author.id), disadvantages.getTimeout(msg.author.id), db.get("lastExplore")];
+    Promise.all(promises).then(([delay, timeout, lastExplore]) => {
+      console.log(`delay:${delay};lastExplore:${lastExplore}`);
+      if (Date.now() - lastExplore < delay * 1000) {
+        util.embedReply('Delayed', 'You are delayed for another ' + ((delay * 1000 - (Date.now() - lastExplore)) / 1000) + ' Seconds!', msg);
+        msg.delete();
+        guessEntered = false;
         return;
       }
-      // Loop through pokemon names and check against guess
-      for (let i = 0; i < pokemon.length; i++) {
-        if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
-
-          db.set("pokemon", ""); // Sets current pokemon to empty string
-
-          db.get("artwork").then(artwork => {
-            // Send msg to addScore - id will be extrapolated
-            leaderBoard.addScore(msg);
-            // Send message that guess is correct
-            if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[0].toLowerCase())
-              title = `${util.capitalize(pokemon[0])} has been caught!`;
-            else
-              title = `${util.capitalize(pokemon[0])} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
-            message = `1 point added to ${msg.author}'s score.'
-            
-            \`$position\`: see your current position
-            \`$leaderboard\`: see the updated leaderboard`;
-            util.embedReply(title, message, msg, artwork);
-          });
-          
-          guessEntered = false;  // Reset guessEntered
-          break; // To avoid scoring multiple times
+      if (timeout) {
+        const splittedStart = timeout.start.split(/\//g);
+        const now = new Date();
+        const defaults = {
+          year: 0/*now.getUTCFullYear()*/,
+          month: 0/*now.getUTCMonth()*/,
+          day: 1/*now.getUTCDate()*/,
+          hour: 0/*now.getUTCHours()*/,
+          minute: 0/*now.getUTCMinutes()*/,
+          second: 0/*now.getUTCSeconds()*/,
+          millisecond: 0/*now.getUTCMilliseconds()*/
+        };
+        const start = {
+          year: parseInt(splittedStart[0]) | defaults.year,
+          month: parseInt(splittedStart[1]) - 1 | defaults.month,
+          day: parseInt(splittedStart[2]) | defaults.day,
+          hour: parseInt(splittedStart[3]) | defaults.hour,
+          minute: parseInt(splittedStart[4]) | defaults.minute,
+          second: parseInt(splittedStart[5]) | defaults.second,
+          millisecond: parseInt(splittedStart[6]) | defaults.millisecond
+        };
+        const startTime = Date.UTC(start.year, start.month, start.day, start.hour, start.minute, start.second, start.millisecond);
+        const splittedEnd = timeout.end.split(/\//g);
+        const end = {
+          year: parseInt(splittedEnd[0]) | defaults.year,
+          month: parseInt(splittedEnd[1]) - 1 | defaults.month,
+          day: parseInt(splittedEnd[2]) | defaults.day,
+          hour: parseInt(splittedEnd[3]) | defaults.hour,
+          minute: parseInt(splittedEnd[4]) | defaults.minute,
+          second: parseInt(splittedEnd[5]) | defaults.second,
+          millisecond: parseInt(splittedEnd[6]) | defaults.millisecond
+        };
+        const endTime = Date.UTC(end.year, end.month, end.day, end.hour, end.minute, end.second, end.millisecond);
+        const nowTime = now.getTime();
+        if (nowTime > startTime && nowTime < endTime) {
+          // In Timeout
+          console.log(`In Timeout: ${nowTime} > ${startTime} && ${nowTime} < ${endTime}`);
+          util.embedReply('Timeouted', 'You are still timeouted until ' + timeout.end, msg);
+          msg.delete();
+          guessEntered = false;
+          return;
+        } else {
+          // Out of Timeout
+          console.log(`Out of Timeout: !(${nowTime} > ${startTime} && ${nowTime} < ${endTime})`);
+          disadvantages.unsetTimeout(msg.author.id);
         }
       }
+      // Checks if the guess is part of the pokemon name
+      db.get("pokemon").then(pokemon => {
+        // If no pokemon set 
+        if (pokemon === "") {
+          console.log("No pokemon set.");
+
+          guessEntered = false;  // Reset guessEntered
+
+          return;
+        }
+        // Loop through pokemon names and check against guess
+        for (let i = 0; i < pokemon.length; i++) {
+          if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
+
+            db.set("pokemon", ""); // Sets current pokemon to empty string
+
+            db.get("artwork").then(artwork => {
+              // Send msg to addScore - id will be extrapolated
+              leaderBoard.addScore(msg);
+              // Find english index
+              let englishIndex = 1;
+              for (let i = 0; i < pokemon.length; i++) {
+                if (pokemon[i].languageName === 'en')
+                  englishIndex = i;
+              }
+              // Send message that guess is correct
+              if ((pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() === pokemon[englishIndex].name.toLowerCase())
+                title = `${util.capitalize(pokemon[englishIndex].name)} has been caught!`;
+              else
+                title = `${util.capitalize(pokemon[englishIndex].name)} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+              message = `1 point added to ${msg.author}'s score.'
+              
+              \`$position\`: see your current position
+              \`$leaderboard\`: see the updated leaderboard`;
+              util.embedReply(title, message, msg, artwork);
+            });
+            
+            guessEntered = false;  // Reset guessEntered
+            break; // To avoid scoring multiple times
+          }
+        }
+      });
     });
   }
 
