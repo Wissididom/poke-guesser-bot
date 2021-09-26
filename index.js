@@ -280,6 +280,32 @@ function checkCommand(command, msg) {
       }
     });
   }
+
+  if (command.startsWith("timeout ")) {
+    const info = msg.content.replace(/!timeout +<@!?(\d+)> +([\d\/]+) +([\d\/]+) */g, '$1-$2-$3').split('-');
+    const userId = info[0];
+    const startDateTime = info[1];
+    const endDateTime = info[2];
+    disadvantages.setTimeout(userId, startDateTime, endDateTime);
+    util.embedReply('Timeout Set', `The Timeout of <@!${userId}> is starting at ${startDateTime} and ending at ${endDateTime} (both in UTC)`, msg);
+  }
+
+  if (command.startsWith("untimeout ")) {
+    const userId = msg.content.replace(/!untimeout +<@!?(\d+)> */g, '$1');
+    disadvantages.unsetTimeout(userId);
+    util.embedReply('Timeout Unset', `The Timeout of <@!${userId}> was removed`, msg);
+  }
+
+  if (command.startsWith("showtimeout ")) {
+    const userId = msg.content.replace(/!showtimeout +<@!?(\d+)> */g, '$1');
+    disadvantages.getTimeout(userId).then(timeout => {
+      if (timeout) {
+        util.embedReply('Show Timeout', `The Timeout of <@!${userId}> is starting at ${timeout.start} and ending at ${timeout.start} (both in UTC)`, msg);
+      } else {
+        util.embedReply('Show Timeout', `The User <@!${userId}> doesn't have a timeout!`, msg);
+      }
+    });
+  }
 }
 
 /*
@@ -308,14 +334,61 @@ function checkInput(inputRequest, msg) {
     guess = msg.content.split("catch ")[1];  // Splits at the command, gets pokemon name guess
     console.log(`${msg.author} guessed ${guess}.`);
 
-    let promises = [disadvantages.getDelayInSeconds(msg.author.id), db.get("lastExplore")];
-    Promise.all(promises).then(([delay, lastExplore]) => {
+    let promises = [disadvantages.getDelayInSeconds(msg.author.id), disadvantages.getTimeout(msg.author.id), db.get("lastExplore")];
+    Promise.all(promises).then(([delay, timeout, lastExplore]) => {
       console.log(`delay:${delay};lastExplore:${lastExplore}`);
       if (Date.now() - lastExplore < delay * 1000) {
         util.embedReply('Delayed', 'You are delayed for another ' + ((delay * 1000 - (Date.now() - lastExplore)) / 1000) + ' Seconds!', msg);
         msg.delete();
         guessEntered = false;
         return;
+      }
+      if (timeout) {
+        const splittedStart = timeout.start.split(/\//g);
+        const now = new Date();
+        const defaults = {
+          year: 0/*now.getUTCFullYear()*/,
+          month: 0/*now.getUTCMonth()*/,
+          day: 1/*now.getUTCDate()*/,
+          hour: 0/*now.getUTCHours()*/,
+          minute: 0/*now.getUTCMinutes()*/,
+          second: 0/*now.getUTCSeconds()*/,
+          millisecond: 0/*now.getUTCMilliseconds()*/
+        };
+        const start = {
+          year: parseInt(splittedStart[0]) | defaults.year,
+          month: parseInt(splittedStart[1]) - 1 | defaults.month,
+          day: parseInt(splittedStart[2]) | defaults.day,
+          hour: parseInt(splittedStart[3]) | defaults.hour,
+          minute: parseInt(splittedStart[4]) | defaults.minute,
+          second: parseInt(splittedStart[5]) | defaults.second,
+          millisecond: parseInt(splittedStart[6]) | defaults.millisecond
+        };
+        const startTime = Date.UTC(start.year, start.month, start.day, start.hour, start.minute, start.second, start.millisecond);
+        const splittedEnd = timeout.end.split(/\//g);
+        const end = {
+          year: parseInt(splittedEnd[0]) | defaults.year,
+          month: parseInt(splittedEnd[1]) - 1 | defaults.month,
+          day: parseInt(splittedEnd[2]) | defaults.day,
+          hour: parseInt(splittedEnd[3]) | defaults.hour,
+          minute: parseInt(splittedEnd[4]) | defaults.minute,
+          second: parseInt(splittedEnd[5]) | defaults.second,
+          millisecond: parseInt(splittedEnd[6]) | defaults.millisecond
+        };
+        const endTime = Date.UTC(end.year, end.month, end.day, end.hour, end.minute, end.second, end.millisecond);
+        const nowTime = now.getTime();
+        if (nowTime > startTime && nowTime < endTime) {
+          // In Timeout
+          console.log(`In Timeout: ${nowTime} > ${startTime} && ${nowTime} < ${endTime}`);
+          util.embedReply('Timeouted', 'You are still timeouted until ' + timeout.end, msg);
+          msg.delete();
+          guessEntered = false;
+          return;
+        } else {
+          // Out of Timeout
+          console.log(`Out of Timeout: !(${nowTime} > ${startTime} && ${nowTime} < ${endTime})`);
+          disadvantages.unsetTimeout(msg.author.id);
+        }
       }
       // Checks if the guess is part of the pokemon name
       db.get("pokemon").then(pokemon => {
