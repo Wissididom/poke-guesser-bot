@@ -22,9 +22,8 @@ Each row represents a user. The key is the id of the user in discord, and the va
 function addScore(msg) {
 
   // Get userId from msg
-  userId = msg.author.id;
-  console.log(`leaderboard.addScore received userId: ${userId}`)
-  console.log(`Adding score to user: ${findUser(msg, userId).username}`);
+  console.log(`leaderboard.addScore received userId: ${msg.author.id}`)
+  console.log(`Adding score to user: ${msg.author.username}`);
 
   // Check the leaderboard if id already exists
   db.get("leaderboard")
@@ -46,19 +45,23 @@ function addScore(msg) {
 function sanitizeLeaderboard(msg, leaderboard) {
   // Returns a promise
   return new Promise(function(resolve, reject) {
+    let promises = [];
     // Iterate through leaderboard object
     for (const [userId, score] of Object.entries(leaderboard)) {
       // Retrieve user from guild, or null if doesn't exist
-      userObj = findUser(msg, userId);
       objLength = Object.keys(leaderboard).length;
-      // If user object is null, delete the key from leaderboard
-      if (userObj === null) {
-        console.log(`Removing User ID ${userId} from leaderboard.`);
-        delete leaderboard[userId];
-      }
+      promises.push(findUser(msg, userId).then(user => {
+        // If user object is null, delete the key from leaderboard
+        if (!user) {
+          console.log(`Removing User ID ${userId} from leaderboard.`);
+          delete leaderboard[userId];
+        }
+      }));
     }
-    // Resolves promise and returns leaderboard once fake users removed
-    resolve(leaderboard);
+    Promise.all(promises).then(values => {
+      // Resolves promise and returns leaderboard once fake users removed
+      resolve(leaderboard);
+    });
   });
 }
 
@@ -103,7 +106,7 @@ function showLeaderboard(msg, debug=false) {
 
     return sanitizedLeaderboard;
   })
-  .then(sanitizedLeaderboard => {
+  .then(async (sanitizedLeaderboard) => {
 
     console.log(sanitizedLeaderboard);
 
@@ -145,7 +148,7 @@ function showLeaderboard(msg, debug=false) {
       if (i < Math.max(0, items.length)) {
 
         // Get userObject
-        userObject = findUser(msg, items[i][0]);
+        let userObject = await findUser(msg, items[i][0]);
         // If userObject, set username
         if (userObject) {
           userName = userObject.username;
@@ -187,7 +190,7 @@ function showLeaderboard(msg, debug=false) {
       if (i==5) {
         // Creates an array of usernames in items starting from index 5
         if (!debug) {
-          usernames = Array.from(items.slice(5), x => findUser(msg, x[0]));
+          usernames = Array.from(items.slice(5), async (x) => await findUser(msg, x[0]));
         } else {
           usernames = Array.from(items.slice(5), x => x[0]);
         }
@@ -280,7 +283,7 @@ function newChampionship(msg) {
 
   // Output message that the championship has ended and x is the victor
   db.get("leaderboard")
-  .then(leaderboard => {
+  .then(async (leaderboard) => {
 
     if (!leaderboard) {
       msg.reply('The Leaderboard has not yet been initialized!');
@@ -300,7 +303,7 @@ function newChampionship(msg) {
       return second[1] - first[1];
     })
 
-    const winner = items[0] ? findUser(msg, items[0][0]): null;  // Determine winner of championship
+    const winner = items[0] ? (await findUser(msg, items[0][0])) : null;  // Determine winner of championship
     const finalScore = items[0] ? items[0][1] : 0;  // Determine winner's final score
     var delayInMilliseconds = 500;  // 0.5 seconds
 
@@ -427,23 +430,25 @@ function removeUser(message) {
   console.log(`removeUser: ${info[1] ? 'true' : 'false'}`);
 }
 
-// Finds the GuildMember by User-ID
-function findMember(message, id) {
-  // Return member or undefined if not found
-  return message.guild.members.cache.get(id);
+// Finds the GuildMember by User-IDs (either string or array)
+function findMember(message, ids) {
+  // Return member or undefined if not found (force specifies if cache should be checked)
+  // I could have omitted the force property, but i have put it there to make it clear
+  return message.guild.members.fetch({ user: ids, force: false});
 }
 
 // Finds the User by User-ID
 function findUser(message, id) {
-  member = findMember(message, id);
-  // If member found, return member, else return null
-  if (member) {
-    console.log(`User ID ${id} found in guild.`);
-    return member.user;
-  } else {
-    console.log(`WARNING: User ID ${id} not found in guild.`);
-    return null
-  }
+  return findMember(message, id).then((member) => {
+    // If member found, return member, else return null
+    if (member) {
+      console.log(`User ID ${id} found in guild.`);
+      return member.user;
+    } else {
+      console.log(`WARNING: User ID ${id} not found in guild.`);
+      return null;
+    }
+  });
 }
 
 // Exports each function separately
