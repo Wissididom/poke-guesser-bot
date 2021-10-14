@@ -22,6 +22,7 @@ Each row represents a user. The key is the id of the user in discord, and the va
 function addScore(msg) {
 
   // Get userId from msg
+  let userId = msg.author.id;
   console.log(`leaderboard.addScore received userId: ${msg.author.id}`)
   console.log(`Adding score to user: ${msg.author.username}`);
 
