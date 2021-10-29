@@ -471,7 +471,7 @@ function authenticateChannel(msg) {
         // If there are no channels in config, return true
         return true;
 
-      } else if (configJson.configuration.channels.some(channelItem => channelItem.name === msg.channel.name)) {
+      } else if (configJson.configuration.channels.some(channelItem => channelItem.id === msg.channel.id)) {
 
         console.log(`CHANNELS: Channel >${msg.channel.name}< found. Authorized.`); // Logging
 
