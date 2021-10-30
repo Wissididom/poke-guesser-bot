@@ -183,6 +183,7 @@ function addRole(role, msg) {
 
 // Remove role from bot moderator roles
 function removeRole(role, msg) {
+  const roleId = getRole(role, msg).id;
   
   // Get the configuration from the database
   db.get("configuration").then(configuration => {
@@ -192,12 +193,12 @@ function removeRole(role, msg) {
 
     // Check if the role is in the database
     // If role exists in configuration
-    if (configJson.configuration.roles.some(roleItem => roleItem.name === role)) {
+    if (configJson.configuration.roles.some(roleItem => roleItem.id === roleId)) {
 
       console.log("Role exists in configuration and can be removed.")  // Logging
 
       // Find index of this role
-      const index = configJson.configuration.roles.findIndex(item => item.name === role);
+      const index = configJson.configuration.roles.findIndex(item => item.id === roleId);
 
       // Remove role from array
       if (index > -1) {
@@ -396,6 +397,7 @@ function addChannel(channel, msg) {
 
 // Remove channel from bot allowed channels
 function removeChannel(channel, msg) {
+  const channelId = getChannel(channel, msg).id;
 
   // Get the configuration from the database
   db.get("configuration").then(configuration => {
@@ -405,12 +407,12 @@ function removeChannel(channel, msg) {
 
     // Check if the channel is in the database
     // If channel exists in configuration
-    if (configJson.configuration.channels.some(channelItem => channelItem.name === channel)) {
+    if (configJson.configuration.channels.some(channelItem => channelItem.id === channelId)) {
 
       console.log("Channel exists in configuration and can be removed.")  // Logging
 
       // Find index of this channel
-      const index = configJson.configuration.channels.findIndex(item => item.name === channel);
+      const index = configJson.configuration.channels.findIndex(item => item.id === channelId);
 
       // Remove role from array
       if (index > -1) {
@@ -471,7 +473,7 @@ function authenticateChannel(msg) {
         // If there are no channels in config, return true
         return true;
 
-      } else if (configJson.configuration.channels.some(channelItem => channelItem.name === msg.channel.name)) {
+      } else if (configJson.configuration.channels.some(channelItem => channelItem.id === msg.channel.id)) {
 
         console.log(`CHANNELS: Channel >${msg.channel.name}< found. Authorized.`); // Logging
 
