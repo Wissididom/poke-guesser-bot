@@ -426,11 +426,10 @@ function checkInput(inputRequest, msg) {
               \`$leaderboard\`: see the updated leaderboard`;
               util.embedReply(title, message, msg, artwork);
             });
-            
-            guessEntered = false;  // Reset guessEntered
             break; // To avoid scoring multiple times
           }
         }
+        guessEntered = false;  // Reset guessEntered
       });
     });
   }
