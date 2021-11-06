@@ -2,6 +2,8 @@
 LIBRARIES
 */
 
+require("dotenv").config();
+
 const Discord = require("discord.js");
 const Database = require("@replit/database");
 
@@ -19,7 +21,7 @@ const disadvantages = require("./disadvantages");
 OBJECTS, TOKENS, GLOBAL VARIABLES
 */
 
-const client = new Discord.Client();  // Discord Object
+const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION']}); // Discord Object
 const db = new Database();  // Replit Database
 
 const mySecret = process.env['TOKEN'];  // Discord Token
@@ -31,7 +33,7 @@ ADMIN COMMANDS
 
 checkCommand() checks any command inputted after !
 
-Any functions called by checkCommand() should either be organized in one of the imported files, or should be placed below checkCommand() if it doesn't belong in the other files. 
+Any functions called by checkCommand() should either be organized in one of the imported files, or should be placed below checkCommand() if it doesn't belong in the other files.
 */
 
 // Checks command, calls appropriate function
@@ -76,7 +78,7 @@ function checkCommand(command, msg) {
   if (command === "roles") {
     configure.roles(msg);
   }
-  
+
   // Adds role to configuration
   if (command.startsWith("add role ")) {
     role = msg.content.split("add role ")[1];
@@ -219,7 +221,7 @@ function checkCommand(command, msg) {
   if (command === "new championship") {
     leaderBoard.newChampionship(msg);
   }
-  
+
   // DEBUGGING - creates a dummy leaderboard with made up usernames
   if (command === "dummy") {
     leaderBoard.dummyLeaderboard(msg);
@@ -313,7 +315,7 @@ PLAYER COMMANDS
 
 checkInput() checks any command inputted after $
 
-Any functions called by checkInput() should either be organized in one of the imported files, or should be placed below checkInput() if it doesn't belong in the other files. 
+Any functions called by checkInput() should either be organized in one of the imported files, or should be placed below checkInput() if it doesn't belong in the other files.
 */
 
 // Checks pokemon guess
@@ -392,7 +394,7 @@ function checkInput(inputRequest, msg) {
       }
       // Checks if the guess is part of the pokemon name
       db.get("pokemon").then(pokemon => {
-        // If no pokemon set 
+        // If no pokemon set
         if (pokemon === "") {
           console.log("No pokemon set.");
 
@@ -421,7 +423,7 @@ function checkInput(inputRequest, msg) {
               else
                 title = `${util.capitalize(pokemon[englishIndex].name)} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
               message = `1 point added to ${msg.author}'s score.'
-              
+
               \`$position\`: see your current position
               \`$leaderboard\`: see the updated leaderboard`;
               util.embedReply(title, message, msg, artwork);
@@ -464,7 +466,7 @@ client.on("ready", () => {
 })
 
 // Reads user messages, interprets commands & guesses, and authenticates channels/roles
-client.on("message", msg => {
+client.on("messageCreate", msg => {
 
   // Returns if message is from bot
   if (msg.author.bot) return;
@@ -477,7 +479,7 @@ client.on("message", msg => {
 
     // Check if user message starts with ! indicating command, call checkCommand
     if (msg.content.startsWith("!")) {
-      
+
       // Authenticate if user is authorized
       configure.authenticateRole(msg).then(authorized => {
         if (authorized) {
@@ -485,7 +487,7 @@ client.on("message", msg => {
           checkCommand(command, msg);
         }
       })
-      
+
     }
 
     // Check if user message starts with $ indicating guess, call checkGuess

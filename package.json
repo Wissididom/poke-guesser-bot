@@ -9,13 +9,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@replit/database": "^2.0.1",
-    "data": "^0.6.1",
-    "discord.js": "^12.5.3",
-    "express": "^4.17.1",
-    "node-fetch": "^2.6.1",
-    "pokemon": "^2.2.0"
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0"
   }
 }
