@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
-const Database = require("@replit/database");
 
-const db = new Database();
+// const db = new Database();
 
 /*
 UTILITIES
@@ -10,55 +9,17 @@ UTILITIES
 // Check Replit database on start to make sure no values are set as null
 function checkDatabase() {
   // Check if database has been instantiated
-  db.get("instantiated")
-  .then(instantiated => {
-
-    console.log(`Instantiated: ${instantiated}`);
-
-    if (instantiated === true) {
-
-      console.log("Database is ready.");
-
-    } else if (instantiated === null) {
-
-      instantiateDatabase();  // Set Database Keys
-
-    } else {
-
-      console.log("ERROR: Unexpected error occurred when performing startup check on database.")
-
-    }
-  })
+  // TODO
 }
 
 // Set first values in database
 function instantiateDatabase() {
-
   console.log("Instantiating database for the first time.");
-
-  // Set blank configuration
-  const configuration = {
-    "configuration": {
-      "channels": [],
-      "roles": []
-    }
-  };
-
-  db.set("configuration", JSON.stringify(configuration));
-
-  // Set blank pokemon
-  db.set("pokemon", "");
-
-  // Set blank leaderboard
-  db.set("leaderboard", {});
-
-  // Set instantiated to True
-  db.set("instantiated", true);
-
+  // TODO
 }
 
 // Wraps reply in poke-guesser themed embed
-function embedReply(title, message, msg, image=null) {
+function returnEmbed(title, message, image=null) {
 
   // Creates new embedded message
   let embed = new Discord.MessageEmbed()
@@ -75,7 +36,7 @@ function embedReply(title, message, msg, image=null) {
     embed.setImage('attachment://pokemon.png');
   }
 
-  msg.channel.send(embed);  // Sends the embedded message back to channel
+  return embed;
 
 }
 
@@ -160,7 +121,7 @@ function playerHelp(msg) {
 }
 
 module.exports.checkDatabase = checkDatabase;
-module.exports.embedReply = embedReply;
+module.exports.returnEmbed = returnEmbed;
 module.exports.capitalize = capitalize;
 module.exports.adminHelp = adminHelp;
 module.exports.configurationHelp = configurationHelp;
