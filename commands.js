@@ -29,16 +29,54 @@ function getRegisterObjects() {
 				}
 			]
 		},
-		'configure': {
-			type: Constants.ApplicationCommandTypes.CHAT_INPUT,
-			name: 'configure',
-			description: 'Shows how to configure the bot in an ephemeral message'
-		},
 		'settings': {
 			type: Constants.ApplicationCommandTypes.CHAT_INPUT,
 			name: 'settings',
 			description: 'View or set settings in an ephemeral message',
 			options: [
+				{
+					name: 'admins',
+					description: 'View, add or remove bot admins',
+					type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+					options: [
+						{
+							name: 'add',
+							description: 'Add a bot admin',
+							type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+							options: [
+								{
+									name: 'mentionable',
+									description: 'The user or role to add as a bot mod',
+									required: true,
+									type: Constants.ApplicationCommandOptionTypes.MENTIONABLE
+								}
+							]
+						},
+						{
+							name: 'remove',
+							description: 'Remove a bot admin',
+							type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+							options: [
+								{
+									name: 'mentionable',
+									description: 'The user or role to remove from the bot mods',
+									required: true,
+									type: Constants.ApplicationCommandOptionTypes.MENTIONABLE
+								}
+							]
+						},
+						{
+							name: 'show',
+							description: 'Shows the current admins',
+							type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						},
+						{
+							name: 'help',
+							description: 'Shows help for admin settings',
+							type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						}
+					]
+				},
 				{
 					name: 'mods',
 					description: 'View, add or remove bot mods',
@@ -129,6 +167,11 @@ function getRegisterObjects() {
 					name: 'reset',
 					description: 'Resets the current settings',
 					type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+				},
+				{
+					name: 'help',
+					description: 'Shows Help for the /settings command',
+					type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
 				}
 			]
 		},
@@ -158,7 +201,7 @@ function getRegisterObjects() {
 		},
 		'score': {
 			name: 'score',
-			description: 'Shows the Score of someone or yourself',
+			description: 'Shows the score of someone or yourself',
 			options: [
 				{
 					name: 'show',
@@ -174,6 +217,14 @@ function getRegisterObjects() {
 					]
 				}
 			]
+		},
+		'explore': {
+			name: 'explore',
+			description: 'Generates a new pokemon'
+		},
+		'reveal': {
+			name: 'reveal',
+			description: 'Reveals the current pokemon'
 		},
 		'mod': {
 			name: 'mod',
@@ -224,7 +275,7 @@ function getRegisterObjects() {
 						},
 						{
 							name: 'set',
-							description: 'Set a score of a user',
+							description: 'Set the score of a user',
 							type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
 							options: [
 								{
@@ -344,6 +395,18 @@ function getRegisterObjects() {
 									type: Constants.ApplicationCommandOptionTypes.USER
 								}
 							]
+						}
+					]
+				},
+				{
+					name: 'championship',
+					description: 'Manages the championship',
+					type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+					options: [
+						{
+							name: 'new',
+							description: 'Outputs the leaderboard one last time, reveals winner and clears the leaderboard',
+							type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
 						}
 					]
 				}
