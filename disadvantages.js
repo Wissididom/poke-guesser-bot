@@ -1,6 +1,4 @@
-const Database = require("@replit/database");
-
-const db = new Database();
+// Deprecated: Just for reference on the algorithm
 
 async function getDelayInSeconds(userId) {
   return await db.get("delays").then(delays => {

@@ -18,16 +18,16 @@ const mySecret = process.env['TOKEN'];  // Discord Token
 // Outputs console log when bot is logged in and registers all commands
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);  // Logging
-	const registerObjects = Commands.getRegisterObjects();
+	const registerObject = Commands.getRegisterObject();
 	let promises = [];
-	promises.push(client.application?.commands?.create(registerObjects['help']));
-	promises.push(client.application?.commands?.create(registerObjects['settings']));
-	promises.push(client.application?.commands?.create(registerObjects['catch']));
-	promises.push(client.application?.commands?.create(registerObjects['leaderboard']));
-	promises.push(client.application?.commands?.create(registerObjects['score']));
-	promises.push(client.application?.commands?.create(registerObjects['explore']));
-	promises.push(client.application?.commands?.create(registerObjects['reveal']));
-	promises.push(client.application?.commands?.create(registerObjects['mod']));
+	promises.push(client.application?.commands?.create(registerObject['help']));
+	promises.push(client.application?.commands?.create(registerObject['settings']));
+	promises.push(client.application?.commands?.create(registerObject['catch']));
+	promises.push(client.application?.commands?.create(registerObject['leaderboard']));
+	promises.push(client.application?.commands?.create(registerObject['score']));
+	promises.push(client.application?.commands?.create(registerObject['explore']));
+	promises.push(client.application?.commands?.create(registerObject['reveal']));
+	promises.push(client.application?.commands?.create(registerObject['mod']));
 	Promise.all(promises).then(reolvedPromises => {
 		process.kill(process.pid, 'SIGTERM');
 	});

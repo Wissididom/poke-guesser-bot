@@ -1,3 +1,4 @@
+const { Constants } = require('discord.js');
 const util = require('./util.js');
 
 function help(interaction) {
@@ -55,4 +56,35 @@ function help(interaction) {
 	});
 }
 
+function getRegisterObject() {
+	return {
+		type: Constants.ApplicationCommandTypes.CHAT_INPUT,
+		name: 'help',
+		description: 'Shows help in an ephemeral message',
+		options: [
+			{
+				name: 'type',
+				description: 'Choose which help to show',
+				required: true,
+				type: Constants.ApplicationCommandOptionTypes.STRING,
+				choices: [
+					{
+						name: 'admin',
+						value: 'admin'
+					},
+					{
+						name: 'mod',
+						value: 'mod'
+					},
+					{
+						name: 'player',
+						value: 'player'
+					}
+				]
+			}
+		]
+	};
+}
+
 module.exports.help = help;
+module.exports.getRegisterObject = getRegisterObject
