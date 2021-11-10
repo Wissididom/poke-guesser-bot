@@ -15,28 +15,22 @@ const client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_M
 
 const mySecret = process.env['TOKEN'];  // Discord Token
 
-/*
-BOT ON
-
-This section runs when the bot is logged in and listening for commands. First, it writes a log to the console indicating it is logged in. Next, it listens on the server and determines whether a message starts with ! or $ before calling either the Admin checkCommand function, or the User checkInput function.
-*/
-
-// Outputs console log when bot is logged in
+// Outputs console log when bot is logged in and registers all commands
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);  // Logging
-});
-
-client.on("interactionCreate", interaction => {
-	if (interaction.isCommand()) {
-		switch (interaction.commandName) {
-			case 'help':
-				Commands.help(interaction);
-				break;
-		}
-	}
-	/*console.log('interactionCreate:' + JSON.stringify(interaction, (key, value) => {
-		return typeof value === 'bigint' ? value.toString() : value;
-	}));*/
+	const registerObject = Commands.getRegisterObject();
+	let promises = [];
+	promises.push(client.application?.commands?.create(registerObject['help']));
+	promises.push(client.application?.commands?.create(registerObject['settings']));
+	promises.push(client.application?.commands?.create(registerObject['catch']));
+	promises.push(client.application?.commands?.create(registerObject['leaderboard']));
+	promises.push(client.application?.commands?.create(registerObject['score']));
+	promises.push(client.application?.commands?.create(registerObject['explore']));
+	promises.push(client.application?.commands?.create(registerObject['reveal']));
+	promises.push(client.application?.commands?.create(registerObject['mod']));
+	Promise.all(promises).then(reolvedPromises => {
+		process.kill(process.pid, 'SIGTERM');
+	});
 });
 
 /*
@@ -46,20 +40,9 @@ This section checks if there is a TOKEN secret and uses it to login if it is fou
 */
 
 if (!mySecret) {
-
   console.log("TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.");
-
   process.kill(process.pid, 'SIGTERM');  // Kill Bot
-
 } else {
-
-  // Check database on start (prevents null errors)
-  //util.checkDatabase();
-
-  // Keeps server alive
-  //keepAlive();
-
   // Logs in with secret TOKEN
   client.login(mySecret);
-
 }
