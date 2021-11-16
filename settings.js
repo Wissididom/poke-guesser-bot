@@ -15,35 +15,6 @@ function settings(interaction) {
 function getRegisterObject() {
 	return {
 		type: Constants.ApplicationCommandTypes.CHAT_INPUT,
-		name: 'help',
-		description: 'Shows help in an ephemeral message',
-		options: [
-			{
-				name: 'type',
-				description: 'Choose which help to show',
-				required: true,
-				type: Constants.ApplicationCommandOptionTypes.STRING,
-				choices: [
-					{
-						name: 'admin',
-						value: 'admin'
-					},
-					{
-						name: 'mod',
-						value: 'mod'
-					},
-					{
-						name: 'player',
-						value: 'player'
-					}
-				]
-			}
-		]
-	};
-}
-function getRegisterObject() {
-	return {
-		type: Constants.ApplicationCommandTypes.CHAT_INPUT,
 		name: 'settings',
 		description: 'View or set settings in an ephemeral message',
 		options: [
