@@ -21,6 +21,12 @@ function getRegisterObject() {
 	};
 }
 
-module.exports.getRegisterObject = getRegisterObject
+module.exports.getRegisterObject = getRegisterObject;
 module.exports.help = helpJS.help;
-// console.log(getRegisterObject());
+module.exports.settings = settingsJS.settings;
+module.exports._catch = catchJS._catch;
+module.exports.leaderboard = leaderboardJS.leaderboard;
+module.exports.score = scoreJS.score;
+module.exports.explore = exploreJS.explore;
+module.exports.reveal = revealJS.reveal;
+module.exports.mod = modJS.mod;

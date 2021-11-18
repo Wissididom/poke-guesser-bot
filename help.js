@@ -36,7 +36,7 @@ function help(interaction) {
 			  \`/mod delay set <user> <delay>\` - Sets a users delay
 			  \`/mod delay unset <user>\` - Unsets a users delay
 			  \`/mod delay show <user>\` - Shows a users delay
-			  \`/mod timeout set <user> <delay>\` - Sets a users timeout
+			  \`/mod timeout set <user> <timeout>\` - Sets a users timeout
 			  \`/mod timeout unset <user>\` - Unsets a users timeout
 			  \`/mod timeout show <user>\` - Shows a users timeout
 			  \`/mod championship new\` - Outputs the leaderboard one last time, reveals winner and clears the leaderboard`;
@@ -45,7 +45,7 @@ function help(interaction) {
 			title = 'Player Help';
 			description = `
 			  \`/catch <pokemon>\` - Catch a previously generated pokemon
-			  \`/leaderboard <ephemeral>\` - Shows the Leaderboard (ephemeral is a boolean to specify if it should be hidden from others - Default: true)
+			  \`/leaderboard\` - Shows the Leaderboard
 			  \`/score show [<user>]\` - Shows the score (and position) of someone or yourself`;
 			break;
 	}
@@ -87,4 +87,4 @@ function getRegisterObject() {
 }
 
 module.exports.help = help;
-module.exports.getRegisterObject = getRegisterObject
+module.exports.getRegisterObject = getRegisterObject;

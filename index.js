@@ -32,6 +32,27 @@ client.on("interactionCreate", interaction => {
 			case 'help':
 				Commands.help(interaction);
 				break;
+			case 'settings':
+				Commands.settings(interaction);
+				break;
+			case 'catch':
+				Commands._catch(interaction);
+				break;
+			case 'leaderboard':
+				Commands.leaderboard(interaction);
+				break;
+			case 'score':
+				Commands.score(interaction);
+				break;
+			case 'explore':
+				Commands.explore(interaction);
+				break;
+			case 'reveal':
+				Commands.reveal(interaction);
+				break;
+			case 'mod':
+				Commands.mod(interaction);
+				break;
 		}
 	}
 	/*console.log('interactionCreate:' + JSON.stringify(interaction, (key, value) => {

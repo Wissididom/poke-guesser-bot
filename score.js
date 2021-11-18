@@ -7,6 +7,14 @@ const leaderboardJS = require('./leaderboard.js');
 function score(interaction) {
 	// leaderboardJS.position(user);
 	// leaderboardJS.score(user);
+	//const type = interaction.options.getString('type');
+	let title = '';
+	let description = '';
+	// returnEmbed(title, message, image=null)
+	interaction.reply({
+		embeds: [util.returnEmbed(title, description)],
+		ephemeral: true
+	});
 }
 
 function getRegisterObject() {
