@@ -86,21 +86,20 @@ function emptyLeaderboard(msg) {
 }
 
 function leaderboard(interaction) {
-	// TODO: Handle leaderboard interaction
+	//const type = interaction.options.getString('type');
+	let title = '';
+	let description = '';
+	// returnEmbed(title, message, image=null)
+	interaction.reply({
+		embeds: [util.returnEmbed(title, description)],
+		ephemeral: true
+	});
 }
 
 function getRegisterObject() {
 	return {
 		name: 'leaderboard',
-		description: 'Shows the Leaderboard',
-		options: [
-			{
-				name: 'ephemeral',
-				description: 'Show the Leaderboard as an ephemeral message (only you can see it)',
-				required: false,
-				type: Constants.ApplicationCommandOptionTypes.BOOLEAN
-			}
-		]
+		description: 'Shows the Leaderboard'
 	};
 }
 

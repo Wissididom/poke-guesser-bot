@@ -2,7 +2,7 @@ const { Constants } = require('discord.js');
 const Discord = require("discord.js");
 const util = require("./util");
 
-function newChampionship(interaction) {
+function championship(interaction) {
 	// TODO: Renew the championship
 }
 
@@ -22,5 +22,5 @@ function getRegisterObject() {
 }
 
 // Exports each function separately
-module.exports.newChampionship = newChampionship;
+module.exports.championship = championship;
 module.exports.getRegisterObject = getRegisterObject;

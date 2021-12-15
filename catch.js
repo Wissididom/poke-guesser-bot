@@ -2,7 +2,7 @@ const { Constants } = require('discord.js');
 const util = require('./util.js');
 
 function _catch(interaction) {
-	const type = interaction.options.getString('type');
+	//const type = interaction.options.getString('type');
 	let title = '';
 	let description = '';
 	// returnEmbed(title, message, image=null)
@@ -28,4 +28,4 @@ function getRegisterObject() {
 }
 
 module.exports._catch = _catch;
-module.exports.getRegisterObject = getRegisterObject
+module.exports.getRegisterObject = getRegisterObject;

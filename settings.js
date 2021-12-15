@@ -2,7 +2,7 @@ const { Constants } = require('discord.js');
 const util = require('./util.js');
 
 function settings(interaction) {
-	const type = interaction.options.getString('type');
+	// const type = interaction.options.getString('type');
 	let title = '';
 	let description = '';
 	// returnEmbed(title, message, image=null)
@@ -139,6 +139,11 @@ function getRegisterObject() {
 						name: 'show',
 						description: 'Shows the current channels in which the bot responds',
 						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+					},
+					{
+						name: 'help',
+						description: 'Shows help for mod settings',
+						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
 					}
 				]
 			},
@@ -162,4 +167,4 @@ function getRegisterObject() {
 }
 
 module.exports.settings = settings;
-module.exports.getRegisterObject = getRegisterObject
+module.exports.getRegisterObject = getRegisterObject;

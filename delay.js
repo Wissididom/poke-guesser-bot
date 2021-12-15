@@ -2,6 +2,17 @@ const { Constants } = require('discord.js');
 const Discord = require("discord.js");
 const util = require("./util");
 
+
+function delay(interaction) {
+	//const type = interaction.options.getString('type');
+	let title = '';
+	let description = '';
+	// returnEmbed(title, message, image=null)
+	interaction.reply({
+		embeds: [util.returnEmbed(title, description)],
+		ephemeral: true
+	});
+}
 function setDelay(user, days = 0, hours = 0, minutes = 0, seconds = 0) {
 	// TODO: Execute Mod Actions
 }
@@ -34,7 +45,7 @@ function getRegisterObject() {
 					{
 						name: 'delay',
 						description: 'The time you want to set the delay to',
-						required: false,
+						required: true,
 						type: Constants.ApplicationCommandOptionTypes.STRING
 					}
 				]
@@ -70,6 +81,7 @@ function getRegisterObject() {
 }
 
 // Exports each function separately
+module.exports.delay = delay;
 module.exports.setDelay = setDelay;
 module.exports.unsetDelay = unsetDelay;
 module.exports.showDelay = showDelay;
