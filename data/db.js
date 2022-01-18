@@ -1,14 +1,5 @@
-const { Client } = require('pg');
 const implementation = require('./postgres.js');
 // Discord-IDs are 18 chars atm (2021) but will increase in the future
-
-const config = {
-	host: "localhost",
-	user: "nodejs",
-	password: "nodejs",
-	port: 5432,
-	database: "postgres"
-}
 
 function getDbImplementation() {
 	return implementation;
