@@ -1,52 +1,54 @@
 const { Constants } = require('discord.js');
 const util = require('./util.js');
+const language = require('./language.js');
 
-function help(interaction) {
+async function help(interaction, data) {
+	const lang = await language.getLanguage(interaction.guildId, data);
 	const type = interaction.options.getString('type');
 	let title = '';
 	let description = '';
 	switch (type) {
 		case 'admin':
-			title = 'Admin Help';
+			title = lang.obj['help_admin_title'];
 			description = `
-			  \`/settings admins add <role or user>\` - Adds a role or user to the collection of bot admins for this server
-			  \`/settings admins remove <role or user>\` - Removes a role or user from the collection of bot admins for this server
-			  \`/settings admins show\` - Shows the current bot admins for this server
-			  \`/settings admins help\` - Shows Help for the subcommands below /settings admins
-			  \`/settings mods add <role or user>\` - Adds a role or user to the collection of bot mods for this server
-			  \`/settings mods remove <role or user>\` - Removes a role or user from the collection of bot mods for this server
-			  \`/settings mods show\` - Shows the current bot mods for this server
-			  \`/settings mods help\` - Shows Help for the subcommands below /settings mods
-			  \`/settings channels add <channel>\` - Adds a channel to the collection of channels of this server in which the bot responds
-			  \`/settings channels remove <channel>\` - Removes a channel from the collection of channels of this server in which the bot responds
-			  \`/settings channels show\` - Shows the currently set channels of this server in which the bot responds
-			  \`/settings channels help\` - Shows Help for the subcommands below /settings channels
-			  \`/settings show\` - Shows the current settings of this server (admins, mods and channels in which the bot responds)
-			  \`/settings reset\` - Resets the current settings of this server (admins, mods and channels in which the bot responds)
-			  \`/settings help\` - Shows Help for the subcommands below /settings`;
+			  \`/settings admins add <role or user>\` - ${lang.obj['help_settings_admins_add']}
+			  \`/settings admins remove <role or user>\` - ${lang.obj['help_settings_admins_remove']}
+			  \`/settings admins show\` - ${lang.obj['help_settings_admins_show']}
+			  \`/settings admins help\` - ${lang.obj['help_settings_admins_help']}
+			  \`/settings mods add <role or user>\` - ${lang.obj['help_settings_mods_add']}
+			  \`/settings mods remove <role or user>\` - ${lang.obj['help_settings_mods_remove']}
+			  \`/settings mods show\` - ${lang.obj['help_settings_mods_show']}
+			  \`/settings mods help\` - ${lang.obj['help_settings_mods_help']}
+			  \`/settings channels add <channel>\` - ${lang.obj['help_settings_channels_add']}
+			  \`/settings channels remove <channel>\` - ${lang.obj['help_settings_channels_remove']}
+			  \`/settings channels show\` - ${lang.obj['help_settings_channels_show']}
+			  \`/settings channels help\` - ${lang.obj['help_settings_channels_help']}
+			  \`/settings show\` - ${lang.obj['help_settings_show']}
+			  \`/settings reset\` - ${lang.obj['help_settings_reset']}
+			  \`/settings help\` - ${lang.obj['help_settings_help']}`;
 			break;
 		case 'mod':
-			title = 'Mod Help';
+			title = lang.obj['help_mod_title'];
 			description = `
-			  \`/explore\` - Generates a new pokemon
-			  \`/reveal\` - Reveals the current pokemon
-			  \`/mod score add <user> [<score>]\` - Adds a score to a user
-			  \`/mod score remove <user> [<score>]\` - Removes a score from a user
-			  \`/mod score set <user> [<score>]\` - Sets the score of a user
-			  \`/mod delay set <user> <delay>\` - Sets a users delay
-			  \`/mod delay unset <user>\` - Unsets a users delay
-			  \`/mod delay show <user>\` - Shows a users delay
-			  \`/mod timeout set <user> <timeout>\` - Sets a users timeout
-			  \`/mod timeout unset <user>\` - Unsets a users timeout
-			  \`/mod timeout show <user>\` - Shows a users timeout
-			  \`/mod championship new\` - Outputs the leaderboard one last time, reveals winner and clears the leaderboard`;
+			  \`/explore\` - ${lang.obj['help_explore']}
+			  \`/reveal\` - ${lang.obj['help_reveal']}
+			  \`/mod score add <user> [<score>]\` - ${lang.obj['help_mod_score_add']}
+			  \`/mod score remove <user> [<score>]\` - ${lang.obj['help_mod_score_remove']}
+			  \`/mod score set <user> [<score>]\` - ${lang.obj['help_mod_score_set']}
+			  \`/mod delay set <user> <delay>\` - ${lang.obj['help_mod_delay_set']}
+			  \`/mod delay unset <user>\` - ${lang.obj['help_mod_delay_unset']}
+			  \`/mod delay show <user>\` - ${lang.obj['help_mod_delay_show']}
+			  \`/mod timeout set <user> <timeout>\` - ${lang.obj['help_mod_timeout_set']}
+			  \`/mod timeout unset <user>\` - ${lang.obj['help_mod_timeout_unset']}
+			  \`/mod timeout show <user>\` - ${lang.obj['help_mod_timeout_show']}
+			  \`/mod championship new\` - ${lang.obj['help_mod_championship_new']}`;
 			break;
 		case 'player':
-			title = 'Player Help';
+			title = lang.obj['help_player_title'];
 			description = `
-			  \`/catch <pokemon>\` - Catch a previously generated pokemon
-			  \`/leaderboard\` - Shows the Leaderboard
-			  \`/score show [<user>]\` - Shows the score (and position) of someone or yourself`;
+			  \`/catch <pokemon>\` - ${lang.obj['help_catch']}
+			  \`/leaderboard\` - ${lang.obj['help_leaderboard']}
+			  \`/score show [<user>]\` - ${lang.obj['help_score_show']}`;
 			break;
 	}
 	// returnEmbed(title, message, image=null)
