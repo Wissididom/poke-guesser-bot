@@ -64,6 +64,11 @@ function findUser(client, id) {
   });
 }
 
+// Checks if the User is the Server Owner or has the Administrator Permission
+function isAdmin(dcMemberObj) {
+	return dcMemberObj.id == dcMemberObj.guild.ownerId || dcMemberObj.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
+}
+
 module.exports.checkDatabase = checkDatabase;
 module.exports.returnEmbed = returnEmbed;
 module.exports.capitalize = capitalize;

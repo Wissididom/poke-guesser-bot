@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const { Client, Intents } = require('discord.js');
 const Commands = require('./commands.js');
+const db = require('./data/db.js');
 
 /*
 OBJECTS, TOKENS, GLOBAL VARIABLES
@@ -30,7 +31,7 @@ client.on("interactionCreate", interaction => {
 	if (interaction.isCommand()) {
 		switch (interaction.commandName) {
 			case 'help':
-				Commands.help(interaction);
+				Commands.help(interaction, db);
 				break;
 			case 'settings':
 				Commands.settings(interaction);
