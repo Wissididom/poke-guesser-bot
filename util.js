@@ -19,7 +19,7 @@ function instantiateDatabase() {
 }
 
 // Wraps reply in poke-guesser themed embed
-function returnEmbed(title, message, image=null) {
+function returnEmbed(title, message, color=0x00AE86, image=null) {
 	// Creates new embedded message
 	let embed = new Discord.MessageEmbed()
 		.setTitle(title)  // Adds title
@@ -65,8 +65,16 @@ function findUser(client, id) {
 }
 
 // Checks if the User is the Server Owner or has the Administrator Permission
-function isAdmin(dcMemberObj) {
-	return dcMemberObj.id == dcMemberObj.guild.ownerId || dcMemberObj.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
+function isAdmin(member) {
+	return member.id == member.guild.ownerId || member.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
+}
+
+function isUser(mentionable) {
+	return mentionable.hoist == undefined;
+}
+
+function isRole(mentionable) {
+	return !isUser(mentionable);
 }
 
 module.exports.checkDatabase = checkDatabase;
@@ -74,3 +82,6 @@ module.exports.returnEmbed = returnEmbed;
 module.exports.capitalize = capitalize;
 module.exports.findMember = findMember;
 module.exports.findUser = findUser;
+module.exports.isAdmin = isAdmin;
+module.exports.isUser = isUser;
+module.exports.isRole = isRole;
