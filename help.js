@@ -2,8 +2,9 @@ const { Constants } = require('discord.js');
 const util = require('./util.js');
 const language = require('./language.js');
 
-async function help(interaction, data) {
-	const lang = await language.getLanguage(interaction.guildId, data);
+async function help(interaction, db) {
+	await interaction.deferReply({ephemeral: true});
+	const lang = await language.getLanguage(interaction.guildId, db);
 	const type = interaction.options.getString('type');
 	let title = '';
 	let description = '';
@@ -11,10 +12,6 @@ async function help(interaction, data) {
 		case 'admin':
 			title = lang.obj['help_admin_title'];
 			description = `
-			  \`/settings admins add <role or user>\` - ${lang.obj['help_settings_admins_add']}
-			  \`/settings admins remove <role or user>\` - ${lang.obj['help_settings_admins_remove']}
-			  \`/settings admins show\` - ${lang.obj['help_settings_admins_show']}
-			  \`/settings admins help\` - ${lang.obj['help_settings_admins_help']}
 			  \`/settings mods add <role or user>\` - ${lang.obj['help_settings_mods_add']}
 			  \`/settings mods remove <role or user>\` - ${lang.obj['help_settings_mods_remove']}
 			  \`/settings mods show\` - ${lang.obj['help_settings_mods_show']}
@@ -52,7 +49,7 @@ async function help(interaction, data) {
 			break;
 	}
 	// returnEmbed(title, message, image=null)
-	interaction.reply({
+	interaction.editReply({
 		embeds: [util.returnEmbed(title, description)],
 		ephemeral: true
 	});
