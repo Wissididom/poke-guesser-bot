@@ -171,6 +171,10 @@ function getLanguageObject(language = 'en_US') {
 	return require(`./languages/${language}.json`);
 }
 
+async function getScore(serverId, userId) {
+	return await client.query('SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY score) AS position, score, userId FROM score WHERE serverId = $1) AS allOfServer WHERE userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows[0]);
+}
+
 async function disconnect() {
 	await client.end();
 }
@@ -194,4 +198,5 @@ module.exports.unsetLanguage = unsetLanguage;
 module.exports.getLanguageCode = getLanguageCode;
 module.exports.getLanguages = getLanguages;
 module.exports.getLanguageObject = getLanguageObject;
+module.exports.getScore = getScore;
 module.exports.disconnect = disconnect;

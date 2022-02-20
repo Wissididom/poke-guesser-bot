@@ -1,5 +1,5 @@
 const { Constants } = require('discord.js');
-const language = require('./language.js')
+const language = require('./language.js');
 const util = require('./util.js');
 
 async function settings(interaction, db) {
