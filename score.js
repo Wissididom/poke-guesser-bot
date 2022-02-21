@@ -1,19 +1,31 @@
 const { Constants } = require('discord.js');
-const Discord = require("discord.js");
+const language = require('./language.js');
 const util = require("./util");
-const leaderboardJS = require('./leaderboard.js');
 
 // Shows User Position and Score
-function score(interaction) {
-	// leaderboardJS.position(user);
-	// leaderboardJS.score(user);
-	//const type = interaction.options.getString('type');
+async function score(interaction, db) {
+	await interaction.deferReply(); // PokeBot is thinking
+	const lang = await language.getLanguage(interaction.guildId, db);
 	let title = '';
 	let description = '';
+	const subcommand = interaction.options.getSubcommand();
+	switch (subcommand) {
+		case 'show': // /score show
+			let user = interaction.options.getUser('user', false);
+			let userScore = null;
+			if (!user)
+				user = interaction.user;
+			userScore = await db.getScore(interaction.guildId, user.id);
+			title = user.tag;
+			if (userScore)
+				description = `**User**: <@!${user.id}>\n**Position**: ${userScore.position}\n**Score:**: ${userScore.score}`;
+			else
+				description = `**User**: <@!${user.id}>\n**Position**: N/A\n**Score:**: N/A`;
+			break;
+	}
 	// returnEmbed(title, message, image=null)
-	interaction.reply({
-		embeds: [util.returnEmbed(title, description)],
-		ephemeral: true
+	interaction.editReply({
+		embeds: [util.returnEmbed(title, description)]
 	});
 }
 
@@ -30,7 +42,7 @@ function getRegisterObject() {
 					{
 						name: 'user',
 						description: 'The user whose score you want to know',
-						required: true,
+						required: false,
 						type: Constants.ApplicationCommandOptionTypes.USER
 					}
 				]
