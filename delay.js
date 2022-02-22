@@ -1,26 +1,60 @@
 const { Constants } = require('discord.js');
-const Discord = require("discord.js");
 const util = require("./util");
 
 
-async function delay(interaction, subcommand, db) {
-	let title = '';
-	let description = '';
-	// returnEmbed(title, message, image=null)
-	return {
-		title: title,
-		description: description
+async function delay(interaction, subcommand, lang, db) {
+	let response = {
+		title: '',
+		description: ''
 	};
+	switch (subcommand) {
+		case 'set':
+			try {
+				let d = interaction.options.getInteger('days', false) || 0;
+				let h = interaction.options.getInteger('hours', false) || 0;
+				let m = interaction.options.getInteger('minutes', false) || 0;
+				let s = interaction.options.getInteger('seconds', false) || 0;
+				await setDelay(interaction.guildId, interaction.options.getUser('user'), d, h, m, s);
+				response.title = lang.obj['mod_delay_set_title_success'];
+				response.description = lang.obj['mod_delay_set_description_success'];
+			} catch (err) {
+				response.title = lang.obj['mod_delay_set_title_failed'];
+				response.description = `${lang.obj['mod_delay_set_description_failed']}${err}`;
+			}
+			break;
+		case 'unset':
+			try {
+				await unsetDelay(interaction.guildId, interaction.options.getUser('user'));
+				response.title = lang.obj['mod_delay_unset_title_success'];
+				response.description = lang.obj['mod_delay_unset_description_success'];
+			} catch (err) {
+				response.title = lang.obj['mod_delay_unset_title_failed'];
+				response.description = `${lang.obj['mod_delay_unset_description_failed']}${err}`;
+			}
+			break;
+		case 'show':
+			try {
+				await showDelay(interaction.guildId, interaction.options.getUser('user'));
+				response.title = lang.obj['mod_delay_show_title_success'];
+				response.description = lang.obj['mod_delay_show_description_success'];
+			} catch (err) {
+				response.title = lang.obj['mod_delay_show_title_failed'];
+				response.description = `${lang.obj['mod_delay_show_description_failed']}${err}`;
+			}
+			break;
+	}
+	// returnEmbed(title, message, image=null)
+	return response;
 }
-function setDelay(user, days = 0, hours = 0, minutes = 0, seconds = 0) {
+async function setDelay(serverId, userId, days = 0, hours = 0, minutes = 0, seconds = 0) {
 	// TODO: Execute Mod Actions
 }
 
-function unsetDelay(user) {
+async function unsetDelay(serverId, userId) {
 	// TODO: Execute Mod Actions
 }
 
-function showDelay(user) {
+async function showDelay(serverId, userId) {
 	// TODO: Execute Mod Actions
 }
 
@@ -39,13 +73,31 @@ function getRegisterObject() {
 						name: 'user',
 						description: 'The user whose delay you want to set',
 						required: true,
-						type: Constants.ApplicationCommandOptionTypes.USER
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
 					},
 					{
-						name: 'delay',
+						name: 'days',
 						description: 'The time you want to set the delay to',
-						required: true,
-						type: Constants.ApplicationCommandOptionTypes.STRING
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
+					},
+					{
+						name: 'hours',
+						description: 'The time you want to set the delay to',
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
+					},
+					{
+						name: 'minutes',
+						description: 'The time you want to set the delay to',
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
+					},
+					{
+						name: 'seconds',
+						description: 'The time you want to set the delay to',
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
 					}
 				]
 			},
@@ -81,7 +133,4 @@ function getRegisterObject() {
 
 // Exports each function separately
 module.exports.delay = delay;
-module.exports.setDelay = setDelay;
-module.exports.unsetDelay = unsetDelay;
-module.exports.showDelay = showDelay;
 module.exports.getRegisterObject = getRegisterObject;

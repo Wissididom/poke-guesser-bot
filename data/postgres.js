@@ -30,6 +30,8 @@ async function prepareDb() {
 	result.push(await client.query('CREATE TABLE IF NOT EXISTS pokemon (pokemonId INT, userId VARCHAR(30), quantity INT);'));
 	result.push(await client.query('CREATE TABLE IF NOT EXISTS pokemonMap (pokemonId INT, pokemonName VARCHAR(100), languageName VARCHAR(100));'));
 	result.push(await client.query('CREATE TABLE IF NOT EXISTS language (serverId VARCHAR(30), languageCode VARCHAR(5));'));
+	// result.push(await client.query('CREATE TABLE IF NOT EXISTS delays (serverId VARCHAR(30), userId VARCHAR(30));')); TODO Include Time
+	// result.push(await client.query('CREATE TABLE IF NOT EXISTS timeouts (serverId VARCHAR(30), userId VARCHAR(30));')); TODO Include Time
 	return result;
 }
 

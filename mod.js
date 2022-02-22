@@ -85,16 +85,28 @@ async function mod(interaction, db) {
 			}
 			break;
 		case 'delay': // /mod delay ?
-			if (isMod)
-				response = delayJS.delay(interaction, subcommand, db);
+			if (isMod) {
+				response = delayJS.delay(interaction, subcommand, lang, db);
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
 			break;
 		case 'timeout': // /mod timeout ?
-			if (isMod)
-				response = timeoutJS.timeout(interaction, subcommand, db);
+			if (isMod) {
+				response = timeoutJS.timeout(interaction, subcommand, lang, db);
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
 			break;
 		case 'championship': // /mod championship ?
-			if (isMod)
-				response = championshipJS.championship(interaction, subcommand, db);
+			if (isMod) {
+				response = championshipJS.championship(interaction, subcommand, lang, db);
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
 			break;
 	}
 	// returnEmbed(title, message, image=null)
