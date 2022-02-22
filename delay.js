@@ -73,7 +73,7 @@ function getRegisterObject() {
 						name: 'user',
 						description: 'The user whose delay you want to set',
 						required: true,
-						type: Constants.ApplicationCommandOptionTypes.INTEGER
+						type: Constants.ApplicationCommandOptionTypes.USER
 					},
 					{
 						name: 'days',
