@@ -1,27 +1,60 @@
 const { Constants } = require('discord.js');
-const Discord = require("discord.js");
 const util = require("./util");
 
-function timeout(interaction) {
-	//const type = interaction.options.getString('type');
-	let title = '';
-	let description = '';
+async function timeout(interaction, subcommand, lang, db) {
+	let response = {
+		title: '',
+		description: ''
+	};
+	switch (subcommand) {
+		case 'set':
+			try {
+				let d = interaction.options.getInteger('days', false) || 0;
+				let h = interaction.options.getInteger('hours', false) || 0;
+				let m = interaction.options.getInteger('minutes', false) || 0;
+				let s = interaction.options.getInteger('seconds', false) || 0;
+				await setTimeout(interaction.guildId, interaction.options.getUser('user').id, d, h, m, s);
+				response.title = lang.obj['mod_timeout_set_title_success'];
+				response.description = lang.obj['mod_timeout_set_description_success'];
+			} catch (err) {
+				response.title = lang.obj['mod_timeout_set_title_failed'];
+				response.description = `${lang.obj['mod_timeout_set_description_failed']}${err}`;
+			}
+			break;
+		case 'unset':
+			try {
+				await unsetTimeout(interaction.guildId, interaction.options.getUser('user').id);
+				response.title = lang.obj['mod_timeout_unset_title_success'];
+				response.description = lang.obj['mod_timeout_unset_description_success'];
+			} catch (err) {
+				response.title = lang.obj['mod_timeout_unset_title_failed'];
+				response.description = `${lang.obj['mod_timeout_unset_description_failed']}${err}`;
+			}
+			break;
+		case 'show':
+			try {
+				await showTimeout(interaction.guildId, interaction.options.getUser('user').id);
+				response.title = lang.obj['mod_timeout_show_title_success'];
+				response.description = lang.obj['mod_timeout_show_description_success'];
+			} catch (err) {
+				response.title = lang.obj['mod_timeout_show_title_failed'];
+				response.description = `${lang.obj['mod_timeout_show_description_failed']}${err}`;
+			}
+			break;
+	}
 	// returnEmbed(title, message, image=null)
-	interaction.reply({
-		embeds: [util.returnEmbed(title, description)],
-		ephemeral: true
-	});
+	return response;
 }
 
-function setTimeout(user, days = 0, hours = 0, minutes = 0, seconds = 0) {
+function setTimeout(serverId, userId, days = 0, hours = 0, minutes = 0, seconds = 0) {
 	// TODO: Execute Mod Actions
 }
 
-function unsetTimeout(user) {
+function unsetTimeout(serverId, userId) {
 	// TODO: Execute Mod Actions
 }
 
-function showTimeout(user) {
+function showTimeout(serverId, userId) {
 	// TODO: Execute Mod Actions
 }
 
@@ -43,10 +76,28 @@ function getRegisterObject() {
 						type: Constants.ApplicationCommandOptionTypes.USER
 					},
 					{
-						name: 'timeout',
+						name: 'days',
 						description: 'The time you want to set the timeout to',
-						required: true,
-						type: Constants.ApplicationCommandOptionTypes.STRING
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
+					},
+					{
+						name: 'hours',
+						description: 'The time you want to set the timeout to',
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
+					},
+					{
+						name: 'minutes',
+						description: 'The time you want to set the timeout to',
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
+					},
+					{
+						name: 'seconds',
+						description: 'The time you want to set the timeout to',
+						required: false,
+						type: Constants.ApplicationCommandOptionTypes.INTEGER
 					}
 				]
 			},
@@ -82,7 +133,4 @@ function getRegisterObject() {
 
 // Exports each function separately
 module.exports.timeout = timeout;
-module.exports.setTimeout = setTimeout;
-module.exports.unsetTimeout = unsetTimeout;
-module.exports.showTimeout = showTimeout;
 module.exports.getRegisterObject = getRegisterObject;

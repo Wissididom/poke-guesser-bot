@@ -1,19 +1,117 @@
 const { Constants } = require('discord.js');
-const Discord = require("discord.js");
+const language = require('./language.js');
 const util = require("./util");
-const leaderboardJS = require('./leaderboard.js');
 const delayJS = require('./delay.js');
 const timeoutJS = require('./timeout.js');
 const championshipJS = require('./championship.js');
 
-function mod(interaction) {
-	// TODO: Execute Mod Actions
-	//const type = interaction.options.getString('type');
-	let title = '';
-	let description = '';
+async function mod(interaction, db) {
+	await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
+	const lang = await language.getLanguage(interaction.guildId, db);
+	const subcommandgroup = interaction.options.getSubcommandGroup();
+	const subcommand = interaction.options.getSubcommand();
+	let isMod = false;
+	if (await db.isMod(interaction.member)) {
+		isMod = true;
+	} else {
+		interaction.member.roles.cache.each(async role => {
+			if (!isMod && (await db.isMod(role)))
+				isMod = true;
+		});
+	}
+	let response = {
+		title: '',
+		description: ''
+	};
+	switch (subcommandgroup) {
+		case 'score': // /mod score ?
+			if (isMod) {
+				switch (subcommand) {
+					case 'add':
+						try {
+							let score = interaction.options.getInteger('score', false);
+							if (score) {
+								await db.addScore(interaction.guildId, interaction.options.getUser('user').id, score);
+							} else {
+								let user = interaction.options.getUser('user');
+								let dbScore = await db.getScore(interaction.guildId, user.id);
+								if (!dbScore)
+									await db.setScore(interaction.guildId, user.id, 0);
+							}
+							response.title = lang.obj['mod_score_add_title_success'];
+							response.description = lang.obj['mod_score_add_description_success'];
+						} catch (err) {
+							response.title = lang.obj['mod_score_add_title_failed'];
+							response.description = `${lang.obj['mod_score_add_description_failed']}${err}`;
+						}
+						break;
+					case 'remove':
+						try {
+							let score = interaction.options.getInteger('score', false);
+							if (score) {
+								await db.removeScore(interaction.guildId, interaction.options.getUser('user').id, score);
+							} else {
+								await db.unsetScore(interaction.guildId, interaction.options.getUser('user').id);
+							}
+							response.title = lang.obj['mod_score_remove_title_success'];
+							response.description = lang.obj['mod_score_remove_description_success'];
+						} catch (err) {
+							response.title = lang.obj['mod_score_remove_title_failed'];
+							response.description = `${lang.obj['mod_score_remove_description_failed']}${err}`;
+						}
+						break;
+					case 'set':
+						try {
+							let score = interaction.options.getInteger('score', false);
+							if (score) {
+								await db.setScore(interaction.guildId, interaction.options.getUser('user').id, score);
+							} else {
+								let user = interaction.options.getUser('user');
+								let dbScore = await db.getScore(interaction.guildId, user.id);
+								if (!dbScore)
+									await db.setScore(interaction.guildId, user.id, 0);
+							}
+							response.title = lang.obj['mod_score_set_title_success'];
+							response.description = lang.obj['mod_score_set_description_success'];
+						} catch (err) {
+							response.title = lang.obj['mod_score_set_title_failed'];
+							response.description = `${lang.obj['mod_score_set_description_failed']}${err}`;
+						}
+						break;
+				}
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
+			break;
+		case 'delay': // /mod delay ?
+			if (isMod) {
+				response = delayJS.delay(interaction, subcommand, lang, db);
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
+			break;
+		case 'timeout': // /mod timeout ?
+			if (isMod) {
+				response = timeoutJS.timeout(interaction, subcommand, lang, db);
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
+			break;
+		case 'championship': // /mod championship ?
+			if (isMod) {
+				response = championshipJS.championship(interaction, subcommand, lang, db);
+			} else {
+				response.title = lang.obj['mod_no_mod_title'];
+				response.description = lang.obj['mod_no_mod_description'];
+			}
+			break;
+	}
 	// returnEmbed(title, message, image=null)
-	interaction.reply({
-		embeds: [util.returnEmbed(title, description)],
+	interaction.editReply({
+		embeds: [util.returnEmbed(response.title, response.description)],
 		ephemeral: true
 	});
 }
@@ -95,3 +193,4 @@ function getRegisterObject() {
 // Exports each function separately
 module.exports.mod = mod;
 module.exports.getRegisterObject = getRegisterObject;
+// console.log(JSON.stringify(getRegisterObject(), null, 4));
