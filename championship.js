@@ -2,8 +2,14 @@ const { Constants } = require('discord.js');
 const Discord = require("discord.js");
 const util = require("./util");
 
-function championship(interaction) {
-	// TODO: Renew the championship
+function championship(interaction, subcommand, db) {
+	let title = '';
+	let description = '';
+	// returnEmbed(title, message, image=null)
+	return {
+		title: title,
+		description: description
+	};
 }
 
 function getRegisterObject() {

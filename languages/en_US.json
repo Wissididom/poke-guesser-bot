@@ -82,5 +82,21 @@
 	"settings_language_show": "Shows the preferred language for the current server",
 	"settings_help": "Settings Help",
 	"settings_reset": "Reset all Settings",
-	"settings_show": "Shows all currently set values"
+	"settings_show": "Shows all currently set values",
+	"mod_score_add_lower_than_1": "You cannot add negative values to a score",
+	"mod_score_unset_not_set": "You cannot unset the score, because it's not set",
+	"mod_no_mod_title": "No Mod!",
+	"mod_no_mod_description": "You need to be specified as a Mod to execute that command!",
+	"mod_score_add_title_success": "Score Added!",
+	"mod_score_add_description_success": "Score added successfully!",
+	"mod_score_add_title_failed": "Adding Score failed!",
+	"mod_score_add_description_failed": "Adding Score failed due to: ",
+	"mod_score_remove_title_success": "Score Removed!",
+	"mod_score_remove_description_success": "Score removed successfully!",
+	"mod_score_remove_title_failed": "Removing Score failed!",
+	"mod_score_remove_description_failed": "Removing Score failed due to: ",
+	"mod_score_set_title_success": "Score Set!",
+	"mod_score_set_description_success": "Score set successfully!",
+	"mod_score_set_title_failed": "Setting Score failed!",
+	"mod_score_set_description_failed": "Setting Score failed due to: "
 }

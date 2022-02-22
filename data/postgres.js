@@ -175,11 +175,61 @@ async function getScore(serverId, userId) {
 	return await client.query('SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY score) AS position, score, userId FROM score WHERE serverId = $1) AS allOfServer WHERE userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows[0]);
 }
 
+async function setScore(serverId, userId, score) {
+	const found = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2;', [serverId, userId]).then(res => res.rows).then(rows => rows.length > 0);
+	if (found)
+		return await client.query('UPDATE score SET score = $3 WHERE serverId = $1 AND userId = $2;', [serverId, userId, score]);
+	else
+		return await client.query('INSERT INTO score (serverId, userId, score) VALUES ($1, $2, $3);', [serverId, userId, score]);
+}
+
+async function addScore(serverId, userId, score) {
+	const lang = await language.getLanguage(serverId, {
+		getLanguageCode
+	});
+	const current = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows);
+	if (current.length > 0) {
+		if (score > 0)
+			return await client.query('UPDATE score SET score = $3 WHERE serverId = $1 AND userId = $2;', [serverId, userId, current[0].score + score]);
+		else
+			throw lang.obj['mod_score_add_lower_than_1'];
+	} else {
+		if (score > 0)
+			return await client.query('INSERT INTO score (serverId, userId, score) VALUES ($1, $2, $3);', [serverId, userId, score]);
+		else
+			throw lang.obj['mod_score_add_lower_than_1'];
+	}
+}
+
+async function removeScore(serverId, userId, score) {
+	const lang = await language.getLanguage(serverId, {
+		getLanguageCode
+	});
+	const current = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows);
+	if (current.length > 0) {
+		if (score > 0 && current[0].score - score >= 0)
+			return await client.query('UPDATE score SET score = $3 WHERE serverId = $1 AND userId = $2;', [serverId, userId, current[0].score - score]);
+		else
+			return unsetScore(serverId, userId);
+	} else {
+		return unsetScore(serverId, userId);
+	}
+}
+
+async function unsetScore(serverId, userId) {
+	const lang = await language.getLanguage(serverId, {
+		getLanguageCode
+	});
+	const found = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows).then(rows => rows.length > 0);
+	if (found)
+		return await client.query('DELETE FROM score WHERE serverId = $1 AND userId = $2;', [serverId, userId]);
+	else
+		throw lang.obj['mod_score_unset_not_set'];
+}
+
 async function disconnect() {
 	await client.end();
 }
-
-//result.push(await client.query('CREATE TABLE IF NOT EXISTS language (serverId VARCHAR(30), languageCode VARCHAR(5));'));
 
 module.exports.connect = connect;
 module.exports.prepareDb = prepareDb;
@@ -199,4 +249,8 @@ module.exports.getLanguageCode = getLanguageCode;
 module.exports.getLanguages = getLanguages;
 module.exports.getLanguageObject = getLanguageObject;
 module.exports.getScore = getScore;
+module.exports.setScore = setScore;
+module.exports.addScore = addScore;
+module.exports.removeScore = removeScore;
+module.exports.unsetScore = unsetScore;
 module.exports.disconnect = disconnect;

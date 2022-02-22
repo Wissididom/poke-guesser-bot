@@ -2,15 +2,14 @@ const { Constants } = require('discord.js');
 const Discord = require("discord.js");
 const util = require("./util");
 
-function timeout(interaction) {
-	//const type = interaction.options.getString('type');
+async function timeout(interaction, subcommand, db) {
 	let title = '';
 	let description = '';
 	// returnEmbed(title, message, image=null)
-	interaction.reply({
-		embeds: [util.returnEmbed(title, description)],
-		ephemeral: true
-	});
+	return {
+		title: title,
+		description: description
+	};
 }
 
 function setTimeout(user, days = 0, hours = 0, minutes = 0, seconds = 0) {

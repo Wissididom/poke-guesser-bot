@@ -3,15 +3,14 @@ const Discord = require("discord.js");
 const util = require("./util");
 
 
-function delay(interaction) {
-	//const type = interaction.options.getString('type');
+async function delay(interaction, subcommand, db) {
 	let title = '';
 	let description = '';
 	// returnEmbed(title, message, image=null)
-	interaction.reply({
-		embeds: [util.returnEmbed(title, description)],
-		ephemeral: true
-	});
+	return {
+		title: title,
+		description: description
+	};
 }
 function setDelay(user, days = 0, hours = 0, minutes = 0, seconds = 0) {
 	// TODO: Execute Mod Actions
