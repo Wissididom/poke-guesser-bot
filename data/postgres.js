@@ -7,10 +7,10 @@ const util = require('./../util.js');
 const config = {
 	idleTimeoutMillis: 10000,
 	host: process.env['POSTGRES_HOST'],
-	user: process.env['POSTGRES_USERNAME'],
+	user: process.env['POSTGRES_USER'],
 	password: process.env['POSTGRES_PASSWORD'],
 	port: parseInt(process.env['POSTGRES_PORT']),
-	database: process.env['POSTGRES_DATABASE']
+	database: process.env['POSTGRES_DB']
 }
 
 const client = new Client(config);

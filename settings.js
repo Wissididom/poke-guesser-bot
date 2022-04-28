@@ -129,12 +129,14 @@ async function settings(interaction, db) {
 			try {
 				await db.resetMods(interaction.guildId);
 				await db.resetChannels(interaction.guildId);
-				await db.unsetLanguage(interaction.guildId);
+				try {
+					await db.unsetLanguage(interaction.guildId);
+				} catch (e) {}
 				title = lang.obj['settings_reset_title_success'];
 				description = lang.obj['settings_reset_description_success'];
 			} catch (err) {
 				title = lang.obj['settings_reset_title_failed'];
-				description = lang.obj['settings_reset_description_failed'];
+				description = `${lang.obj['settings_reset_description_failed']}${err}`;
 			}
 			break;
 		case 'help': // /settings ? help
