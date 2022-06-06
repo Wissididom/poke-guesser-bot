@@ -1,38 +1,97 @@
-const { Client } = require('pg');
+// TODO Continue switching to Sequelize at getScore
+
+
+// const { Client } = require('pg');
+const { Sequelize, DataTypes } = require('sequelize');
 const fs = require('fs');
 const language = require('./../language.js');
 const util = require('./../util.js');
 // Discord-IDs are 18 chars atm (2021) but will increase in the future
 
-const config = {
-	idleTimeoutMillis: 10000,
-	host: process.env['POSTGRES_HOST'],
-	user: process.env['POSTGRES_USER'],
-	password: process.env['POSTGRES_PASSWORD'],
-	port: parseInt(process.env['POSTGRES_PORT']),
-	database: process.env['POSTGRES_DB']
+var db = null;
+
+if (process.env['DATABASE_URL']) {
+	db = new Sequelize(process.env['DATABASE_URL']);
+} else {
+	db = new Sequelize(process.env['POSTGRES_DB'], process.env['POSTGRES_USER'], process.env['POSTGRES_PASSWORD'], {
+		host: process.env['POSTGRES_HOST'],
+		port: parseInt(process.env['POSTGRES_PORT']),
+		dialect: 'postgres' // one of 'mysql' | 'mariadb' | 'postgres' | 'mssql'
+	});
 }
 
-const client = new Client(config);
+// Mods
+const Mod = db.define('mod', {
+	/*id: {
+		type: DataTypes.INTEGER,
+		autoIncrement: true,
+		primaryKey: true
+	},*/
+	serverId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	mentionableId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	isUser: {
+		type: DataTypes.BOOLEAN,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
+// Channels
+const Channel = db.define('channel', {
+	serverId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	channelId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
+// Language
+const Language = db.define('language', {
+	serverId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	languageCode: {
+		type: DataTypes.STRING,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
+// Score
+const Score = db.define('score', {
+	serverId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	userId: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	score: {
+		type: DataTypes.INTEGER,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
 
 async function connect() {
-	await client.connect();
+	return await db.authenticate();
 }
 
 async function prepareDb() {
-	let result = [];
-	// View tables: SELECT * FROM information_schema.tables
-	// Changing Database is not supported by PostgreSQL so the Database 'pokebot' needs to be existing before executing
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS mods (serverId VARCHAR(30), mentionableId VARCHAR(30), isUser BOOLEAN);'));
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS channels (serverId VARCHAR(30), channelId VARCHAR(30));'));
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS tempPokemon (tempPokemonId INT, pokemonId VARCHAR(100), serverId VARCHAR(30));'));
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS score (serverId VARCHAR(30), userId VARCHAR(30), score INT);'));
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS pokemon (pokemonId INT, userId VARCHAR(30), quantity INT);'));
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS pokemonMap (pokemonId INT, pokemonName VARCHAR(100), languageName VARCHAR(100));'));
-	result.push(await client.query('CREATE TABLE IF NOT EXISTS language (serverId VARCHAR(30), languageCode VARCHAR(5));'));
-	// result.push(await client.query('CREATE TABLE IF NOT EXISTS delays (serverId VARCHAR(30), userId VARCHAR(30));')); TODO Include Time
-	// result.push(await client.query('CREATE TABLE IF NOT EXISTS timeouts (serverId VARCHAR(30), userId VARCHAR(30));')); TODO Include Time
-	return result;
+	return await db.sync();
 }
 
 async function addMod(mentionable) {
@@ -43,7 +102,11 @@ async function addMod(mentionable) {
 	if (await isMod(mentionable))
 		throw util.isUser(mentionable) ? lang.obj['settings_mods_add_already_existing_user'].replace('{mentionable}', `<@!${mentionable.userId || mentionable.id}>`) : lang.obj['settings_mods_add_already_existing_role'].replace('{mentionable}', `<@&${mentionable.userId || mentionable.id}>`);
 	else
-		result.push(await client.query('INSERT INTO mods (serverId, mentionableId, isUser) VALUES ($1, $2, $3);', [mentionable.guild.id, mentionable.userId || mentionable.id, util.isUser(mentionable)]));
+		result.push(await Mod.create({
+			serverId: mentionable.guild.id,
+			mentionableId: mentionable.userId || mentionable.id,
+			isUser: util.isUser(mentionable)
+		}));
 	return result;
 }
 
@@ -55,21 +118,39 @@ async function removeMod(mentionable) {
 	if (!(await isMod(mentionable)))
 		throw util.isUser(mentionable) ? lang.obj['settings_mods_remove_not_existing_mod_user'].replace('{mentionable}', `<@!${mentionable.userId || mentionable.id}>`) : lang.obj['settings_mods_remove_not_existing_mod_role'].replace('{mentionable}', `<@&${mentionable.userId || mentionable.id}>`);
 	else
-		result.push(await client.query('DELETE FROM mods WHERE serverId = $1 AND mentionableId = $2;', [mentionable.guild.id, mentionable.userId || mentionable.id]));
+		result.push(await Mod.destroy({
+			where: {
+				serverId: mentionable.guild.id,
+				mentionableId: mentionable.userId || mentionable.id
+			}
+		}));
 	return result;
 }
 
 async function listMods(serverId) {
-	return await client.query('SELECT * FROM mods WHERE serverId = $1;', [serverId]).then(res => res.rows);
+	return await Mod.findAll({
+		where: {
+			serverId
+		}
+	});
 }
 
 async function isMod(mentionable) {
-	return await client.query('SELECT * FROM mods WHERE serverId = $1 AND mentionableId = $2;', [mentionable.guild.id, mentionable.userId || mentionable.id]).then(res => res.rows).then(rows => rows.length > 0);
+	return (await Mod.count({
+		where: {
+			serverId: mentionable.guild.id,
+			mentionableId: mentionable.userId || mentionable.id
+		}
+	})) > 0;
 }
 
 async function resetMods(serverId) {
 	let result = [];
-	result.push(await client.query('DELETE FROM mods WHERE serverId = $1;', [serverId]));
+	result.push(await Mod.destroy({
+		where: {
+			serverId
+		}
+	}));
 	return result;
 }
 
@@ -81,7 +162,10 @@ async function addChannel(channel) {
 	if (await isAllowedChannel(channel))
 		throw lang.obj['settings_channels_add_already_allowed'].replace('{channel}', `<#${channel.id}>`);
 	else
-		result.push(await client.query('INSERT INTO channels (serverId, channelId) VALUES ($1, $2);', [channel.guildId, channel.id]));
+		result.push(Channel.create({
+			serverId: channel.guildId,
+			channelId: channel.id
+		}));
 	return result;
 }
 
@@ -93,21 +177,47 @@ async function removeChannel(channel) {
 	if (!(await isAllowedChannel(channel)))
 		throw lang.obj['settings_channels_remove_not_allowed'].replace('{channel}', `<#${channel.id}>`);
 	else
-		result.push(await client.query('DELETE FROM channels WHERE serverId = $1 AND channelId = $2;', [channel.guildId, channel.id]));
+		result.push(await Channel.destroy({
+			where: {
+				serverId: channel.guildId,
+				channelId: channel.id
+			}
+		}))
 	return result;
 }
 
 async function listChannels(serverId) {
-	return await client.query('SELECT * FROM channels WHERE serverId = $1;', [serverId]).then(res => res.rows);
+	return await Channel.findAll({
+		where: {
+			serverId
+		}
+	})
 }
 
 async function isAllowedChannel(channel) {
-	return await client.query('SELECT * FROM channels WHERE serverId = $1 AND channelId = $2;', [channel.guildId, channel.id]).then(res => res.rows).then(rows => rows.length > 0);
+	return (await Channel.count({
+		where: {
+			serverId: channel.guildId,
+			channelId: channel.id
+		}
+	})) > 0;
+}
+
+async function isAnyAllowedChannel(serverId) {
+	return (await Channel.count({
+		where: {
+			serverId
+		}
+	})) > 0;
 }
 
 async function resetChannels(serverId) {
 	let result = [];
-	result.push(await client.query('DELETE FROM channels WHERE serverId = $1;', [serverId]));
+	result.push(await Channel.destroy({
+		where: {
+			serverId
+		}
+	}))
 	return result;
 }
 
@@ -119,9 +229,16 @@ async function setLanguage(serverId, languageCode) {
 	if (await isLanguageSet(serverId, languageCode))
 		throw lang.obj['settings_language_set_already_set'].replace('{language}', languageCode);
 	else if (await isAnyLanguageSet(serverId))
-		result.push(await client.query('UPDATE language SET languageCode = $2 WHERE serverId = $1', [serverId, languageCode]));
+		result.push(await Language.update({ languageCode }, {
+			where: {
+				serverId
+			}
+		}));
 	else
-		result.push(await client.query('INSERT INTO language (serverId, languageCode) VALUES ($1, $2);', [serverId, languageCode]));
+		result.push(Language.create({
+			serverId,
+			languageCode
+		}));
 	return result;
 }
 
@@ -131,27 +248,44 @@ async function unsetLanguage(serverId) {
 	});
 	let result = [];
 	if (await isAnyLanguageSet(serverId))
-		result.push(await client.query('DELETE FROM language WHERE serverId = $1', [serverId]));
+		result.push(await Language.destroy({
+			where: {
+				serverId
+			}
+		}));
 	else
 		throw lang.obj['settings_language_unset_not_set'];
 	return result;
 }
 
 async function isLanguageSet(serverId, languageCode) {
-	return await client.query('SELECT * FROM language WHERE serverId = $1 AND languageCode = $2;', [serverId, languageCode]).then(res => res.rows).then(rows => rows.length > 0);
+	return (await Language.findAll({
+		where: {
+			serverId,
+			languageCode
+		}
+	})).length > 0;
 }
 
 async function isAnyLanguageSet(serverId) {
-	return await client.query('SELECT * FROM language WHERE serverId = $1;', [serverId]).then(res => res.rows).then(rows => rows.length > 0);
+	return (await Language.findAll({
+		where: {
+			serverId
+		}
+	})).length > 0;
 }
 
 async function getLanguageCode(serverId) {
 	let result = [];
-	result = await client.query('SELECT * FROM language WHERE serverId = $1;', [serverId]).then(res => res.rows);
+	result = await Language.findAll({
+		where: {
+			serverId
+		}
+	});
 	if (result.length < 1)
 		result = 'en_US';
 	else
-		result = result[0].languagecode;
+		result = result[0].getDataValue('languageCode');
 	return result;
 }
 
@@ -174,30 +308,92 @@ function getLanguageObject(language = 'en_US') {
 }
 
 async function getScore(serverId, userId) {
-	return await client.query('SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY score) AS position, score, userId FROM score WHERE serverId = $1) AS allOfServer WHERE userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows[0]);
+	let scores = await Score.findAll({
+		where: {
+			serverId
+		},
+		order: [
+			[ 'score', 'DESC' ]
+		]
+	});
+	let position = 1;
+	for (let i = 0; i < scores.length; i++) {
+		if (scores[i].getDataValue('userId') == userId)
+			return {
+				position,
+				serverId,
+				userId,
+				score: scores[i].getDataValue('score')
+			}
+		position++;
+	}
+}
+
+async function getScores(serverId) {
+	return await Score.findAll({
+		where: {
+			serverId,
+			userId
+		},
+		order: [
+			[ 'score', 'DESC' ]
+		]
+	});
 }
 
 async function setScore(serverId, userId, score) {
-	const found = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2;', [serverId, userId]).then(res => res.rows).then(rows => rows.length > 0);
-	if (found)
-		return await client.query('UPDATE score SET score = $3 WHERE serverId = $1 AND userId = $2;', [serverId, userId, score]);
+	const found = await Score.count({
+		where: {
+			serverId,
+			userId
+		}
+	});
+	if (found > 0)
+		return await Score.update({
+			score
+		}, {
+			where: {
+				serverId,
+				userId
+			}
+		});
 	else
-		return await client.query('INSERT INTO score (serverId, userId, score) VALUES ($1, $2, $3);', [serverId, userId, score]);
+		return await Score.create({
+			serverId,
+			userId,
+			score
+		});
 }
 
 async function addScore(serverId, userId, score) {
 	const lang = await language.getLanguage(serverId, {
 		getLanguageCode
 	});
-	const current = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows);
-	if (current.length > 0) {
+	const current = await Score.findOne({
+		where: {
+			serverId,
+			userId
+		}
+	});
+	if (current) {
 		if (score > 0)
-			return await client.query('UPDATE score SET score = $3 WHERE serverId = $1 AND userId = $2;', [serverId, userId, current[0].score + score]);
+			return await Score.update({
+				score: current.getDataValue('score') + score
+			}, {
+				where: {
+					serverId,
+					userId
+				}
+			});
 		else
 			throw lang.obj['mod_score_add_lower_than_1'];
 	} else {
 		if (score > 0)
-			return await client.query('INSERT INTO score (serverId, userId, score) VALUES ($1, $2, $3);', [serverId, userId, score]);
+			return Score.create({
+				serverId,
+				userId,
+				score
+			});
 		else
 			throw lang.obj['mod_score_add_lower_than_1'];
 	}
@@ -207,10 +403,22 @@ async function removeScore(serverId, userId, score) {
 	const lang = await language.getLanguage(serverId, {
 		getLanguageCode
 	});
-	const current = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows);
-	if (current.length > 0) {
-		if (score > 0 && current[0].score - score >= 0)
-			return await client.query('UPDATE score SET score = $3 WHERE serverId = $1 AND userId = $2;', [serverId, userId, current[0].score - score]);
+	const current = await Score.findOne({
+		where: {
+			serverId,
+			userId
+		}
+	});
+	if (current) {
+		if (score > 0 && current.getDataValue('score') - score >= 0)
+			return await Score.update({
+				score: current.getDataValue('score') - score
+			}, {
+				where: {
+					serverId,
+					userId
+				}
+			});
 		else
 			return unsetScore(serverId, userId);
 	} else {
@@ -222,15 +430,25 @@ async function unsetScore(serverId, userId) {
 	const lang = await language.getLanguage(serverId, {
 		getLanguageCode
 	});
-	const found = await client.query('SELECT * FROM score WHERE serverId = $1 AND userId = $2 LIMIT 1;', [serverId, userId]).then(res => res.rows).then(rows => rows.length > 0);
-	if (found)
-		return await client.query('DELETE FROM score WHERE serverId = $1 AND userId = $2;', [serverId, userId]);
+	const found = await Score.count({
+		where: {
+			serverId,
+			userId
+		}
+	});
+	if (found > 0)
+		return Score.destroy({
+			where: {
+				serverId,
+				userId
+			}
+		});
 	else
 		throw lang.obj['mod_score_unset_not_set'];
 }
 
 async function disconnect() {
-	await client.end();
+	await db.close();
 }
 
 module.exports.connect = connect;
@@ -244,6 +462,7 @@ module.exports.addChannel = addChannel;
 module.exports.removeChannel = removeChannel;
 module.exports.listChannels = listChannels;
 module.exports.isAllowedChannel = isAllowedChannel;
+module.exports.isAnyAllowedChannel = isAnyAllowedChannel;
 module.exports.resetChannels = resetChannels;
 module.exports.setLanguage = setLanguage;
 module.exports.unsetLanguage = unsetLanguage;
@@ -251,6 +470,7 @@ module.exports.getLanguageCode = getLanguageCode;
 module.exports.getLanguages = getLanguages;
 module.exports.getLanguageObject = getLanguageObject;
 module.exports.getScore = getScore;
+module.exports.getScores = getScores;
 module.exports.setScore = setScore;
 module.exports.addScore = addScore;
 module.exports.removeScore = removeScore;
