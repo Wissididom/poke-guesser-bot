@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const { Client, Intents } = require('discord.js');
 const Commands = require('./commands.js');
+const util = require('./util.js');
 const db = require('./data/postgres.js');
 
 /*
@@ -29,33 +30,40 @@ client.on("ready", () => {
 	db.prepareDb();
 });
 
-client.on("interactionCreate", interaction => {
+client.on("interactionCreate", async interaction => {
 	if (interaction.isCommand()) {
-		switch (interaction.commandName) {
-			case 'help':
-				Commands.help(interaction, db);
-				break;
-			case 'settings':
-				Commands.settings(interaction, db);
-				break;
-			case 'catch':
-				Commands._catch(interaction, db);
-				break;
-			case 'leaderboard':
-				Commands.leaderboard(interaction, db);
-				break;
-			case 'score':
-				Commands.score(interaction, db);
-				break;
-			case 'explore':
-				Commands.explore(interaction, db);
-				break;
-			case 'reveal':
-				Commands.reveal(interaction, db);
-				break;
-			case 'mod':
-				Commands.mod(interaction, db);
-				break;
+		if (await db.isAllowedChannel(interaction.channel) || !(await db.isAnyAllowedChannel(interaction.guildId))) {
+			switch (interaction.commandName) {
+				case 'help':
+					Commands.help(interaction, db);
+					break;
+				case 'settings':
+					Commands.settings(interaction, db);
+					break;
+				case 'catch':
+					Commands._catch(interaction, db);
+					break;
+				case 'leaderboard':
+					Commands.leaderboard(interaction, db);
+					break;
+				case 'score':
+					Commands.score(interaction, db);
+					break;
+				case 'explore':
+					Commands.explore(interaction, db);
+					break;
+				case 'reveal':
+					Commands.reveal(interaction, db);
+					break;
+				case 'mod':
+					Commands.mod(interaction, db);
+					break;
+			}
+		} else {
+			interaction.reply({
+				embeds: [util.returnEmbed('Channel is not allowed', 'This Channel is not allowed!\nYou can run `/settings channels show` in an allowed channel to find out what they are')],
+				ephemeral: true
+			})
 		}
 	}
 });

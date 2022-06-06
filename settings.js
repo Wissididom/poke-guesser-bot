@@ -71,7 +71,7 @@ async function settings(interaction, db) {
 					title = lang.obj['settings_mods_show_title'];
 					const mods = await db.listMods(interaction.guildId);
 					for (let i = 0; i < mods.length; i++) {
-						description += `<@${mods[i].isuser ? '!' + mods[i].mentionableid : '&' + mods[i].mentionableid}> (${mods[i].mentionableid})\n`;
+						description += `<@${mods[i].getDataValue('isUser') ? '!' + mods[i].getDataValue('mentionableId') : '&' + mods[i].get('mentionableId')}> (${mods[i].get('mentionableId')})\n`;
 					}
 					if (description.length < 20)
 						description = lang.obj['settings_mods_show_none'];
@@ -80,7 +80,7 @@ async function settings(interaction, db) {
 					title = lang.obj['settings_channels_show_title'];
 					const channels = await db.listChannels(interaction.guildId);
 					for (let i = 0; i < channels.length; i++) {
-						description += `<#${channels[i].channelid}> (${channels[i].channelid})\n`;
+						description += `<#${channels[i].get('channelId')}> (${channels[i].get('channelId')})\n`;
 					}
 					if (description.length < 20)
 						description = lang.obj['settings_channels_show_none'];
