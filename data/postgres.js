@@ -1,6 +1,3 @@
-// TODO Continue switching to Sequelize at getScore
-
-
 // const { Client } = require('pg');
 const { Sequelize, DataTypes } = require('sequelize');
 const fs = require('fs');

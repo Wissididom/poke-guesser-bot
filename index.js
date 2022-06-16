@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const { Client, Intents } = require('discord.js');
 const Commands = require('./commands.js');
+const language = require('./language.js');
 const util = require('./util.js');
 const db = require('./data/postgres.js');
 
@@ -60,10 +61,11 @@ client.on("interactionCreate", async interaction => {
 					break;
 			}
 		} else {
+			const lang = await language.getLanguage(interaction.guildId, db);
 			interaction.reply({
-				embeds: [util.returnEmbed('Channel is not allowed', 'This Channel is not allowed!\nYou can run `/settings channels show` in an allowed channel to find out what they are')],
+				embeds: [util.returnEmbed(lang.obj['channel_forbidden_error_title'], lang.obj['channel_forbidden_error_description'])],
 				ephemeral: true
-			})
+			});
 		}
 	}
 });

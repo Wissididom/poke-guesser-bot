@@ -127,5 +127,9 @@
 	"mod_championship_new_title_success": "Championship renewed!",
 	"mod_championship_new_description_success": "The ongoing Championship was renewed",
 	"mod_championship_new_title_failed": "Championship renewal failed!",
-	"mod_championship_new_description_failed": "Championship renewal failed due to: "
+	"mod_championship_new_description_failed": "Championship renewal failed due to: ",
+	"channel_forbidden_error_title": "Channel is not allowed",
+	"channel_forbidden_error_description": "This Channel is not allowed!\nYou can run `/settings channels show` in an allowed channel to find out what they are!",
+	"settings_command_forbidden_error_title": "Command is not allowed",
+	"settings_command_forbidden_error_description": "This Command is not allowed for you!\nIt can only be used by Server Owners and Users with the `ADMINISTRATOR` permission!"
 }

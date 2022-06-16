@@ -5,6 +5,17 @@ const util = require('./util.js');
 async function settings(interaction, db) {
 	await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
 	const lang = await language.getLanguage(interaction.guildId, db);
+	if (!interaction.guild.available)
+		return;
+	// https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
+	console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.member?.permissions.has('ADMINISTRATOR', false)}`);
+	if (interaction.guild.ownerId != interaction.user.id/*Owner*/ && !interaction.member?.permissions.has('ADMINISTRATOR', false)/*Administrator-Permission*/) {
+		interaction.editReply({
+			embeds: [util.returnEmbed(lang.obj['settings_command_forbidden_error_title'], lang.obj['settings_command_forbidden_error_description'])],
+			ephemeral: true
+		});
+		return;
+	}
 	let title = '';
 	let description = '';
 	let subcommandgroup = null;
