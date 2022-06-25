@@ -23,9 +23,9 @@ async function mod(interaction, db) {
 		title: '',
 		description: ''
 	};
-	switch (subcommandgroup) {
-		case 'score': // /mod score ?
-			if (isMod) {
+	if (isMod) {
+		switch (subcommandgroup) {
+			case 'score': // /mod score ?
 				switch (subcommand) {
 					case 'add':
 						try {
@@ -79,35 +79,20 @@ async function mod(interaction, db) {
 						}
 						break;
 				}
-			} else {
-				response.title = lang.obj['mod_no_mod_title'];
-				response.description = lang.obj['mod_no_mod_description'];
-			}
-			break;
-		case 'delay': // /mod delay ?
-			if (isMod) {
-				response = delayJS.delay(interaction, subcommand, lang, db);
-			} else {
-				response.title = lang.obj['mod_no_mod_title'];
-				response.description = lang.obj['mod_no_mod_description'];
-			}
-			break;
-		case 'timeout': // /mod timeout ?
-			if (isMod) {
-				response = timeoutJS.timeout(interaction, subcommand, lang, db);
-			} else {
-				response.title = lang.obj['mod_no_mod_title'];
-				response.description = lang.obj['mod_no_mod_description'];
-			}
-			break;
-		case 'championship': // /mod championship ?
-			if (isMod) {
-				response = championshipJS.championship(interaction, subcommand, lang, db);
-			} else {
-				response.title = lang.obj['mod_no_mod_title'];
-				response.description = lang.obj['mod_no_mod_description'];
-			}
-			break;
+				break;
+			case 'delay': // /mod delay ?
+				response = await delayJS.delay(interaction, subcommand, lang, db);
+				break;
+			case 'timeout': // /mod timeout ?
+				response = await timeoutJS.timeout(interaction, subcommand, lang, db);
+				break;
+			case 'championship': // /mod championship ?
+				response = await championshipJS.championship(interaction, subcommand, lang, db);
+				break;
+		}
+	} else {
+		response.title = lang.obj['mod_no_mod_title'];
+		response.description = lang.obj['mod_no_mod_description'];
 	}
 	// returnEmbed(title, message, image=null)
 	interaction.editReply({
