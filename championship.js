@@ -19,7 +19,6 @@ async function championship(interaction, subcommand, lang, db) {
 			}
 			break;
 	}
-	// returnEmbed(title, message, image=null)
 	return response;
 }
 
