@@ -185,7 +185,7 @@ This bot was written to run locally or on docker with NodeJS and PostgreSQL and 
 
 ## PostgreSQL
 
-We used Postgres for out database.
+We used Postgres for our database.
 
 ## node.js
 
