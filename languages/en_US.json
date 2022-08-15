@@ -131,5 +131,11 @@
 	"channel_forbidden_error_title": "Channel is not allowed",
 	"channel_forbidden_error_description": "This Channel is not allowed!\nYou can run `/settings channels show` in an allowed channel to find out what they are!",
 	"settings_command_forbidden_error_title": "Command is not allowed",
-	"settings_command_forbidden_error_description": "This Command is not allowed for you!\nIt can only be used by Server Owners and Users with the `ADMINISTRATOR` permission!"
+	"settings_command_forbidden_error_description": "This Command is not allowed for you!\nIt can only be used by Server Owners and Users with the `ADMINISTRATOR` permission!",
+	"explore_no_mod_title": "No Mod",
+	"explore_no_mod_description": "You need to be a Mod to run `/explore`",
+	"explore_wild_pokemon_appeared_title": "A wild POKEMON appeared!",
+	"explore_wild_pokemon_appeared_description": "Type `/catch pokemon:_____` with the correct pokemon name to catch this pokemon!",
+	"explore_fetch_names_failed_title": "Fetch Failed",
+	"explore_fetch_names_failed_description": "Failed to fetch the names of the pokemons!"
 }
