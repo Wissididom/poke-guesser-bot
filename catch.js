@@ -19,7 +19,7 @@ async function _catch(interaction, db) {
 		for (let i = 0; i < encounter.length; i++) {
 			if (encounter[i].name.toLowerCase() === guess.toLowerCase()) {
 				await db.clearEncounters(interaction.guildId, interaction.channelId);
-				let artwork = db.getArtwork(interaction.guildId, interaction.channelId);
+				let artwork = await db.getArtwork(interaction.guildId, interaction.channelId);
 				await db.addScore(interaction.guildId, interaction.member.id, 1);
 				let englishIndex = 0;
 				for (let i = 0; i < encounter.length; i++) {
@@ -32,9 +32,12 @@ async function _catch(interaction, db) {
 					title = lang.obj['catch_caught_english_title'].replace('<pokemon>', util.capitalize(encounter[englishIndex].name));
 				else
 					title = lang.obj['catch_caught_other_language_title'].replace('<englishPokemon>', util.capitalize(encounter[englishIndex].name)).replace('<guessedPokemon>', util.capitalize(encounter[i].name));
+				console.log(`catch.js-artwork:${artwork}`);
+				let returnedEmbed = util.returnEmbed(title, lang.obj['catch_caught_description'].replace('<guesser>', `<@${interaction.member.id}>`), 0x00AE86, artwork);
 				// returnEmbed(title, message, image=null)
 				interaction.reply({
-					embeds: [util.returnEmbed(title, lang.obj['catch_caught_description'])],
+					embeds: [returnedEmbed.embed],
+					files: [returnedEmbed.attachment],
 					ephemeral: false
 				});
 				guessed = true;
