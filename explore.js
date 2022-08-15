@@ -2,7 +2,6 @@ const { Constants } = require('discord.js');
 const language = require("./language.js");
 const util = require("./util");
 
-// Shows User Position and Score
 async function explore(interaction, db) {
 	await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
 	if (!interaction.guild.available)

@@ -137,5 +137,11 @@
 	"explore_wild_pokemon_appeared_title": "A wild POKEMON appeared!",
 	"explore_wild_pokemon_appeared_description": "Type `/catch pokemon:_____` with the correct pokemon name to catch this pokemon!",
 	"explore_fetch_names_failed_title": "Fetch Failed",
-	"explore_fetch_names_failed_description": "Failed to fetch the names of the pokemons!"
+	"explore_fetch_names_failed_description": "Failed to fetch the names of the pokemons!",
+	"reveal_no_mod_title": "No Mod",
+	"reveal_no_mod_description": "You need to be a Mod to run `/reveal`",
+	"reveal_no_encounter_title": "There is no pokémon to reveal",
+	"reveal_no_encounter_description": "You have to explore to find a pokémon. Type `/explore` to find a pokémon.",
+	"reveal_pokemon_escaped_title": "Pokémon escaped!",
+	"reveal_pokemon_escaped_description": "As you approached, the pokémon escaped, but you were able to catch a glimpse of <englishPokemon> (<inBrackets>) as it fled."
 }
