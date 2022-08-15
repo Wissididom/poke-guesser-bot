@@ -7,14 +7,12 @@ async function explore(interaction, db) {
 	if (!interaction.guild.available)
 		return;
 	const lang = await language.getLanguage(interaction.guildId, db);
-	let title = '';
-	let description = '';
 	if (await db.isMod(interaction.member)) {
 		console.log('Generating a new Pokemon');
-		db.clearEncounters(interaction.guildId, interaction.channelId);
-		db.unsetArtwork(interaction.guildId, interaction.channelId);
+		await db.clearEncounters(interaction.guildId, interaction.channelId);
+		await db.unsetArtwork(interaction.guildId, interaction.channelId);
 		let pokemon = await util.generatePokemon();
-		db.addEncounter(interaction.guildId, interaction.channelId, pokemon.url.replace(/.+\/(\d+)\//g, '$1'), 'id');
+		await db.addEncounter(interaction.guildId, interaction.channelId, pokemon.url.replace(/.+\/(\d+)\//g, '$1'), 'id');
 		util.fetchNames(pokemon.url.replace(/.+\/(\d+)\//g, '$1')).then(async names => {
 			if (!names) {
 				console.log(`Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`);
@@ -23,7 +21,7 @@ async function explore(interaction, db) {
 			}
 			for (let name of names) {
 				// Sets current pokemon (different languages) names in database
-				db.addEncounter(interaction.guildId, interaction.channelId, name.name, name.languageName) // available properties: name, languageName and languageUrl
+				await db.addEncounter(interaction.guildId, interaction.channelId, name.name, name.languageName) // available properties: name, languageName and languageUrl
 			}
 			// Gets sprite url for the reply to the command with newly generated pokemon
 			let sprites = await util.fetchSprite(pokemon.url);
@@ -36,13 +34,13 @@ async function explore(interaction, db) {
 			let officialArtUrl = sprites.other['official-artwork'].front_default;
 			console.log(spriteUrl);
 			console.log(officialArtUrl);
-			db.setArtwork(interaction.guildId, interaction.channelId, officialArtUrl);
+			await db.setArtwork(interaction.guildId, interaction.channelId, officialArtUrl);
 			// returnEmbed(title, message, image=null)
 			interaction.editReply({
 				embeds: [util.returnEmbed(lang.obj['explore_wild_pokemon_appeared_title'], lang.obj['explore_wild_pokemon_appeared_description'], spriteUrl)],
 				ephemeral: false
 			});
-			db.setLastExplore(interaction.guildId, interaction.channelId, Date.now());
+			await db.setLastExplore(interaction.guildId, interaction.channelId, Date.now());
 		}).catch(err => {
 			console.log(`Error: ${err}`);
 			// returnEmbed(title, message, image=null)

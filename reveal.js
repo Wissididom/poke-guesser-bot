@@ -7,8 +7,6 @@ async function reveal(interaction, db) {
 	if (!interaction.guild.available)
 		return;
 	const lang = await language.getLanguage(interaction.guildId, db);
-	let title = '';
-	let description = '';
 	if (await db.isMod(interaction.member)) {
 		let encounter = await db.getEncounter(interaction.guildId, interaction.channelId);
 		if (encounter.length > 0) {
@@ -36,7 +34,7 @@ async function reveal(interaction, db) {
 				embeds: [util.returnEmbed(lang.obj['reveal_pokemon_escaped_title'], lang.obj['reveal_pokemon_escaped_description'].replace('<englishPokemon>', util.capitalize(encounter[englishIndex].name)).replace('<inBrackets>', inBrackets))],
 				ephemeral: false
 			});
-			db.clearEncounters(interaction.guildId, interaction.channelId);
+			await db.clearEncounters(interaction.guildId, interaction.channelId);
 		} else {
 			// returnEmbed(title, message, image=null)
 			interaction.editReply({

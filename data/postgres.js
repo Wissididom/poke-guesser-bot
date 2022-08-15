@@ -535,6 +535,15 @@ async function artworkExists(serverId, channelId) {
 	})) > 0;
 }
 
+async function getArtwork(serverId, channelId) {
+	return (await Artwork.findOne({
+		where: {
+			serverId,
+			channelId
+		}
+	})).url;
+}
+
 async function setArtwork(serverId, channelId, url) {
 	if (await artworkExists(serverId, channelId)) {
 		return await Artwork.update({
@@ -572,6 +581,15 @@ async function lastExploreExists(serverId, channelId) {
 			channelId
 		}
 	})) > 0;
+}
+
+async function getLastExplore(serverId, channelId) {
+	return (await lastExplore.findOne({
+		where: {
+			serverId,
+			channelId
+		}
+	})).time;
 }
 
 async function setLastExplore(serverId, channelId, time) {
@@ -635,8 +653,10 @@ module.exports.unsetScore = unsetScore;
 module.exports.clearEncounters = clearEncounters;
 module.exports.addEncounter = addEncounter;
 module.exports.getEncounter = getEncounter;
+module.exports.getArtwork = getArtwork;
 module.exports.setArtwork = setArtwork;
 module.exports.unsetArtwork = unsetArtwork;
+module.exports.getLastExplore = getLastExplore;
 module.exports.setLastExplore = setLastExplore;
 module.exports.unsetLastExplore = unsetLastExplore;
 module.exports.disconnect = disconnect;

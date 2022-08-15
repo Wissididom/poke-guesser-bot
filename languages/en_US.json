@@ -141,7 +141,14 @@
 	"reveal_no_mod_title": "No Mod",
 	"reveal_no_mod_description": "You need to be a Mod to run `/reveal`",
 	"reveal_no_encounter_title": "There is no pokémon to reveal",
-	"reveal_no_encounter_description": "You have to explore to find a pokémon. Type `/explore` to find a pokémon.",
+	"reveal_no_encounter_description": "You have to explore to find a pokémon. Type `/explore` to generate a pokémon.",
 	"reveal_pokemon_escaped_title": "Pokémon escaped!",
-	"reveal_pokemon_escaped_description": "As you approached, the pokémon escaped, but you were able to catch a glimpse of <englishPokemon> (<inBrackets>) as it fled."
+	"reveal_pokemon_escaped_description": "As you approached, the pokémon escaped, but you were able to catch a glimpse of <englishPokemon> (<inBrackets>) as it fled.",
+	"catch_no_encounter_title": "There is no pokémon to guess!",
+	"catch_no_encounter_description": "You have to explore to guess a pokémon. Type `/explore` to generate a pokémon.",
+	"catch_caught_english_title": "<pokemon> has been caught!",
+	"catch_caught_other_language_title": "<englishPokemon> (<guessedPokemon>) has been caught!",
+	"catch_caught_description": "1 point added to <guesser>'s score.\n\nUse `/score show` to see your score\nUse `/leaderboard` to see the updated leaderboard",
+	"catch_guess_incorrect_title": "Incorrect",
+	"catch_guess_incorrect_description": "Your guess was not correct!"
 }
