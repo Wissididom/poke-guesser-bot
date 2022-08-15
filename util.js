@@ -1,33 +1,27 @@
 const Discord = require("discord.js");
-
-// const db = new Database();
+const fetch = require("node-fetch");
 
 /*
 UTILITIES
 */
-
-// Check database on start to make sure no values are set as null
-function checkDatabase() {
-	// Check if database has been instantiated
-	// TODO
-}
-
-// Set first values in database
-function instantiateDatabase() {
-	console.log("Instantiating database for the first time.");
-	// TODO
-}
 
 // Wraps reply in poke-guesser themed embed
 function returnEmbed(title, message, color=0x00AE86, image=null) {
 	// Creates new embedded message
 	let embed = new Discord.MessageEmbed()
 		.setTitle(title)  // Adds title
-		.setAuthor('POKé-GUESSER BOT', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
+		.setAuthor({
+			name: 'POKé-GUESSER BOT',
+			url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png',
+			iconURL: 'https://github.com/GeorgeCiesinski/poke-guesser-bot'
+		})
 		.setColor(0x00AE86)
 		.setDescription(message)  // Adds message
 		.setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
-		.setFooter('By borreLore, Wissididom and Pokketmuse', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
+		.setFooter({
+			text: 'By borreLore, Wissididom and Pokketmuse',
+			iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png'
+		});
 
 	if (image) {
 		const attachment = new Discord.MessageAttachment(image, 'pokemon.png');
@@ -77,7 +71,47 @@ function isRole(mentionable) {
 	return !isUser(mentionable);
 }
 
-module.exports.checkDatabase = checkDatabase;
+function generatePokemon() {
+	// Fetch json of all available pokemon up to a limit of 2000 (~1200 available)
+	return fetch('https://pokeapi.co/api/v2/pokemon/?limit=2000').then(res => {
+		return res.json(); // Parse json
+	}).then(json => {
+		return json.results; // Extract results
+	}).then(resultList => {
+		return resultList[Math.floor(Math.random() * resultList.length)]; // Return random item from list
+	});
+}
+
+// Fetches the sprite using the pokemon's api url
+function fetchSprite(url) {
+	return fetch(url).then(res => {
+		return res.json(); // Parse json
+	}).then(json => {
+		return json.sprites; // returns an array of urls for the sprites
+	});
+}
+
+// Fetches the pokemon's names in different languages
+function fetchNames(nameOrId) {
+	return fetch(`https://pokeapi.co/api/v2/pokemon-species/${nameOrId}/`).then(res => {
+		return res.json(); // Parse json
+	}).then(json => {
+		return json.names; // Get names as array
+	}).then(names => {
+		let resultNames = [];
+		for (let i = 0; i < names.length; i++) {
+			resultNames.push({
+				languageName: names[i].language.name,
+				languageUrl: names[i].language.url,
+				name: names[i].name
+			});
+		}
+		return resultNames;
+	}).catch(err => {
+		// For example id 10220 returns 404 Not Found
+	});
+}
+
 module.exports.returnEmbed = returnEmbed;
 module.exports.capitalize = capitalize;
 module.exports.findMember = findMember;
@@ -85,3 +119,6 @@ module.exports.findUser = findUser;
 module.exports.isAdmin = isAdmin;
 module.exports.isUser = isUser;
 module.exports.isRole = isRole;
+module.exports.generatePokemon = generatePokemon;
+module.exports.fetchSprite = fetchSprite;
+module.exports.fetchNames = fetchNames;

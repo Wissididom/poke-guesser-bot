@@ -82,6 +82,61 @@ const Score = db.define('score', {
 }, {
 	timestamps: false
 });
+// Encounter
+const Encounter = db.define('encounter', {
+	serverId: {
+		type: DataTypes.STRING,
+		allowMull: false
+	},
+	channelId: { // If we ever want to make it possible to have multiple guessing games in one server. I set allowNull to true because I think we can make it like `if (channelId == null)` to make independant of channels.
+		type: DataTypes.STRING,
+		allowNull: true
+	},
+	name: {
+		type: DataTypes.STRING,
+		allowNull: false
+	},
+	language: {
+		type: DataTypes.STRING,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
+// Artwork
+const Artwork = db.define('artwork', {
+	serverId: {
+		type: DataTypes.STRING,
+		allowMull: false
+	},
+	channelId: { // If we ever want to make it possible to have multiple guessing games in one server. I set allowNull to true because I think we can make it like `if (channelId == null)` to make independant of channels.
+		type: DataTypes.STRING,
+		allowNull: true
+	},
+	url: {
+		type: DataTypes.STRING,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
+// LastExplore
+const LastExplore = db.define('lastexplore', {
+	serverId: {
+		type: DataTypes.STRING,
+		allowMull: false
+	},
+	channelId: { // If we ever want to make it possible to have multiple guessing games in one server. I set allowNull to true because I think we can make it like `if (channelId == null)` to make independant of channels.
+		type: DataTypes.STRING,
+		allowNull: true
+	},
+	time: {
+		type: DataTypes.BIGINT,
+		allowNull: false
+	}
+}, {
+	timestamps: false
+});
 
 async function connect() {
 	return await db.authenticate();
@@ -444,6 +499,129 @@ async function unsetScore(serverId, userId) {
 		throw lang.obj['mod_score_unset_not_set'];
 }
 
+async function clearEncounters(serverId, channelId) {
+	Encounter.destroy({
+		where: {
+			serverId,
+			channelId
+		}
+	});
+}
+
+async function addEncounter(serverId, channelId, name, language) {
+	return Encounter.create({
+		serverId,
+		channelId,
+		name,
+		language
+	});
+}
+
+async function getEncounter(serverId, channelId) {
+	return await Encounter.findAll({
+		where: {
+			serverId,
+			channelId
+		}
+	});
+}
+
+async function artworkExists(serverId, channelId) {
+	return (await Artwork.count({
+		where: {
+			serverId,
+			channelId
+		}
+	})) > 0;
+}
+
+async function getArtwork(serverId, channelId) {
+	return (await Artwork.findOne({
+		where: {
+			serverId,
+			channelId
+		}
+	})).url;
+}
+
+async function setArtwork(serverId, channelId, url) {
+	if (await artworkExists(serverId, channelId)) {
+		return await Artwork.update({
+			url
+		}, {
+			where: {
+				serverId,
+				channelId
+			}
+		});
+	} else {
+		return await Artwork.create({
+			serverId,
+			channelId,
+			url
+		});
+	}
+}
+
+async function unsetArtwork(serverId, channelId) {
+	if (await artworkExists(serverId, channelId)) {
+		return await Artwork.destroy({
+			where: {
+				serverId,
+				channelId
+			}
+		});
+	}
+}
+
+async function lastExploreExists(serverId, channelId) {
+	return (await Artwork.count({
+		where: {
+			serverId,
+			channelId
+		}
+	})) > 0;
+}
+
+async function getLastExplore(serverId, channelId) {
+	return (await lastExplore.findOne({
+		where: {
+			serverId,
+			channelId
+		}
+	})).time;
+}
+
+async function setLastExplore(serverId, channelId, time) {
+	if (await artworkExists(serverId, channelId)) {
+		return await LastExplore.update({
+			time
+		}, {
+			where: {
+				serverId,
+				channelId
+			}
+		});
+	} else {
+		return await LastExplore.create({
+			serverId,
+			channelId,
+			time
+		});
+	}
+}
+
+async function unsetLastExplore(serverId, channelId) {
+	if (await lastExploreExists(serverId, channelId)) {
+		return await LastExplore.destroy({
+			where: {
+				serverId,
+				channelId
+			}
+		});
+	}
+}
+
 async function disconnect() {
 	await db.close();
 }
@@ -472,4 +650,13 @@ module.exports.setScore = setScore;
 module.exports.addScore = addScore;
 module.exports.removeScore = removeScore;
 module.exports.unsetScore = unsetScore;
+module.exports.clearEncounters = clearEncounters;
+module.exports.addEncounter = addEncounter;
+module.exports.getEncounter = getEncounter;
+module.exports.getArtwork = getArtwork;
+module.exports.setArtwork = setArtwork;
+module.exports.unsetArtwork = unsetArtwork;
+module.exports.getLastExplore = getLastExplore;
+module.exports.setLastExplore = setLastExplore;
+module.exports.unsetLastExplore = unsetLastExplore;
 module.exports.disconnect = disconnect;
