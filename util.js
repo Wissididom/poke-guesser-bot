@@ -25,11 +25,14 @@ function returnEmbed(title, message, color=0x00AE86, image=null) {
 
 	if (image) {
 		const attachment = new Discord.MessageAttachment(image, 'pokemon.png');
-		embed.attachFiles(attachment);
 		embed.setImage('attachment://pokemon.png');
+		return {
+			embed,
+			attachment
+		}
+	} else {
+		return embed;
 	}
-
-	return embed;
 }
 
 // Capitalizes first letter of pokemon name

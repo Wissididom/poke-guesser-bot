@@ -35,9 +35,11 @@ async function explore(interaction, db) {
 			console.log(spriteUrl);
 			console.log(officialArtUrl);
 			await db.setArtwork(interaction.guildId, interaction.channelId, officialArtUrl);
+			let returnedEmbed = util.returnEmbed(lang.obj['explore_wild_pokemon_appeared_title'], lang.obj['explore_wild_pokemon_appeared_description'], 0x00AE86, spriteUrl);
 			// returnEmbed(title, message, image=null)
 			interaction.editReply({
-				embeds: [util.returnEmbed(lang.obj['explore_wild_pokemon_appeared_title'], lang.obj['explore_wild_pokemon_appeared_description'], spriteUrl)],
+				embeds: [returnedEmbed.embed],
+				files: [returnedEmbed.attachment],
 				ephemeral: false
 			});
 			await db.setLastExplore(interaction.guildId, interaction.channelId, Date.now());
