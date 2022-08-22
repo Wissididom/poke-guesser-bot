@@ -81,30 +81,44 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 The bot uses slash commands which need to be added to the discord server.
 
 <ol>
-    <li>In the terminal, run <code>node setupCommands.js</code></li>
+    <li>While still in the project directory, run <code>node setupCommands.js</code></li>
 </ol>
 
-## Docker Setup
+## Running the Bot
 
-This bot was intented to run locally so my installation instructions will cover this method.
+This bot was written to run locally or on docker with NodeJS and PostgreSQL and uses Env-Files for the senstive data that will get loaded in NodeJS as Environment Variables.
 
-**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first.*
+### Run in Docker
+
+**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first.*
 
 <img src="" alt="">
 
 <ol>
-   
+    <li>
+        <a href="https://docs.docker.com/get-started/">Set up Docker</a> if you haven't already.
+    </li>
     <li>
         Run the bot with Docker Compose. You can do this by running either: <br><code>sudo docker-compose up -d</code><br> or if that doesn't work, then try: <br><code>sudo docker-compose --env-file docker.env up -d</code>
     </li>
 </ol>
 
 
-## Running locally
+### Run Locally
 
-1. Without Docker Compose (Make sure you configured the database properly): `node index.js` or `npm start`
+You can also run the bot using node, but the database has to be set up manually.
 
-This bot was written to run locally or on docker with NodeJS and PostgreSQL and uses Env-Files for the senstive data that will get loaded in NodeJS as Environment Variables.
+<ol>
+    <li>
+        Set up your database if you haven't already. The bot was built using Postgres but other DBs can work if they allow a connection string with user/pass.
+    </li>
+    <li>
+        Run the command:
+        <br><code>node index.js</code>
+        <br>or
+        <br><code>npm start</code> 
+    </li>
+</ol>
 
 # Technology
 
@@ -133,6 +147,8 @@ This bot was originally written in Replit, but has since been rewritten to run i
 To contribute to the bot, please fork this repository and open up a pull request to merge changes back into the repository.
 
 If your change adds a feature, please include proof that the feature is working as intended. Make sure you also test the bot to ensure other features aren't broken. I will expand this section soon to be more detailed, and add Pull Request templates to follow as well.
+
+Contribution guideline coming soon!
 
 # License
 
