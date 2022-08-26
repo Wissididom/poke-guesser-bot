@@ -64,12 +64,26 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
         Create a <code>.env</code> file if it doesn't exist. Copy the contents of <code>example.env</code> into the <code>.env</code>
     </li>
     <li>
-        Change the below fields in the .env file:
+        Add the Discord Token to the <code>.env</code> file.
         <ul>
             <li><strong>TOKEN:</strong> This is your discord token from previous steps.</li>
-            <li><strong>POSTGRES_HOST:</strong> Connection string for Postgres server. Leave as <code>db</code> if using Docker.</li>
-            <li><strong>POSTGRES_USER & POSTGRES_PASS:</strong> User/pass for postgres server. Doesn't need to be changed if using Docker.
         </ul>
+    </li>
+    <li>
+        Add the Database configuration to the <code>.env</code> file. There are two options: 
+        <ol>
+            <li>
+                If you use a Database URL, add it to the <code>.env</code> file as below: 
+                <br><code>DATABASE_URL: "postgres://user:pass@example.com:5432/dbname"</code> (your string)
+            </li>
+            <li>
+                If you want to pass the parameters separately to the Sequalize constructor, change the below fields in the .env file:
+                <ul>
+                    <li><strong>POSTGRES_HOST:</strong> Connection string for Postgres server. Leave as <code>db</code> if using Docker.</li>
+                    <li><strong>POSTGRES_USER & POSTGRES_PASSWORD:</strong> User/pass for postgres server. Doesn't need to be changed if using Docker.
+                </ul>  
+            </li>
+        </ol>
     </li>
     <li>
         Copy the contents of <code>.env</code> into <code>docker.env</code>
@@ -81,7 +95,8 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 The bot uses slash commands which need to be added to the discord server.
 
 <ol>
-    <li>While still in the project directory, run <code>node setupCommands.js</code></li>
+    <li>While still in the project directory, run <code>npm install</code> to install the required packages</li>
+    <li>Then run <code>node setupCommands.js</code> to add slash commands to your server</li>
 </ol>
 
 ## Running the Bot
