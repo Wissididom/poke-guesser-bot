@@ -92,11 +92,11 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 
 ## Adding Slash Commands
 
-The bot uses slash commands which need to be added to the discord server.
+The bot uses slash commands which need to be registered with discord.
 
 <ol>
     <li>While still in the project directory, run <code>npm install</code> to install the required packages</li>
-    <li>Then run <code>node setupCommands.js</code> to add slash commands to your server</li>
+    <li>Then run <code>node setupCommands.js</code> to register slash commands for the bot with discord</li>
 </ol>
 
 ## Running the Bot
@@ -125,7 +125,7 @@ You can also run the bot using node, but the database has to be set up manually.
 
 <ol>
     <li>
-        Set up your database if you haven't already. The bot was built using Postgres but other DBs can work if they allow a connection string with user/pass.
+        Set up your database if you haven't already. The bot was built using Postgres but other DBs can work if they allow a connection string with user/pass. If you don't use the <code>DATABASE_URL</code> environment variable, you'd have to adjust the dialect for Sequelize in data/postgres.js.
     </li>
     <li>
         Run the command:
