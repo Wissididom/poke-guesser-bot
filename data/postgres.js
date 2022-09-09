@@ -575,7 +575,7 @@ async function unsetArtwork(serverId, channelId) {
 }
 
 async function lastExploreExists(serverId, channelId) {
-	return (await Artwork.count({
+	return (await LastExplore.count({
 		where: {
 			serverId,
 			channelId
@@ -593,7 +593,7 @@ async function getLastExplore(serverId, channelId) {
 }
 
 async function setLastExplore(serverId, channelId, time) {
-	if (await artworkExists(serverId, channelId)) {
+	if (await lastExploreExists(serverId, channelId)) {
 		return await LastExplore.update({
 			time
 		}, {
