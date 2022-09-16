@@ -77,7 +77,7 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
                 <br><code>DATABASE_URL: "postgres://user:pass@example.com:5432/dbname"</code> (your string)
             </li>
             <li>
-                If you want to pass the parameters separately to the Sequalize constructor, change the below fields in the .env file:
+                If you want to pass the parameters separately to the Sequelize constructor, change the below fields in the .env file:
                 <ul>
                     <li><strong>POSTGRES_HOST:</strong> Connection string for Postgres server. Leave as <code>db</code> if using Docker.</li>
                     <li><strong>POSTGRES_USER & POSTGRES_PASSWORD:</strong> User/pass for postgres server. Doesn't need to be changed if using Docker.
