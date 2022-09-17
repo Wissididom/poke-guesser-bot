@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const language = require('./language.js');
 const util = require("./util");
 
@@ -33,17 +33,18 @@ function getRegisterObject() {
 	return {
 		name: 'score',
 		description: 'Shows the score of someone or yourself',
+		type: ApplicationCommandType.ChatInput,
 		options: [
 			{
 				name: 'show',
 				description: 'Shows the Score of someone or yourself',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+				type: ApplicationCommandOptionType.Subcommand,
 				options: [
 					{
 						name: 'user',
 						description: 'The user whose score you want to know',
 						required: false,
-						type: Constants.ApplicationCommandOptionTypes.USER
+						type: ApplicationCommandOptionType.User
 					}
 				]
 			}

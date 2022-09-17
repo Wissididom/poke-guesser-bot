@@ -1,9 +1,10 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const language = require("./language.js");
 const util = require("./util");
 
-async function explore(interaction, db) {
-	await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+async function explore(interaction, db, preventDefer = false) {
+	if (!preventDefer)
+		await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
 	if (!interaction.guild.available)
 		return;
 	const lang = await language.getLanguage(interaction.guildId, db);
@@ -15,8 +16,8 @@ async function explore(interaction, db) {
 		await db.addEncounter(interaction.guildId, interaction.channelId, pokemon.url.replace(/.+\/(\d+)\//g, '$1'), 'id');
 		util.fetchNames(pokemon.url.replace(/.+\/(\d+)\//g, '$1')).then(async names => {
 			if (!names) {
-				console.log(`Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`);
-				explore(interaction, db); // Attention: Recursive
+				console.log(`Warning: 404 Not Found for pokemon ${pokemon.url.replace(/.+\/(\d+)\//g, '$1')}. Fetching new pokemon.`);
+				explore(interaction, db, true); // Attention: Recursive
 				return;
 			}
 			for (let name of names) {
@@ -63,7 +64,8 @@ async function explore(interaction, db) {
 function getRegisterObject() {
 	return {
 		name: 'explore',
-		description: 'Generates a new pokemon'
+		description: 'Generates a new pokemon',
+		type: ApplicationCommandType.ChatInput
 	};
 }
 

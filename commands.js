@@ -1,4 +1,3 @@
-const { Constants } = require('discord.js');
 const helpJS = require('./help.js');
 const settingsJS = require('./settings.js');
 const catchJS = require('./catch.js');

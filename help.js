@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const util = require('./util.js');
 const language = require('./language.js');
 
@@ -57,15 +57,15 @@ async function help(interaction, db) {
 
 function getRegisterObject() {
 	return {
-		type: Constants.ApplicationCommandTypes.CHAT_INPUT,
 		name: 'help',
 		description: 'Shows help in an ephemeral message',
+		type: ApplicationCommandType.ChatInput,
 		options: [
 			{
 				name: 'type',
 				description: 'Choose which help to show',
 				required: true,
-				type: Constants.ApplicationCommandOptionTypes.STRING,
+				type: ApplicationCommandOptionType.String,
 				choices: [
 					{
 						name: 'admin',

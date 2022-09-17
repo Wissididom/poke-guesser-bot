@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const Discord = require("discord.js");
 const util = require("./util");
 
@@ -30,12 +30,12 @@ function getRegisterObject() {
 	return {
 		name: 'championship',
 		description: 'Manages the championship',
-		type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+		type: ApplicationCommandOptionType.SubcommandGroup,
 		options: [
 			{
 				name: 'new',
 				description: 'Outputs the leaderboard one last time, reveals winner and clears the leaderboard',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+				type: ApplicationCommandOptionType.Subcommand
 			}
 		]
 	};
