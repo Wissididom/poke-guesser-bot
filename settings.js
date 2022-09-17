@@ -8,7 +8,7 @@ async function settings(interaction, db) {
 	if (!interaction.guild.available)
 		return;
 	// https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
-	console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.memberPermissions.has('Administrator', false)}`);
+	console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.memberPermissions?.has('Administrator', false)}`);
 	if (interaction.guild.ownerId != interaction.user.id/*Owner*/ && !interaction.memberPermissions?.has('Administrator', false)/*Administrator-Permission*/) {
 		interaction.editReply({
 			embeds: [util.returnEmbed(lang.obj['settings_command_forbidden_error_title'], lang.obj['settings_command_forbidden_error_description'])],
