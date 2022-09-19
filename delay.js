@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const util = require("./util");
 
 
@@ -62,68 +62,68 @@ function getRegisterObject() {
 	return {
 		name: 'delay',
 		description: 'Manage the delay of someone',
-		type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+		type: ApplicationCommandOptionType.SubcommandGroup,
 		options: [
 			{
 				name: 'set',
 				description: 'Sets a users delay',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+				type: ApplicationCommandOptionType.Subcommand,
 				options: [
 					{
 						name: 'user',
 						description: 'The user whose delay you want to set',
 						required: true,
-						type: Constants.ApplicationCommandOptionTypes.USER
+						type: ApplicationCommandOptionType.User
 					},
 					{
 						name: 'days',
 						description: 'The time you want to set the delay to',
 						required: false,
-						type: Constants.ApplicationCommandOptionTypes.INTEGER
+						type: ApplicationCommandOptionType.Integer
 					},
 					{
 						name: 'hours',
 						description: 'The time you want to set the delay to',
 						required: false,
-						type: Constants.ApplicationCommandOptionTypes.INTEGER
+						type: ApplicationCommandOptionType.Integer
 					},
 					{
 						name: 'minutes',
 						description: 'The time you want to set the delay to',
 						required: false,
-						type: Constants.ApplicationCommandOptionTypes.INTEGER
+						type: ApplicationCommandOptionType.Integer
 					},
 					{
 						name: 'seconds',
 						description: 'The time you want to set the delay to',
 						required: false,
-						type: Constants.ApplicationCommandOptionTypes.INTEGER
+						type: ApplicationCommandOptionType.Integer
 					}
 				]
 			},
 			{
 				name: 'unset',
 				description: 'Unsets a users delay',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+				type: ApplicationCommandOptionType.Subcommand,
 				options: [
 					{
 						name: 'user',
 						description: 'The user whose delay you want to unset',
 						required: true,
-						type: Constants.ApplicationCommandOptionTypes.USER
+						type: ApplicationCommandOptionType.User
 					}
 				]
 			},
 			{
 				name: 'show',
 				description: 'Shows a users delay',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+				type: ApplicationCommandOptionType.Subcommand,
 				options: [
 					{
 						name: 'user',
 						description: 'The user whose score you want to show',
 						required: true,
-						type: Constants.ApplicationCommandOptionTypes.USER
+						type: ApplicationCommandOptionType.User
 					}
 				]
 			}

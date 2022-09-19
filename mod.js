@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const language = require('./language.js');
 const util = require("./util");
 const delayJS = require('./delay.js');
@@ -105,66 +105,67 @@ function getRegisterObject() {
 	return {
 		name: 'mod',
 		description: 'Manage delay, timeout and score',
+		type: ApplicationCommandType.ChatInput,
 		options: [
 			{
 				name: 'score',
 				description: 'Manage the score of someone',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+				type: ApplicationCommandOptionType.SubcommandGroup,
 				options: [
 					{
 						name: 'add',
 						description: 'Add a score to a user',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'user',
 								description: 'The user whose score you want to update',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.USER
+								type: ApplicationCommandOptionType.User
 							},
 							{
 								name: 'score',
 								description: 'The amount of points you want to add to the score',
 								required: false,
-								type: Constants.ApplicationCommandOptionTypes.INTEGER
+								type: ApplicationCommandOptionType.Integer
 							}
 						]
 					},
 					{
 						name: 'remove',
 						description: 'Remove a score from a user',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'user',
 								description: 'The user whose score you want to update',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.USER
+								type: ApplicationCommandOptionType.User
 							},
 							{
 								name: 'score',
 								description: 'The amount of points you want to remove from the score',
 								required: false,
-								type: Constants.ApplicationCommandOptionTypes.INTEGER
+								type: ApplicationCommandOptionType.Integer
 							}
 						]
 					},
 					{
 						name: 'set',
 						description: 'Set the score of a user',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'user',
 								description: 'The user whose score you want to update',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.USER
+								type: ApplicationCommandOptionType.User
 							},
 							{
 								name: 'score',
 								description: 'The amount of points you want to set the score',
 								required: false,
-								type: Constants.ApplicationCommandOptionTypes.INTEGER
+								type: ApplicationCommandOptionType.Integer
 							}
 						]
 					}
@@ -178,4 +179,3 @@ function getRegisterObject() {
 // Exports each function separately
 module.exports.mod = mod;
 module.exports.getRegisterObject = getRegisterObject;
-// console.log(JSON.stringify(getRegisterObject(), null, 4));

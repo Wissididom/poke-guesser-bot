@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const util = require("./util");
 
 // Sanitizes leaderboard by removing non-existent users which might break other functions
@@ -49,7 +49,8 @@ function leaderboard(interaction) {
 function getRegisterObject() {
 	return {
 		name: 'leaderboard',
-		description: 'Shows the Leaderboard'
+		description: 'Shows the Leaderboard',
+		type: ApplicationCommandType.ChatInput
 	};
 }
 

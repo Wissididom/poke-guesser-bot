@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const language = require('./language.js');
 const util = require('./util.js');
 
@@ -8,8 +8,8 @@ async function settings(interaction, db) {
 	if (!interaction.guild.available)
 		return;
 	// https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
-	console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.member?.permissions.has('ADMINISTRATOR', false)}`);
-	if (interaction.guild.ownerId != interaction.user.id/*Owner*/ && !interaction.member?.permissions.has('ADMINISTRATOR', false)/*Administrator-Permission*/) {
+	console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.memberPermissions?.has('Administrator', false)}`);
+	if (interaction.guild.ownerId != interaction.user.id/*Owner*/ && !interaction.memberPermissions?.has('Administrator', false)/*Administrator-Permission*/) {
 		interaction.editReply({
 			embeds: [util.returnEmbed(lang.obj['settings_command_forbidden_error_title'], lang.obj['settings_command_forbidden_error_description'])],
 			ephemeral: true
@@ -201,140 +201,140 @@ async function settings(interaction, db) {
 
 function getRegisterObject() {
 	return {
-		type: Constants.ApplicationCommandTypes.CHAT_INPUT,
 		name: 'settings',
 		description: 'View or set settings in an ephemeral message',
+		type: ApplicationCommandType.ChatInput,
 		options: [
 			{
 				name: 'mods',
 				description: 'View, add or remove bot mods',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+				type: ApplicationCommandOptionType.SubcommandGroup,
 				options: [
 					{
 						name: 'add',
 						description: 'Add a bot mod',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'mentionable',
 								description: 'The user or role to add as a bot mod',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.MENTIONABLE
+								type: ApplicationCommandOptionType.Mentionable
 							}
 						]
 					},
 					{
 						name: 'remove',
 						description: 'Remove a bot mod',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'mentionable',
 								description: 'The user or role to remove from the bot mods',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.MENTIONABLE
+								type: ApplicationCommandOptionType.Mentionable
 							}
 						]
 					},
 					{
 						name: 'show',
 						description: 'Shows the current mods',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					},
 					{
 						name: 'help',
 						description: 'Shows help for mod settings',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					}
 				]
 			},
 			{
 				name: 'channels',
 				description: 'View, add or remove channels in which the bot responds',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+				type: ApplicationCommandOptionType.SubcommandGroup,
 				options: [
 					{
 						name: 'add',
 						description: 'Add a channel in which the bot responds',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'channel',
 								description: 'The channel in which the bot should start responding',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.CHANNEL
+								type: ApplicationCommandOptionType.Channel
 							}
 						]
 					},
 					{
 						name: 'remove',
 						description: 'Remove a channel from the channels in which the bot responds',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'channel',
 								description: 'The channel in which the bot should stop responding',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.CHANNEL
+								type: ApplicationCommandOptionType.Channel
 							}
 						]
 					},
 					{
 						name: 'show',
 						description: 'Shows the current channels in which the bot responds',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					},
 					{
 						name: 'help',
 						description: 'Shows help for mod settings',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					}
 				]
 			},
 			{
 				name: 'language',
 				description: 'View, set or unset a preferred language',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+				type: ApplicationCommandOptionType.SubcommandGroup,
 				options: [
 					{
 						name: 'set',
 						description: 'Set the preferred language for this server',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+						type: ApplicationCommandOptionType.Subcommand,
 						options: [
 							{
 								name: 'language',
 								description: 'The language code of your preferred language (e.g. en_US)',
 								required: true,
-								type: Constants.ApplicationCommandOptionTypes.STRING
+								type: ApplicationCommandOptionType.String
 							}
 						]
 					},
 					{
 						name: 'unset',
 						description: 'Unsets your preferred language for this server',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					},
 					{
 						name: 'show',
 						description: 'Shows your currently set preferred language for this server',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					},
 					{
 						name: 'help',
 						description: 'Shows help for language settings',
-						type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+						type: ApplicationCommandOptionType.Subcommand
 					}
 				]
 			},
 			{
 				name: 'reset',
 				description: 'Resets the current settings',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+				type: ApplicationCommandOptionType.Subcommand
 			},
 			{
 				name: 'help',
 				description: 'Shows Help for the /settings command',
-				type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND
+				type: ApplicationCommandOptionType.Subcommand
 			}
 		]
 	};

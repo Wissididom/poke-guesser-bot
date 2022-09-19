@@ -1,4 +1,4 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const language = require("./language.js");
 const util = require("./util");
 
@@ -13,7 +13,7 @@ async function reveal(interaction, db) {
 			let pokemonNames = [];
 			let englishIndex = 0;
 			for (let i = 0; i < encounter.length; i++) {
-				console.log(encounter);
+				// console.log(encounter);
 				let lowercaseName = encounter[i].name.toLowerCase();
 				if (!pokemonNames.includes(lowercaseName))
 					pokemonNames.push(lowercaseName);
@@ -54,7 +54,8 @@ async function reveal(interaction, db) {
 function getRegisterObject() {
 	return {
 		name: 'reveal',
-		description: 'Reveals the current pokemon'
+		description: 'Reveals the current pokemon',
+		type: ApplicationCommandType.ChatInput
 	};
 }
 

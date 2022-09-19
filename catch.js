@@ -1,10 +1,11 @@
-const { Constants } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const language = require('./language.js');
 const util = require('./util.js');
 
 let guessEntered = false;
 
 async function _catch(interaction, db) {
+	await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
 	guessEntered = true; // Lock catch until complete
 	const guess = interaction.options.getString('pokemon');
 	console.log(`${interaction.user.tag} guessed ${guess}`);
@@ -35,7 +36,7 @@ async function _catch(interaction, db) {
 				console.log(`catch.js-artwork:${artwork}`);
 				let returnedEmbed = util.returnEmbed(title, lang.obj['catch_caught_description'].replace('<guesser>', `<@${interaction.member.id}>`), 0x00AE86, artwork);
 				// returnEmbed(title, message, image=null)
-				interaction.reply({
+				interaction.editReply({
 					embeds: [returnedEmbed.embed],
 					files: [returnedEmbed.attachment],
 					ephemeral: false
@@ -47,14 +48,14 @@ async function _catch(interaction, db) {
 			}
 		}
 		if (!guessed) {
-			interaction.reply({
+			interaction.editReply({
 				embeds: [util.returnEmbed(lang.obj['catch_guess_incorrect_title'], lang.obj['catch_guess_incorrect_description'])],
 				ephemeral: true
 			});
 		}
 	} else {
 		// returnEmbed(title, message, image=null)
-		interaction.reply({
+		interaction.editReply({
 			embeds: [util.returnEmbed(lang.obj['catch_no_encounter_title'], lang.obj['catch_no_encounter_description'])],
 			ephemeral: true
 		});
@@ -66,12 +67,13 @@ function getRegisterObject() {
 	return {
 		name: 'catch',
 		description: 'Catch a previously generated pokémon',
+		type: ApplicationCommandType.ChatInput,
 		options: [
 			{
 				name: 'pokemon',
 				description: 'The name of the pokemon you want to guess',
 				required: true,
-				type: Constants.ApplicationCommandOptionTypes.STRING
+				type: ApplicationCommandOptionType.String
 			}
 		]
 	};

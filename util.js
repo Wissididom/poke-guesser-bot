@@ -1,5 +1,4 @@
-const Discord = require("discord.js");
-const fetch = require("node-fetch");
+const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 
 /*
 UTILITIES
@@ -8,7 +7,7 @@ UTILITIES
 // Wraps reply in poke-guesser themed embed
 function returnEmbed(title, message, color=0x00AE86, image=null) {
 	// Creates new embedded message
-	let embed = new Discord.MessageEmbed()
+	let embed = new EmbedBuilder()
 		.setTitle(title)  // Adds title
 		.setAuthor({
 			name: 'POKé-GUESSER BOT',
@@ -24,7 +23,7 @@ function returnEmbed(title, message, color=0x00AE86, image=null) {
 		});
 
 	if (image) {
-		const attachment = new Discord.MessageAttachment(image, 'pokemon.png');
+		const attachment = new AttachmentBuilder(image, { name: 'pokemon.png' });
 		embed.setImage('attachment://pokemon.png');
 		return {
 			embed,
