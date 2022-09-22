@@ -18,7 +18,7 @@ function returnEmbed(title, message, color=0x00AE86, image=null) {
 		.setDescription(message)  // Adds message
 		.setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
 		.setFooter({
-			text: 'By borreLore, Wissididom and Pokketmuse',
+			text: 'By borreLore, Wissididom and Valley Orion',
 			iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png'
 		});
 
