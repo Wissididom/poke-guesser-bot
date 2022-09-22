@@ -18,9 +18,9 @@ async function score(interaction, db) {
 			userScore = await db.getScore(interaction.guildId, user.id);
 			title = user.tag;
 			if (userScore)
-				description = `**User**: <@!${user.id}>\n**Position**: ${userScore.position}\n**Score:**: ${userScore.score}`;
+				description = `**User**: <@${user.id}>\n**Position**: ${userScore.position}\n**Score:**: ${userScore.score}`;
 			else
-				description = `**User**: <@!${user.id}>\n**Position**: N/A\n**Score:**: N/A`;
+				description = `**User**: <@${user.id}>\n**Position**: N/A\n**Score:**: N/A`;
 			break;
 	}
 	// returnEmbed(title, message, image=null)
