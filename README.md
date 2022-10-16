@@ -18,6 +18,11 @@ You can learn more about the [roles here](https://github.com/GeorgeCiesinski/pok
 
 Each role has access to certain commands. You can find out more from [this wiki page](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Commands).
 
+### Guessing / Catching
+
+You can simply guess the pokémon name by clicking or tapping on `Catch This Pokémon!`-button below the message that shows the pokémon that needs to be guessed. After that a modal opens up that asks you for the name where you need to enter it and press or tap on `Submit`.
+![catch](images/catch.png)
+
 ## Channel configuration
 
 You can set which channels the bot is allowed to reply in. The bot can listen and reply on all channels if no channels are set.
@@ -106,8 +111,6 @@ This bot was written to run locally or on docker with NodeJS and PostgreSQL and 
 ### Run in Docker
 
 **Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first.*
-
-<img src="" alt="">
 
 <ol>
     <li>

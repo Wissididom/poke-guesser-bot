@@ -24,6 +24,7 @@ module.exports.getRegisterObject = getRegisterObject;
 module.exports.help = helpJS.help;
 module.exports.settings = settingsJS.settings;
 module.exports._catch = catchJS._catch;
+module.exports.catchModalSubmitted = catchJS.catchModalSubmitted;
 module.exports.leaderboard = leaderboardJS.leaderboard;
 module.exports.score = scoreJS.score;
 module.exports.explore = exploreJS.explore;

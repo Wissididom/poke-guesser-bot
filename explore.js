@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
+const { ApplicationCommandType, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const language = require("./language.js");
 const util = require("./util");
 
@@ -41,6 +41,7 @@ async function explore(interaction, db, preventDefer = false) {
 			interaction.editReply({
 				embeds: [returnedEmbed.embed],
 				files: [returnedEmbed.attachment],
+				components: [new ActionRowBuilder().setComponents(new ButtonBuilder().setCustomId('catchBtn').setLabel('Catch This Pokémon!').setStyle(ButtonStyle.Primary))],
 				ephemeral: false
 			});
 			await db.setLastExplore(interaction.guildId, interaction.channelId, Date.now());
