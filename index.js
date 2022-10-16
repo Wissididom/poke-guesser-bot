@@ -4,7 +4,7 @@ LIBRARIES
 
 require('dotenv').config();
 
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, ComponentType, ButtonBuilder, ButtonStyle } = require('discord.js');
 const Commands = require('./commands.js');
 const language = require('./language.js');
 const util = require('./util.js');
@@ -32,7 +32,7 @@ client.on("ready", () => {
 });
 
 client.on("interactionCreate", async interaction => {
-	if (interaction.isCommand()) {
+	if (interaction.isChatInputCommand()) {
 		if (await db.isAllowedChannel(interaction.channel) || !(await db.isAnyAllowedChannel(interaction.guildId))) {
 			switch (interaction.commandName) {
 				case 'help':
@@ -66,6 +66,28 @@ client.on("interactionCreate", async interaction => {
 				embeds: [util.returnEmbed(lang.obj['channel_forbidden_error_title'], lang.obj['channel_forbidden_error_description'])],
 				ephemeral: true
 			});
+		}
+	} else if (interaction.isButton()) {
+		if (interaction.customId == 'catchBtn') {
+			let modal = new ModalBuilder().setTitle('Catch This Pokémon!').setCustomId('catchModal').setComponents(
+				new ActionRowBuilder().setComponents(new TextInputBuilder().setCustomId('guess').setLabel('Pokémon Name').setMaxLength(100).setMinLength(1).setPlaceholder('Pokémon Name').setStyle(TextInputStyle.Short))
+			);
+			await interaction.showModal(modal);
+			let submitted = await interaction.awaitModalSubmit({
+				filter: i => i.customId == 'catchModal' && i.user.id == interaction.user.id,
+				time: 60000
+			}).catch(err => {
+				console.error(err);
+			});
+			if (submitted) {
+				if (await Commands.catchModalSubmitted(interaction, submitted, db)) {
+					interaction.editReply({
+						//embeds: interaction.message.embeds,
+						components: [new ActionRowBuilder().setComponents(new ButtonBuilder().setCustomId('catchBtn').setLabel('Catch This Pokémon!').setStyle(ButtonStyle.Primary).setDisabled(true))],
+						ephemeral: false
+					});
+				}
+			}
 		}
 	}
 });
