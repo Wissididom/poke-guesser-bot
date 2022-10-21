@@ -7,12 +7,15 @@ on:
     branches: [ "master" ]
 
 jobs:
-
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
+    env:
+      COMPOSE_FILE: .ci/docker-compose.yml
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker-compose -f docker-compose-gh-action.yml build
+      run: docker-compose build
+    - name: Test the Docker image
+      run: docker-compose up --abort-on-container-exit
+      timeout-minutes: 30
