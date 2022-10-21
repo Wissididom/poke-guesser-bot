@@ -22,7 +22,6 @@ client.on("ready", () => {
 	let promises = [];
 	promises.push(client.application?.commands?.create(registerObject['help']));
 	promises.push(client.application?.commands?.create(registerObject['settings']));
-	promises.push(client.application?.commands?.create(registerObject['catch']));
 	promises.push(client.application?.commands?.create(registerObject['leaderboard']));
 	promises.push(client.application?.commands?.create(registerObject['score']));
 	promises.push(client.application?.commands?.create(registerObject['explore']));

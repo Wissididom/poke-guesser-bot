@@ -135,7 +135,7 @@
 	"explore_no_mod_title": "No Mod",
 	"explore_no_mod_description": "You need to be a Mod to run `/explore`",
 	"explore_wild_pokemon_appeared_title": "A wild POKEMON appeared!",
-	"explore_wild_pokemon_appeared_description": "Type `/catch pokemon:_____` with the correct pokemon name to catch this pokemon!",
+	"explore_wild_pokemon_appeared_description": "Click or tap `Catch This Pokémon!` and then type the correct pokemon name in the modal that'll pop up to catch this pokemon!",
 	"explore_fetch_names_failed_title": "Fetch Failed",
 	"explore_fetch_names_failed_description": "Failed to fetch the names of the pokemons!",
 	"reveal_no_mod_title": "No Mod",

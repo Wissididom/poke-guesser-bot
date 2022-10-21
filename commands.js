@@ -11,7 +11,6 @@ function getRegisterObject() {
 	return {
 		'help': helpJS.getRegisterObject(),
 		'settings': settingsJS.getRegisterObject(),
-		'catch': catchJS.getRegisterObject(),
 		'leaderboard': leaderboardJS.getRegisterObject(),
 		'score': scoreJS.getRegisterObject(),
 		'explore': exploreJS.getRegisterObject(),
@@ -23,7 +22,6 @@ function getRegisterObject() {
 module.exports.getRegisterObject = getRegisterObject;
 module.exports.help = helpJS.help;
 module.exports.settings = settingsJS.settings;
-module.exports._catch = catchJS._catch;
 module.exports.catchModalSubmitted = catchJS.catchModalSubmitted;
 module.exports.leaderboard = leaderboardJS.leaderboard;
 module.exports.score = scoreJS.score;
