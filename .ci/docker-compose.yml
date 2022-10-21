@@ -6,7 +6,6 @@ services:
     restart: "no"
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-      TOKEN: testtoken
     networks:
       - default
   poke-guesser-bot:
