@@ -41,9 +41,6 @@ client.on("interactionCreate", async interaction => {
 				case 'settings':
 					Commands.settings(interaction, db);
 					break;
-				case 'catch':
-					Commands._catch(interaction, db);
-					break;
 				case 'leaderboard':
 					Commands.leaderboard(interaction, db);
 					break;
