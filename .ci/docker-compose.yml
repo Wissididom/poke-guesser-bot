@@ -1,26 +1,24 @@
 version: "3.1"
 services:
   db:
-    image: postgres:14.4-alpine
+    image: postgres:15
     container_name: poke-guesser-postgres
-    restart: unless-stopped
+    restart: "no"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      TOKEN: testtoken
     networks:
       - default
-    volumes:
-      - ./docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
-      - database:/var/lib/postgresql/data
   poke-guesser-bot:
     build:
-      context: .
+      context: ../.
       dockerfile: Dockerfile
     container_name: poke-guesser-bot
-    restart: unless-stopped
+    restart: "no"
     image: poke-guesser-bot
     depends_on:
       - db
     networks:
       - default
-volumes:
-  database:
 networks:
   default:
