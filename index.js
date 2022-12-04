@@ -80,7 +80,7 @@ client.on("interactionCreate", async interaction => {
 				if (await Commands.catchModalSubmitted(interaction, submitted, db)) {
 					interaction.editReply({
 						//embeds: interaction.message.embeds,
-						components: [new ActionRowBuilder().setComponents(new ButtonBuilder().setCustomId('catchBtn').setLabel('Catch This Pokémon!').setStyle(ButtonStyle.Primary).setDisabled(true))],
+						components: [],
 						ephemeral: false
 					});
 				}
