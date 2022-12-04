@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "CommonJS",
+		"outDir": "build",
+		"noImplicitAny": true,
+		"alwaysStrict": true,
+		"esModuleInterop": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"strictNullChecks": true,
+		"allowJs": true,
+		"checkJs": true,
+		"sourceMap": true
+	},
+	"exclude": [
+		"node_modules",
+		"**/*.spec.ts",
+		"*.js"
+	]
+}
