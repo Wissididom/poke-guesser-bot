@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, Message, ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandType, Message, ChatInputCommandInteraction } from "discord.js";
 import Database from "./data/postgres";
 import Util from "./util";
 

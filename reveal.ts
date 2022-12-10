@@ -23,6 +23,7 @@ export default class Reveal {
         await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
         const lang = await Language.getLanguage(interaction.guildId, db);
         if (await db.isMod(interaction.member as GuildMember | null)) {
+            console.log('isMod: true');
             let encounter = await db.getEncounter(interaction.guildId, interaction.channelId);
             if (encounter.length > 0) {
                 let pokemonNames: string[] = [];
@@ -49,8 +50,11 @@ export default class Reveal {
                 await db.clearEncounters(interaction.guildId, interaction.channelId);
             } else {
                 // returnEmbed(title, message, image=null)
-                await Util.editReply(interaction, lang.obj['reveal_no_mod_title'], lang.obj['reveal_no_mod_description']);
+                await Util.editReply(interaction, lang.obj['reveal_no_encounter_title'], lang.obj['reveal_no_encounter_description']);
             }
+        } else {
+            // returnEmbed(title, message, image=null)
+            await Util.editReply(interaction, lang.obj['reveal_no_mod_title'], lang.obj['reveal_no_mod_description']);
         }
     }
 

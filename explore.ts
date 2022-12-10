@@ -51,6 +51,7 @@ export default class Explore {
             }
             for (let name of names) {
                 // Sets current pokemon (different languages) names in database
+                console.log(`Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`);
                 await db.addEncounter(interaction.guildId, interaction.channelId, name.name, name.languageName);
             }
             // Gets sprite url for the reply to the command with the newly generated pokemon

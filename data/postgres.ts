@@ -1,5 +1,5 @@
 import { Sequelize, Model, DataTypes } from "sequelize";
-import fs from 'fs';
+import * as fs from 'fs';
 import LanguageApi from "../language";
 import Util from "../util";
 import { GuildChannel, GuildMember, Role } from "discord.js";
@@ -329,8 +329,7 @@ export default class Database {
     }
 
     async getLanguageCode(serverId: string): Promise<string> {
-        let result = [];
-        result = await this.Language.findAll({
+        let result = await this.Language.findAll({
             where: {
                 serverId
             }

@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
+		"target": "ES2022",
 		"module": "CommonJS",
 		"outDir": "build",
 		"noImplicitAny": true,
@@ -14,6 +14,7 @@
 		"sourceMap": true
 	},
 	"exclude": [
+		"build/",
 		"node_modules",
 		"**/*.spec.ts",
 		"*.js"

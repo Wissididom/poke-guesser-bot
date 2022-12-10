@@ -21,21 +21,21 @@ export default class Catch {
             let guessed = false;
             // Loop through pokemon names and check against guess
             for (let i = 0; i < encounter.length; i++) {
-                if (encounter[i].name.toLowerCase() === guess.toLowerCase()) {
+                if (encounter[i].getDataValue('name').toLowerCase() === guess.toLowerCase()) {
                     await db.clearEncounters(modalInteraction.guild.id, btnInteraction.channelId);
                     let artwork = await db.getArtwork(modalInteraction.guild.id, btnInteraction.channelId);
                     await db.addScore(modalInteraction.guild.id, btnInteraction.user.id, 1);
                     let englishIndex = 0;
                     for (let j = 0; j < encounter.length; j++) {
-                        if (encounter[j].language === 'en')
+                        if (encounter[j].getDataValue('language') === 'en')
                             englishIndex = j;
                     }
                     // Send messsage that guess is correct
                     let title = '';
-                    if (encounter[i].name.toLowerCase() === encounter[englishIndex].name.toLowerCase())
-                        title = lang.obj['catch_caught_english_title'].replace('<pokemon>', Util.capitalize(encounter[englishIndex].name));
+                    if (encounter[i].getDataValue('name').toLowerCase() === encounter[englishIndex].getDataValue('name').toLowerCase())
+                        title = lang.obj['catch_caught_english_title'].replace('<pokemon>', Util.capitalize(encounter[englishIndex].getDataValue('name')));
                     else
-                        title = lang.obj['catch_caught_other_language_title'].replace('<englishPokemon>', Util.capitalize(encounter[englishIndex].name)).replace('<guessedPokemon>', Util.capitalize(encounter[i].name));
+                        title = lang.obj['catch_caught_other_language_title'].replace('<englishPokemon>', Util.capitalize(encounter[englishIndex].getDataValue('name'))).replace('<guessedPokemon>', Util.capitalize(encounter[i].getDataValue('name')));
                     console.log(`catch.js-artwork: ${artwork}`);
                     let returnedEmbed: {embed: EmbedBuilder, attachment: AttachmentBuilder} = Util.returnEmbed(title, lang.obj['catch_caught_description'].replace('<guesser>', `<@${btnInteraction.user.id}>`), 0x00AE86, artwork) as {embed: EmbedBuilder, attachment: AttachmentBuilder};
                     // returnEmbed(title, message, image=null)
@@ -59,7 +59,8 @@ export default class Catch {
                 await btnInteraction.followUp({
                     embeds: [
                         Util.returnEmbed(lang.obj['catch_guess_incorrect_title'], lang.obj['catch_guess_incorrect_description']) as EmbedBuilder
-                    ]
+                    ],
+                    ephemeral: true
                 });
             }
         } else {

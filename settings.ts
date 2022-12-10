@@ -195,7 +195,6 @@ export default class Settings {
                 break;
         }
         // returnEmbed(title, message, image=null);
-        await Util.editReply(interaction, '', '');
     }
 
     static getRegisterObject() {

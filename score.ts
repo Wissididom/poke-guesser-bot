@@ -28,10 +28,9 @@ export default class Score {
         switch (subcommand) {
             case 'show':
                 let user = interaction.options.getUser('user', false);
-                let userScore = null;
                 if (!user)
                     user = interaction.user;
-                userScore = await db.getScore(interaction.guildId, user.id);
+                let userScore = await db.getScore(interaction.guildId, user.id);
                 title = user.tag;
                 if (userScore)
                     description = `**User**: <@${user.id}>\n**Position**: ${userScore.position}\n**Score**: ${userScore.score}`;
