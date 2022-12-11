@@ -12,7 +12,7 @@ type FetchSpriteType = {
     other: {
         dream_world: {
             front_default: string,
-            fromt_female: string
+            front_female: string
         },
         home: {
             front_default: string,
@@ -125,7 +125,7 @@ export default class Util {
             other: {
                 dream_world: {
                     front_default: json.sprites.other.dream_world.front_default,
-                    fromt_female: json.sprites.other.dream_world.front_female
+                    front_female: json.sprites.other.dream_world.front_female
                 },
                 home: {
                     front_default: json.sprites.other.home.front_default,
