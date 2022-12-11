@@ -171,35 +171,35 @@ export default class Settings {
                 switch (subcommandgroup) {
                     case 'mods': // /settings mods help
                         helpTitle = lang.obj['settings_mods_help'];
-                        helpDescription = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}` +
-                                        `\`/settings mods remove <role or user>\` - ${lang.obj['settings_mods_remove']}` +
+                        helpDescription = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}\n` +
+                                        `\`/settings mods remove <role or user>\` - ${lang.obj['settings_mods_remove']}\n` +
                                         `\`/settings mods show\` - ${lang.obj['settings_mods_show']}`;
                         break;
                     case 'channels': // /settings channels help
                         helpTitle = lang.obj['settings_channels_help'];
-                        helpDescription = `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}` +
-                                        `\`/settings channels remove <role or user>\` - ${lang.obj['settings_channels_remove']}` +
+                        helpDescription = `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}\n` +
+                                        `\`/settings channels remove <role or user>\` - ${lang.obj['settings_channels_remove']}\n` +
                                         `\`/settings channels show\` - ${lang.obj['settings_channels_show']}`;
                         break;
                     case 'language': // /settings language help
                         helpTitle = lang.obj['settings_language_help'];
-                        helpDescription = `\`/settings language set <language code>\` - ${lang.obj['settings_language_set']}` +
-                                        `\`/settings language unset\` - ${lang.obj['settings_language_unset']}` +
+                        helpDescription = `\`/settings language set <language code>\` - ${lang.obj['settings_language_set']}\n` +
+                                        `\`/settings language unset\` - ${lang.obj['settings_language_unset']}\n` +
                                         `\`/settings channels show\` - ${lang.obj['settings_language_show']}`;
                         break;
                     default:
                         helpTitle = lang.obj['settings_help'];
-                        helpDescription = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}` +
-                                        `\`/settings mods remove <role or user>\` - ${lang.obj['settings_mods_remove']}` +
-                                        `\`/settings mods show\` - ${lang.obj['settings_mods_show']}` +
-                                        `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}` +
-                                        `\`/settings channels remove <role or user>\` - ${lang.obj['settings_channels_remove']}` +
-                                        `\`/settings channels show\` - ${lang.obj['settings_channels_show']}` +
-                                        `\`/settings language set <language code>\` - ${lang.obj['settings_language_set']}` +
-                                        `\`/settings language unset\` - ${lang.obj['settings_language_unset']}` +
-                                        `\`/settings language show\` - ${lang.obj['settings_language_show']}` +
-                                        `\`/settings reset\` - ${lang.obj['settings_reset']}` +
-                                        `\`/settings show\` - ${lang.obj['settings_show']}`;
+                        helpDescription = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}\n` +
+                                        `\`/settings mods remove <role or user>\` - ${lang.obj['settings_mods_remove']}\n` +
+                                        `\`/settings mods show\` - ${lang.obj['settings_mods_show']}\n` +
+                                        `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}\n` +
+                                        `\`/settings channels remove <role or user>\` - ${lang.obj['settings_channels_remove']}\n` +
+                                        `\`/settings channels show\` - ${lang.obj['settings_channels_show']}\n` +
+                                        `\`/settings language set <language code>\` - ${lang.obj['settings_language_set']}\n` +
+                                        `\`/settings language unset\` - ${lang.obj['settings_language_unset']}\n` +
+                                        `\`/settings language show\` - ${lang.obj['settings_language_show']}\n` +
+                                        `\`/settings reset\` - ${lang.obj['settings_reset']}\n` +
+                                        `\`/settings show\` - ${lang.obj['settings_show']}\n`;
                         break;
                 }
                 await Util.editReply(interaction, helpTitle, helpDescription);
