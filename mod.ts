@@ -98,6 +98,8 @@ export default class Mod {
                                 Util.editReply(interaction, lang.obj['mod_score_set_title_failed'], `${lang.obj['mod_score_set_description_failed']}${err}`);
                             }
                             break;
+                        default:
+                            await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /mod score subcommand (${subcommand}`);
                     }
                     break;
                 case 'delay': // /mod delay ?
@@ -109,12 +111,13 @@ export default class Mod {
                 case 'championship': // /mod championship ?
                     await Championship.championship(interaction, db);
                     break;
+                default:
+                    await Util.editReply(interaction, 'Invalid subcommand group', `You used an invalid /mod championship subcommand group (${subcommandgroup}`);
             }
         } else {
             Util.editReply(interaction, lang.obj['mod_no_mod_title'], lang.obj['mod_no_mod_description']);
         }
         // returnEmbed(title, message, image=null)
-        Util.editReply(interaction, '', '');
     }
 
     static getRegisterObject() {

@@ -32,8 +32,9 @@ export default class Championship {
                     await Util.editReply(interaction, lang.obj['mod_championship_new_title_failed'], lang.obj['mod_championship_new_description_failed']);
                 }
                 break;
+            default:
+                    await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /championship subcommand (${subcommand}`);
         }
-        await Util.editReply(interaction, '', '');
     }
 
     private static async newChampionship(serverId: string) {

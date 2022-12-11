@@ -61,9 +61,10 @@ export default class Delay {
                     await Util.editReply(interaction, lang.obj['mod_delay_show_title_failed'], `${lang.obj['mod_delay_show_description_failed']}${err}`);
                 }
                 break;
+            default:
+                await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /delay subcommand (${subcommand}`);
         }
         // returnEmbed(title, message, image=null)
-        await Util.editReply(interaction, '', '');
     }
 
     private static async setDelay(serverId: string, userId: string, days: number = 0, hours: number = 0, minutes: number = 0, seconds: number = 0) {

@@ -55,6 +55,8 @@ export default class Settings {
                             await Util.editReply(interaction, lang.obj['settings_channels_add_title_failed'], lang.obj['settings_channels_add_description_failed']);
                         }
                         break;
+                    default:
+                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`);
                 }
                 break;
             case 'remove':
@@ -64,10 +66,10 @@ export default class Settings {
                             let mentionable = interaction.options.getMentionable('mentionable');
                             if (mentionable) {
                                 await db.removeMod(mentionable as GuildMember | Role);
-                                Util.editReply(interaction, lang.obj['settings_mods_remove_title_success'], lang.obj['settings_mods_remove_description_success']);
+                                await Util.editReply(interaction, lang.obj['settings_mods_remove_title_success'], lang.obj['settings_mods_remove_description_success']);
                             }
                         } catch (err) {
-                            Util.editReply(interaction, lang.obj['settings_mods_remove_title_failed'], `${lang.obj['settings_mods_remove_description_failed']}${err}`);
+                            await Util.editReply(interaction, lang.obj['settings_mods_remove_title_failed'], `${lang.obj['settings_mods_remove_description_failed']}${err}`);
                         }
                         break;
                     case 'channels': // /settings channels remove
@@ -81,6 +83,8 @@ export default class Settings {
                             await Util.editReply(interaction, lang.obj['settings_channels_remove_title_failed'], `${lang.obj['settings_channels_remove_description_failed']}${err}`);
                         }
                         break;
+                    default:
+                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`);
                 }
                 break;
             case 'show':
@@ -91,7 +95,7 @@ export default class Settings {
                         title = lang.obj['settings_mods_show_title'];
                         const mods = await db.listMods(interaction.guildId);
                         for (let i = 0; i < mods.length; i++) {
-                            description += `<@${mods[i].getDataValue('isUser') ? '!' + mods[i].getDataValue('mentionableId') : '&' + mods[i].get('mentionableId')}> (${mods[i].get('mentionableId')})\n`;
+                            description += `<@${mods[i].getDataValue('isUser') ? mods[i].getDataValue('mentionableId') : '&' + mods[i].get('mentionableId')}> (${mods[i].get('mentionableId')})\n`;
                         }
                         if (description.length < 20)
                             description = lang.obj['settings_mods_show_none'];
@@ -109,11 +113,14 @@ export default class Settings {
                         title = lang.obj['settings_language_show_title'];
                         description = await db.getLanguageCode(interaction.guildId);
                         break;
+                    default:
+                        title = 'Invalid Subcommand Group';
+                        description = `You used an invalid /settings subcommand group (${subcommandgroup}`;
+                        break;
                 }
                 await Util.editReply(interaction, title, description);
                 break;
             case 'set':
-                subcommandgroup = interaction.options.getSubcommandGroup(false);
                 switch (subcommandgroup) {
                     case 'language': // /settings language set
                         try {
@@ -126,6 +133,9 @@ export default class Settings {
                             await Util.editReply(interaction, lang.obj['settings_language_set_title_failed'], `${lang.obj['settings_language_set_description_failed']}${err}`);
                         }
                         break;
+                    default:
+                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`);
+                        break;
                 }
                 break;
             case 'unset':
@@ -135,10 +145,11 @@ export default class Settings {
                             await db.unsetLanguage(interaction.guildId);
                             await Util.editReply(interaction, lang.obj['settings_language_unset_title_success'], lang.obj['settings_language_unset_description_success']);
                         } catch (err) {
-                            Util.editReply(interaction, lang.obj['settings_language_unset_title_failed'], lang.obj['settings_language_unset_description_failed']);
+                            await Util.editReply(interaction, lang.obj['settings_language_unset_title_failed'], lang.obj['settings_language_unset_description_failed']);
                         }
                         break;
                     default:
+                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`);
                         break;
                 }
                 break;
@@ -159,26 +170,26 @@ export default class Settings {
                 let helpDescription = '';
                 switch (subcommandgroup) {
                     case 'mods': // /settings mods help
-                        title = lang.obj['settings_mods_help'];
-                        description = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}` +
+                        helpTitle = lang.obj['settings_mods_help'];
+                        helpDescription = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}` +
                                         `\`/settings mods remove <role or user>\` - ${lang.obj['settings_mods_remove']}` +
                                         `\`/settings mods show\` - ${lang.obj['settings_mods_show']}`;
                         break;
                     case 'channels': // /settings channels help
-                        title = lang.obj['settings_channels_help'];
-                        description = `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}` +
+                        helpTitle = lang.obj['settings_channels_help'];
+                        helpDescription = `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}` +
                                         `\`/settings channels remove <role or user>\` - ${lang.obj['settings_channels_remove']}` +
                                         `\`/settings channels show\` - ${lang.obj['settings_channels_show']}`;
                         break;
                     case 'language': // /settings language help
-                        title = lang.obj['settings_language_help'];
-                        description = `\`/settings language set <language code>\` - ${lang.obj['settings_language_set']}` +
+                        helpTitle = lang.obj['settings_language_help'];
+                        helpDescription = `\`/settings language set <language code>\` - ${lang.obj['settings_language_set']}` +
                                         `\`/settings language unset\` - ${lang.obj['settings_language_unset']}` +
                                         `\`/settings channels show\` - ${lang.obj['settings_language_show']}`;
                         break;
                     default:
-                        title = lang.obj['settings_help'];
-                        description = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}` +
+                        helpTitle = lang.obj['settings_help'];
+                        helpDescription = `\`/settings mods add <role or user>\` - ${lang.obj['settings_mods_add']}` +
                                         `\`/settings mods remove <role or user>\` - ${lang.obj['settings_mods_remove']}` +
                                         `\`/settings mods show\` - ${lang.obj['settings_mods_show']}` +
                                         `\`/settings channels add <role or user>\` - ${lang.obj['settings_channels_add']}` +
@@ -192,6 +203,9 @@ export default class Settings {
                         break;
                 }
                 await Util.editReply(interaction, helpTitle, helpDescription);
+                break;
+            default:
+                await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /settings subcommand (${subcommand}`);
                 break;
         }
         // returnEmbed(title, message, image=null);
