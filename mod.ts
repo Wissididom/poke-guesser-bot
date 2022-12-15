@@ -52,7 +52,6 @@ export default class Mod {
                                 if (score && user) {
                                     await db.addScore(interaction.guildId, user.id, score);
                                 } else {
-                                    let user = interaction.options.getUser('user');
                                     if (user) {
                                         let dbScore = await db.getScore(interaction.guildId, user.id);
                                         if (!dbScore)

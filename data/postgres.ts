@@ -227,7 +227,7 @@ export default class Database {
             throw lang.obj['settings_channels_add_already_allowed'].replace('{channel}', `<#${channel.id}>`);
         } else {
             return this.Channel.create({
-                serverId: channel.guild,
+                serverId: channel.guildId,
                 channelId: channel.id
             });
         }

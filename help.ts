@@ -20,7 +20,7 @@ export default class Help {
             });
             return;
         }
-        await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+        await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
         const lang = await Language.getLanguage(interaction.guildId, db);
         const type = interaction.options.getString('type');
         let title = '';

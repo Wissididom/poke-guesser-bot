@@ -2,6 +2,7 @@ import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandI
 import Database from "./data/postgres";
 import Language from './language';
 import Util from './util';
+import * as fs from 'fs';
 
 export default class Settings {
 
@@ -52,7 +53,7 @@ export default class Settings {
                                 await Util.editReply(interaction, lang.obj['settings_channels_add_title_success'], lang.obj['settings_channels_add_description_success']);
                             }
                         } catch (err) {
-                            await Util.editReply(interaction, lang.obj['settings_channels_add_title_failed'], lang.obj['settings_channels_add_description_failed']);
+                            await Util.editReply(interaction, lang.obj['settings_channels_add_title_failed'], `${lang.obj['settings_channels_add_description_failed']}${err}`);
                         }
                         break;
                     default:
@@ -125,9 +126,14 @@ export default class Settings {
                     case 'language': // /settings language set
                         try {
                             let language = interaction.options.getString('language');
+                            
                             if (language) {
-                                await db.setLanguage(interaction.guildId, language);
-                                await Util.editReply(interaction, lang.obj['settings_language_set_title_success'], lang.obj['settings_language_set_description_success']);
+                                if (fs.existsSync(`./languages/${language}.json`)) {
+                                    await db.setLanguage(interaction.guildId, language);
+                                    await Util.editReply(interaction, lang.obj['settings_language_set_title_success'], lang.obj['settings_language_set_description_success']);
+                                } else {
+                                    await Util.editReply(interaction, lang.obj['settings_language_set_title_unavailable'], lang.obj['settings_language_set_description_unavailable']);
+                                }
                             }
                         } catch (err) {
                             await Util.editReply(interaction, lang.obj['settings_language_set_title_failed'], `${lang.obj['settings_language_set_description_failed']}${err}`);
