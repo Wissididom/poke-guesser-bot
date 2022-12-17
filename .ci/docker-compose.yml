@@ -30,7 +30,5 @@ services:
       - db
     networks:
       - default
-volumes:
-  database:
 networks:
   default:
