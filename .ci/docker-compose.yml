@@ -5,9 +5,14 @@ services:
     container_name: poke-guesser-postgres
     restart: "no"
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+      # POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     networks:
       - default
+    volumes:
+      - ${PWD}/docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
   poke-guesser-bot:
     build:
       context: ../.
@@ -15,9 +20,17 @@ services:
     container_name: poke-guesser-bot
     restart: "no"
     image: poke-guesser-bot
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: pokebot
     depends_on:
       - db
     networks:
       - default
+volumes:
+  database:
 networks:
   default:

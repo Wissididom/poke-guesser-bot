@@ -15,7 +15,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker-compose build
+      run: docker-compose build --no-cache
     - name: Test the Docker image
       run: docker-compose up --abort-on-container-exit
       timeout-minutes: 30
