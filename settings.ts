@@ -21,8 +21,8 @@ export default class Settings {
             });
             return;
         }
-        const lang = await Language.getLanguage(interaction.guildId, db);
         await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
+        const lang = await Language.getLanguage(interaction.guildId, db);
         // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
         console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator, false)}`);
         if (interaction.guild.ownerId != interaction.user.id/*Is Owner*/ && !interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator, false)) {
