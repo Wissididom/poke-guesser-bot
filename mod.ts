@@ -48,14 +48,19 @@ export default class Mod {
                         case 'add':
                             try {
                                 let score = interaction.options.getInteger('score', false);
-                                let user = interaction.options.getUser('user');
-                                if (score && user) {
-                                    await db.addScore(interaction.guildId, user.id, score);
+                                let user = interaction.options.getUser('user', false) || interaction.user;
+                                let dbScore = await db.getScore(interaction.guildId, user.id);
+                                if (score) {
+                                    if (dbScore) {
+                                        await db.setScore(interaction.guildId, user.id, dbScore.score + score);
+                                    } else {
+                                        await db.setScore(interaction.guildId, user.id, score);
+                                    }
                                 } else {
-                                    if (user) {
-                                        let dbScore = await db.getScore(interaction.guildId, user.id);
-                                        if (!dbScore)
-                                            await db.setScore(interaction.guildId, user.id, 0);
+                                    if (dbScore) {
+                                        await db.setScore(interaction.guildId, user.id, dbScore.score + 1);
+                                    } else {
+                                        await db.setScore(interaction.guildId, user.id, 0);
                                     }
                                 }
                                 Util.editReply(interaction, lang.obj['mod_score_add_title_success'], lang.obj['mod_score_add_description_success'], lang);
