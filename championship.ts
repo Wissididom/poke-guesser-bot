@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from 'discord.js';
 import Database from './data/postgres';
 import Language from './language';
 import Util from './util';
@@ -41,18 +41,25 @@ export default class Championship {
         // TODO: Execute newChampionship Actions
     }
 
-    static getRegisterObject() {
-        return {
-            name: 'championship',
-            description: 'Manages the championship',
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: [
-                {
-                    name: 'new',
-                    description: 'Outputs the leaderboard one last time, reveals winner and clears the leaderboard',
-                    type: ApplicationCommandOptionType.Subcommand
-                }
-            ]
-        };
+    static getRegisterObject(subcommandgroup: SlashCommandSubcommandGroupBuilder): SlashCommandSubcommandGroupBuilder {
+        return subcommandgroup
+        .setName('championship')
+        .setNameLocalizations({
+            'de': 'meisterschaft'
+        })
+        .setDescription('Manages the championship')
+        .setDescriptionLocalizations({
+            'de': 'Meisterschaft verwalten'
+        }).addSubcommand(subcommand =>
+            subcommand
+            .setName('new')
+            .setNameLocalizations({
+                'de': 'neu'
+            })
+            .setDescription('Outputs the leaderboard one last time, reveals winner and clears the leaderboard')
+            .setDescriptionLocalizations({
+                'de': 'Gibt die Bestenliste ein letztes Mal aus, verkündet den Gewinner und leert die Bestenliste'
+            })
+        );
     }
 }
