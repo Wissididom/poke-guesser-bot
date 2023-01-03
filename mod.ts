@@ -71,15 +71,13 @@ export default class Mod {
                         case 'remove':
                             try {
                                 let score = interaction.options.getInteger('score', false);
-                                let user = interaction.options.getUser('user');
-                                if (user) {
-                                    if (score) {
-                                        await db.removeScore(interaction.guildId, user.id, score);
-                                    } else {
-                                        await db.unsetScore(interaction.guildId, user.id);
-                                    }
-                                    Util.editReply(interaction, lang.obj['mod_score_remove_title_success'], lang.obj['mod_score_remove_description_success'], lang);
+                                let user = interaction.options.getUser('user') || interaction.user;
+                                if (score) {
+                                    await db.removeScore(interaction.guildId, user.id, score);
+                                } else {
+                                    await db.unsetScore(interaction.guildId, user.id);
                                 }
+                                Util.editReply(interaction, lang.obj['mod_score_remove_title_success'], lang.obj['mod_score_remove_description_success'], lang);
                             } catch (err) {
                                 Util.editReply(interaction, lang.obj['mod_score_remove_title_failed'], `${lang.obj['mod_score_remove_description_failed']}${err}`, lang);
                             }
@@ -87,17 +85,15 @@ export default class Mod {
                         case 'set':
                             try {
                                 let score = interaction.options.getInteger('score', false);
-                                let user = interaction.options.getUser('user');
-                                if (user) {
-                                    if (score) {
-                                        await db.setScore(interaction.guildId, user.id, score);
-                                    } else {
-                                        let dbScore = await db.getScore(interaction.guildId, user.id);
-                                        if (!dbScore)
-                                            await db.setScore(interaction.guildId, user.id, 0);
-                                    }
-                                    Util.editReply(interaction, lang.obj['mod_score_set_title_success'], lang.obj['mod_score_set_description_success'], lang);
+                                let user = interaction.options.getUser('user', false) || interaction.user;
+                                if (score != null && score >= 0) {
+                                    await db.setScore(interaction.guildId, user.id, score);
+                                } else {
+                                    let dbScore = await db.getScore(interaction.guildId, user.id);
+                                    if (!dbScore)
+                                        await db.setScore(interaction.guildId, user.id, 0);
                                 }
+                                Util.editReply(interaction, lang.obj['mod_score_set_title_success'], lang.obj['mod_score_set_description_success'], lang);
                             } catch (err) {
                                 Util.editReply(interaction, lang.obj['mod_score_set_title_failed'], `${lang.obj['mod_score_set_description_failed']}${err}`, lang);
                             }
