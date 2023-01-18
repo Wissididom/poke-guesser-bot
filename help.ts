@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import Util from "./util";
-import Language from "./language";
-import Database from "./data/postgres";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "npm:discord.js";
+import Util from "./util.ts";
+import Language from "./language.ts";
+import Database from "./data/postgres.ts";
 
 export default class Help {
 
