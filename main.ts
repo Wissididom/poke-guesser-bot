@@ -99,7 +99,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 // Gracefully disconnect Postgres-Client on exit
-if (process.platform === 'win32') {
+/*if (process.platform === 'win32') {
     let rl = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
@@ -108,7 +108,7 @@ if (process.platform === 'win32') {
         process.emit('SIGINT');
         process.exit();
     });
-}
+}*/
 
 // Bot Login
 if (!mySecret) {
