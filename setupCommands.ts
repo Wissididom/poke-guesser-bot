@@ -1,8 +1,9 @@
-import * as DotEnv from 'dotenv';
-DotEnv.config();
-
-import { Client, GatewayIntentBits, Partials } from "discord.js";
+import { DotEnv, DiscordJS } from "discord.js";
 import Commands from './commands';
+
+const { Client, GatewayIntentBits, Partials } = DiscordJS;
+
+DotEnv.config();
 
 const client = new Client({intents: [
     GatewayIntentBits.Guilds,
