@@ -20,12 +20,13 @@ export default class Database {
     private LastExplore = class extends Model {}
 
     constructor() {
-        if (process.env['DATABASE_URL']) {
-            this.db = new Sequelize(process.env['DATABASE_URL']);
+        const databaseUrl = Deno.env.get("DATABASE_URL");
+        if (databaseUrl) {
+            this.db = new Sequelize(databaseUrl);
         } else {
-            this.db = new Sequelize(process.env['POSTGRES_DB'] ?? 'pokebot', process.env['POSTGRES_USER'] ?? 'postgres', process.env['POSTGRES_PASSWORD'] ?? 'postgres', {
-                host: process.env['POSTGRES_HOST'] ?? 'db',
-                port: parseInt(process.env['POSTGRES_PORT'] ?? '5432'),
+            this.db = new Sequelize(Deno.env.get("POSTGRES_DB") ?? 'pokebot', Deno.env.get("POSTGRES_USER") ?? 'postgres', Deno.env.get("POSTGRES_PASSWORD") ?? 'postgres', {
+                host: Deno.env.get("POSTGRES_HOST") ?? 'db',
+                port: parseInt(Deno.env.get("POSTGRES_PORT") ?? '5432'),
                 dialect: 'postgres'
             });
         }
