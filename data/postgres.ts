@@ -1,8 +1,7 @@
-import { Sequelize, Model, DataTypes } from "sequelize";
-import * as fs from 'fs';
-import LanguageApi from "../language";
-import Util from "../util";
-import { GuildChannel, GuildMember, Role } from "discord.js";
+import { Sequelize, Model, DataTypes } from "npm:sequelize";
+import LanguageApi from "../language.ts";
+import Util from "../util.ts";
+import { GuildChannel, GuildMember, Role } from "npm:discord.js";
 // Discord-IDs are 18 chars atm (2021) but will increase in the future
 
 export default class Database {
@@ -341,22 +340,15 @@ export default class Database {
     }
 
     async getLanguages() {
-        return new Promise<string[]>((resolve, reject) => {
-            fs.readdir('./languages', (err: NodeJS.ErrnoException | null, filenames: string[]) => {
-                if (err != null) {
-                    reject(err);
-                } else {
-                    for (let i = 0; i < filenames.length; i++) {
-                        filenames[i] = filenames[i].substring(0, filenames[i].lastIndexOf('.'));
-                    }
-                    resolve(filenames);
-                }
-            });
-        });
+        let result = [];
+        for await (const language of Deno.readDir(`./languages`)) {
+            result.push(language.substring(0, language.lastIndexOf('.')));
+        }
+        return result;
     }
 
     async getLanguageObject(language: string = 'en_US') {
-        return require(`./languages/${language}.json`);
+        return JSON.parse(await Deno.readTextFile(`./languages/${language}.json`));
     }
 
     async getScore(serverId: string, userId: string): Promise<{ position: number, serverId: string, userId: string, score: number } | null> {
