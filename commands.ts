@@ -1,11 +1,11 @@
-import Help from "./help";
-import Settings from "./settings";
-import Leaderboard from "./leaderboard";
-import Score from "./score";
-import Explore from "./explore";
-import Reveal from "./reveal";
-import Mod from "./mod";
-import Catch from "./catch";
+import Help from "./help.ts";
+import Settings from "./settings.ts";
+import Leaderboard from "./leaderboard.ts";
+import Score from "./score.ts";
+import Explore from "./explore.ts";
+import Reveal from "./reveal.ts";
+import Mod from "./mod.ts";
+import Catch from "./catch.ts";
 
 export default class Commands {
 
