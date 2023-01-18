@@ -1,3 +1,4 @@
+import * as pg from 'pg';
 import { Sequelize, Model, DataTypes } from "npm:sequelize";
 import LanguageApi from "../language.ts";
 import Util from "../util.ts";
@@ -22,12 +23,15 @@ export default class Database {
     constructor() {
         const databaseUrl = Deno.env.get("DATABASE_URL");
         if (databaseUrl) {
-            this.db = new Sequelize(databaseUrl);
+            this.db = new Sequelize(databaseUrl, {
+                dialectModule: pg
+            });
         } else {
             this.db = new Sequelize(Deno.env.get("POSTGRES_DB") ?? 'pokebot', Deno.env.get("POSTGRES_USER") ?? 'postgres', Deno.env.get("POSTGRES_PASSWORD") ?? 'postgres', {
                 host: Deno.env.get("POSTGRES_HOST") ?? 'db',
                 port: parseInt(Deno.env.get("POSTGRES_PORT") ?? '5432'),
-                dialect: 'postgres'
+                dialect: 'postgres',
+                dialectModule: pg
             });
         }
         this.Mod.init({
