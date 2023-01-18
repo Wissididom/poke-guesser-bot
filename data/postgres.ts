@@ -1,4 +1,4 @@
-import * as pg from 'npm:pg';
+import pg from 'npm:pg';
 import { Sequelize, Model, DataTypes } from "npm:sequelize";
 import LanguageApi from "../language.ts";
 import Util from "../util.ts";
