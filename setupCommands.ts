@@ -1,4 +1,4 @@
-import { DotEnv, DiscordJS } from "discord.js";
+import { DotEnv, DiscordJS } from "./deps.ts";
 import Commands from './commands';
 
 const { Client, GatewayIntentBits, Partials } = DiscordJS;
