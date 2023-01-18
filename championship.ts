@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from 'discord.js';
-import Database from './data/postgres';
-import Language from './language';
-import Util from './util';
+import { ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from "npm:discord.js";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
 
 export default class Championship {
 
