@@ -1,9 +1,8 @@
-FROM node:19
-WORKDIR /usr/src/app
-COPY . .
-RUN npm install -g typescript
-RUN npm install
-RUN tsc
-RUN cp -r /usr/src/app/build/. .
-RUN rm *.ts
-CMD [ "npm", "start" ]
+FROM denoland/deno:1.29.4
+WORKDIR /app
+USER deno
+COPY deps.ts
+RUN deno cache deps.ts
+ADD . .
+RUN deno cache.main.ts
+CMD [ "run", "--allow-net", "--allow-env", "main.ts" ]
