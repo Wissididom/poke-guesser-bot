@@ -1,4 +1,4 @@
-import { pg as pgImport, sequelize as sequelizeImport, DiscordJS } from './deps.ts';
+import { pg as pgImport, sequelize as sequelizeImport, DiscordJS } from '../deps.ts';
 import LanguageApi from "../language.ts";
 import Util from "../util.ts";
 
