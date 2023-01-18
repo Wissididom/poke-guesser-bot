@@ -1,10 +1,12 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "npm:discord.js";
+import { DiscordJS } from "./deps.ts";
 import Language from "./language.ts";
 import Util from "./util.ts";
 import Delay from "./delay.ts";
 import Timeout from "./timeout.ts";
 import Championship from "./championship.ts";
 import Database from "./data/postgres.ts";
+
+const { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } = DiscordJS;
 
 export default class Mod {
 
