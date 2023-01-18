@@ -1,10 +1,10 @@
-import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
-import Language from './language';
-import Util from './util';
-import Delay from "./delay";
-import Timeout from "./timeout";
-import Championship from "./championship";
-import Database from "./data/postgres";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "npm:discord.js";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import Delay from "./delay.ts";
+import Timeout from "./timeout.ts";
+import Championship from "./championship.ts";
+import Database from "./data/postgres.ts";
 
 export default class Mod {
 
