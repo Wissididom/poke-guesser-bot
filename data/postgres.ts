@@ -1,6 +1,4 @@
-import pg from 'npm:pg';
-import { Sequelize, Model, DataTypes } from "npm:sequelize";
-import { GuildChannel, GuildMember, Role } from "npm:discord.js";
+import { pg, sequelize: { Sequelize, Model, DataTypes }, DiscordJS: { GuildChannel, GuildMember, Role } } from './deps.ts';
 import LanguageApi from "../language.ts";
 import Util from "../util.ts";
 // Discord-IDs are 18 chars atm (2021) but will increase in the future
