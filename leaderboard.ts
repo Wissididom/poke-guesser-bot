@@ -1,8 +1,8 @@
-import { ChatInputCommandInteraction, EmbedBuilder, User, BaseInteraction, SlashCommandBuilder } from "discord.js";
-import { Model } from "sequelize";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
+import { ChatInputCommandInteraction, EmbedBuilder, User, BaseInteraction, SlashCommandBuilder } from "npm:discord.js";
+import { Model } from "npm:sequelize";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
 
 export default class Leaderboard {
 
