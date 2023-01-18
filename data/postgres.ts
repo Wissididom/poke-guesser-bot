@@ -1,7 +1,10 @@
-import { pg, sequelize: { Sequelize, Model, DataTypes }, DiscordJS: { GuildChannel, GuildMember, Role } } from './deps.ts';
+import { pg as pgImport, sequelize as sequelizeImport, DiscordJS } from './deps.ts';
 import LanguageApi from "../language.ts";
 import Util from "../util.ts";
-// Discord-IDs are 18 chars atm (2021) but will increase in the future
+
+const { pg } = pgImport;
+const { Sequelize, Model, DataTypes } = sequelizeImport;
+const { GuildChannel, GuildMember, Role } = DiscordJS;
 
 export default class Database {
 
