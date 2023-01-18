@@ -1,11 +1,11 @@
-import * as DotEnv from 'dotenv';
+import * as DotEnv from 'npm:dotenv';
 DotEnv.config();
 
-import { Client, GatewayIntentBits, Partials, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, ComponentType, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionResponse, GuildChannel, ActionRow } from 'discord.js';
-import Commands from './commands';
-import Language from './language';
-import Util from './util';
-import Database from './data/postgres';
+import { Client, GatewayIntentBits, Partials, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, ComponentType, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionResponse, GuildChannel, ActionRow } from 'npm:discord.js';
+import Commands from './commands.ts';
+import Language from './language.ts';
+import Util from './util.ts';
+import Database from './data/postgres.ts';
 
 const mySecret = process.env['TOKEN']; // Discord Token
 
