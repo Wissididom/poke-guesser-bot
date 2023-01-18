@@ -1,4 +1,6 @@
-import { EmbedBuilder, AttachmentBuilder, Message, GuildMember, PermissionsBitField, User, APIGuildMember, Role, APIRole, ChatInputCommandInteraction, BaseInteraction } from 'npm:discord.js';
+import { DiscordJS } from "./deps.ts";
+
+const { EmbedBuilder, AttachmentBuilder, Message, GuildMember, PermissionsBitField, User, APIGuildMember, Role, APIRole, ChatInputCommandInteraction, BaseInteraction } = DiscordJS;
 
 type FetchSpriteType = {
     back_default: string,
