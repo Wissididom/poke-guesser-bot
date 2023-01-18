@@ -3,7 +3,7 @@ import Util from "./util.ts";
 import Language from "./language.ts";
 import Database from "./data/postgres.ts";
 
-import { ChatInputCommandInteraction, SlashCommandBuilder } = DiscordJS;
+const { ChatInputCommandInteraction, SlashCommandBuilder } = DiscordJS;
 
 export default class Help {
 
