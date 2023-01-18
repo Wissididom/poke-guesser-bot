@@ -1,8 +1,7 @@
-import { ChatInputCommandInteraction, PermissionsBitField, Role, GuildMember, GuildChannel, SlashCommandBuilder } from "discord.js";
-import Database from "./data/postgres";
-import Language from './language';
-import Util from './util';
-import * as fs from 'fs';
+import { ChatInputCommandInteraction, PermissionsBitField, Role, GuildMember, GuildChannel, SlashCommandBuilder } from "npm:discord.js";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
 
 export default class Settings {
 
@@ -126,13 +125,16 @@ export default class Settings {
                     case 'language': // /settings language set
                         try {
                             let language = interaction.options.getString('language');
-                            
                             if (language) {
-                                if (fs.existsSync(`./languages/${language}.json`)) {
+                                try {
+                                    await Deno.stat(`./languages/${language}.json`); // check if exists, throws Deno.errors.NotFound if it does not
                                     await db.setLanguage(interaction.guildId, language);
                                     await Util.editReply(interaction, lang.obj['settings_language_set_title_success'], lang.obj['settings_language_set_description_success'], lang);
-                                } else {
-                                    await Util.editReply(interaction, lang.obj['settings_language_set_title_unavailable'], lang.obj['settings_language_set_description_unavailable'], lang);
+                                } catch(e) {
+                                    if (e instanceof Deno.errors.NotFound)
+                                        await Util.editReply(interaction, lang.obj['settings_language_set_title_unavailable'], lang.obj['settings_language_set_description_unavailable'], lang);
+                                    else
+                                        console.log(`Error stating ./languages/${language}.json (TODO: send actual error message to Discord User): ${e}`);
                                 }
                             }
                         } catch (err) {
