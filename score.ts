@@ -1,7 +1,9 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "npm:discord.js";
+import { DiscordJS } from "./deps.ts";
 import Database from "./data/postgres.ts";
 import Language from "./language.ts";
 import Util from "./util.ts";
+
+const { ChatInputCommandInteraction, SlashCommandBuilder } = DiscordJS;
 
 export default class Score {
 
