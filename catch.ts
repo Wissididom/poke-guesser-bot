@@ -1,7 +1,9 @@
-import { AttachmentBuilder, ButtonInteraction, EmbedBuilder, ModalSubmitInteraction } from "npm:discord.js";
+import { DiscordJS } from "./deps.ts";
 import Database from "./data/postgres.ts";
 import Language from "./language.ts";
 import Util from "./util.ts";
+
+const { AttachmentBuilder, ButtonInteraction, EmbedBuilder, ModalSubmitInteraction } = DiscordJS;
 
 export default class Catch {
 
