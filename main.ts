@@ -1,11 +1,12 @@
-import * as DotEnv from 'npm:dotenv';
-DotEnv.config();
-
-import { Client, GatewayIntentBits, Partials, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, ComponentType, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionResponse, GuildChannel, ActionRow } from 'npm:discord.js';
+import { DotEnv, DiscordJS } from './deps.ts';
 import Commands from "./commands.ts";
 import Language from "./language.ts";
 import Util from "./util.ts";
 import Database from "./data/postgres.ts";
+
+const { Client, GatewayIntentBits, Partials, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle, ComponentType, ButtonBuilder, ButtonStyle, EmbedBuilder, InteractionResponse, GuildChannel, ActionRow } = DiscordJS;
+
+DotEnv.config();
 
 const mySecret = Deno.env.get("TOKEN"); // Discord Token
 
