@@ -1,4 +1,4 @@
-import Database from "./data/postgres";
+import Database from "./data/postgres.ts";
 
 export default class Language {
 
