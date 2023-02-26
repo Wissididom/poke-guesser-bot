@@ -9,7 +9,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 > - Tweet about it
 > - Refer this project in your project's readme
 > - Mention the project at local meetups and tell your friends/colleagues
-> - Join our [discord](#community)
+> - Join our [Discord](#community)
 
 ## Table of Contents
 
