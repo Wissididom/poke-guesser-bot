@@ -156,21 +156,17 @@ All interactions with discord were handled thanks to the [discord.js](https://di
 
 This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot.
 
-## Replit (No Longer Supported)
-
-This bot was originally written in Replit, but has since been rewritten to run in a Docker container instead. Replit is no longer supported. 
-
 # Contributions
 
-To contribute to the bot, please fork this repository and open up a pull request to merge changes back into the repository.
+If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`. 
 
-If your change adds a feature, please include proof that the feature is working as intended. Make sure you also test the bot to ensure other features aren't broken. I will expand this section soon to be more detailed, and add Pull Request templates to follow as well.
+# Terms of Conduct
 
-Contribution guideline coming soon!
+Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`. 
 
 # License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/master/LICENSE)
 
 # Additional Credit
 
