@@ -51,7 +51,7 @@ If you then still feel the need to ask a question and need clarification, we rec
 
 We will then take care of the issue as soon as possible.
 
-> Alternatively, you can join our [discord](#community) and ask your question there. 
+> Alternatively, you can join our [Discord](#community) and ask your question there.
 
 
 ## I Want To Contribute
