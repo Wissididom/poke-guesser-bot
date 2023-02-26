@@ -33,7 +33,7 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 
 ## Community
 
-If you are interested in this project, please consider joining our [discord](https://discord.gg/WmD5CW3aFu). 
+If you are interested in this project, please consider joining our [Discord](https://discord.gg/WmD5CW3aFu).
 
 
 ## I Have a Question
