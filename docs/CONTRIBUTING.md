@@ -110,7 +110,7 @@ This section guides you through submitting an enhancement suggestion for Poke-gu
 
 #### How Do I Submit a Good Enhancement Suggestion?
 
-Enhancement suggestions are tracked as [GitHub issues](https://github.com/GeorgeCiesinski/poke-guesser-bot/issues).
+Enhancement suggestions are tracked as [GitHub Issues](https://github.com/GeorgeCiesinski/poke-guesser-bot/issues).
 
 - Create a new issue and follow the provided `New Feature` template.
 - Use a **clear and descriptive title** for the issue to identify the suggestion.
