@@ -1,168 +1,148 @@
 # Poké-guesser Bot
 
-Poké-guesser Bot is a discord bot which selects random pokémon and asks the user to guess the pokémon name. The bot automatically tracks the score of participating users. It also recognizes a number of admin commands, and player commands such as catching pokémon, and displaying the leaderboard. 
-
-## Repositories
-
-Poké-guesser Bot is hosted on Github and Replit. To visit the repositories, see the links below.
-
-1. Github - https://github.com/GeorgeCiesinski/poke-guesser-bot
-
-2. Replit - https://replit.com/@GeorgeKhan/poke-guesser-bot
-
-## Background
-
-A few months ago, one of my friends Pokketmuse reached out to me about a coding idea. She is a Twitch streamer who has a discord server where she runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game she ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. She wanted a bot that could automate this process.
-
-I fell in love with this idea immediately. I have wanted to build a discord bot for a very long time. I also have wanted to apply my JavaScript knowledge for a while as well as I have not completed any javascript projects yet. This project gave me an opportunity to kill two birds with one stone!
+Poké-guesser Bot is a discord bot that runs a Pokemon guessing game. The bot automatically tracks the score of participating users.
 
 # Features
 
-## Admin Role Configuration
+## Bot Roles
 
-You can set one or more roles to administrate the bot. Setting no roles leaves admin commands and controls open for all server users.
+The bot has the following roles:
 
-## Channel configuration
+- Admin
+- Mod
+- Player
 
-You can set which channels the bot is allowed to reply in. Setting no channels allows the bot to listen and reply on all channels.
-
-## Multi-language Support
-
-Poké-guesser Bot supports guesses containing pokemon names in other languages as supported by Poké-API. This makes it great for an international discord server with players from many different regions.
-
-## Dynamic Leaderboard
-
-Poké-guesser Bot keeps track of scores and generates a nice looking leaderboard 
-
-## Player commands
-
-Besides the usual admin commands, there are also many player commands which can be used to get the leaderboard, get their own or another player's score, guess pokemon, and more. 
-
-## Hosted by YOU on Replit
-
-Thanks to this bot being written in Replit, you can clone this and run it yourself so you know exactly what this bot is doing. You can also make any custom modifications you want!
-
-# Usage
+You can learn more about the [roles here](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Bot-Roles).
 
 ## Commands
 
-Poke-guesser bot recognizes commands from Admins and Mods (make sure that you add the role first!) which are for moderating the bot. It also recognizes regular player commands for playing the game.
+Each role has access to certain commands. You can find out more from [this wiki page](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Commands).
 
-### Admin Commands
+### Guessing / Catching
 
-Admin commands have the prefix `!`
+You can simply guess the pokémon name by clicking or tapping on `Catch This Pokémon!`-button below the message that shows the pokémon that needs to be guessed. After that a modal opens up that asks you for the name where you need to enter it and press or tap on `Submit`.
+![catch](images/catch.png)
 
-Full list of admin commands is shown below. Do not type the < > characters. 
+## Channel configuration
 
-#### Gameplay
+You can set which channels the bot is allowed to reply in. The bot can listen and reply on all channels if no channels are set.
 
-`!help`: Shows Admin commands.
+## Leaderboard
 
-`!leaderboard`: Shows a leaderboard of top players.
+Generate a Leaderboard of the top players.
 
-`!new championship`: (caution) Outputs the Leaderboard one last time, reveals winner, and starts new championship with a blank leaderboard.
+## Hosted by YOU on Docker
 
-#### Score and leaderboard correction
+You can clone this repository to run it yourself through Docker Compose so you know exactly what this bot is doing. You can also fork this repo and make any modifications you want!
 
-*Note: The below commands require you to use @user mentions*
+## Multi-language Support
 
-`!addscore <@user>`: (caution) Adds the user to the leaderboard with 0 points. Cannot be used if the user is already on leaderboard.
-
-`!addscore <@user> <score>`: (caution) Adds the user to the leaderboard and sets their score.
-
-`!removescore <@user>`: (caution) Removes the user from the leaderboard.
-
-`!removescore <@user> <score>`: (caution) Subtracts the given score from the user's current score.
-
-#### Configuration
-
-`!configure`: Shows configure helper.
-
-`!add role <role name>`: Adds the role as a bot moderator. The role name must be exactly what it is in Discord, including any emojis. 
-
-`!remove role <role name>`: Removes the role from bot moderator.
-
-`!add channel <channel name>`: Adds the channel to list of channels the bot replies to. 
-
-`!remove channel <channel name>`: Removes the channel from list of channels the bot replies to.
-
-`!show config`: Shows bot moderator roles and allowed channels.
-
-`!reset config`: Removes all allowed roles and channels. Bot returns to default configuration where all server members are able to send admin commands, and the bot replies in all channels. **Note:** This default configuration should only be used to configure the bot.
-
-### Player Commands
-
-Player commands have the prefix `$`
-
-Full list of player commands is shown below. Do not include the < > characters. 
-
-`$help`: Shows Admin and Player commands. 
-
-`$catch <pokémon-name>`: Allows player to guess the pokémon. Guessing correctly adds the player to the leaderboard and adds one point.
-
-`$leaderboard`: Shows a leaderboard of top players.
-
-`$position`: See your current position.
-
-*Note: The below command requires you to use @user mentions*
-
-`$position <@user>`: See another user's position.
+Poké-guesser Bot supports guesses in any language supported by Poké-API.
 
 # Installation
 
-## Forking and Running Bot using Replit
-
-This bot was intented to run in [replit](https://replit.com) so my installation instructions will cover this method.
-
-**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first.*
-
-1. Go to the Replit link for the project: https://replit.com/@GeorgeKhan/poke-guesser-bot
-
-2. Click Fork to fork it to your own Replit account.
-
-![replit-3](images/replit-3.png)
-
-3. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret. 
-
-![replit-4](images/replit-4.png)
-
-4. Click the **Run** button at the top of the Replit page to start the bot.
-
-## Setup Discord Bot
+## Discord Bot Setup
 
 In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
 
-1. Login to the Discord Developer portal and create a bot using [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
+<!-- Keep ordered lists in html format -->
+<ol>            
+    <li>
+        Login to the <a href="https://discord.com/developers/applications">Discord Developer portal</a>.
+    </li>
+    <li>
+        Follow <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot">these instructions</a> to setup the discord bot. Save the token from this step for later.
+    </li>
+    <li>
+        Create the <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links">Bot Invite Link</a>, but select the below permissions before using the invite link:
+        <img src="images/bot-4.png" alt="bot-4">
+    </li>
+</ol>
 
-2. Copy the token by clicking the copy button. Save this for a future step.
+## Create the .env and docker.env files
 
-![bot-2](images/bot-2.png)
+<ol>
+     <li>
+        Clone or download the repo.
+    </li>
+    <li>
+        Create a <code>.env</code> file if it doesn't exist. Copy the contents of <code>example.env</code> into the <code>.env</code>
+    </li>
+    <li>
+        Add the Discord Token to the <code>.env</code> file.
+        <ul>
+            <li><strong>TOKEN:</strong> This is your discord token from previous steps.</li>
+        </ul>
+    </li>
+    <li>
+        Add the Database configuration to the <code>.env</code> file. There are two options: 
+        <ol>
+            <li>
+                If you use a Database URL, add it to the <code>.env</code> file as below: 
+                <br><code>DATABASE_URL: "postgres://user:pass@example.com:5432/dbname"</code> (your string)
+            </li>
+            <li>
+                If you want to pass the parameters separately to the Sequelize constructor, change the below fields in the .env file:
+                <ul>
+                    <li><strong>POSTGRES_HOST:</strong> Connection string for Postgres server. Leave as <code>db</code> if using Docker.</li>
+                    <li><strong>POSTGRES_USER & POSTGRES_PASSWORD:</strong> User/pass for postgres server. Doesn't need to be changed if using Docker.
+                </ul>  
+            </li>
+        </ol>
+    </li>
+    <li>
+        Copy the contents of <code>.env</code> into <code>docker.env</code>
+    </li>
+</ol>
 
-3. Click the OAuth2 button, then click bot.
+## Adding Slash Commands
 
-![bot-3](images/bot-3.png)
+The bot uses slash commands which need to be registered with discord.
 
-4. Scroll down to the bot permissions. Select the permissions from the below screenshot.
+<ol>
+    <li>While still in the project directory, run <code>npm install</code> to install the required packages</li>
+    <li>Then run <code>node setupCommands.js</code> to register slash commands for the bot with discord</li>
+</ol>
 
-![bot-4](images/bot-4.png)
+## Running the Bot
 
-5. Click copy above the bot permissions, and paste it into your browser.
+This bot was written to run locally or on docker with NodeJS and PostgreSQL and uses Env-Files for the senstive data that will get loaded in NodeJS as Environment Variables.
 
-6. Choose a server to invite the bot to, then click authorize.
+### Run in Docker
 
-## Running locally
+**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first.*
 
-This bot was written to run on Replit and utilize the Replit Secrets (Environment Variables). I didn't look into this too much to see how well it works in just nodeJS and outside of Replit. 
+<ol>
+    <li>
+        <a href="https://docs.docker.com/get-started/">Set up Docker</a> if you haven't already.
+    </li>
+    <li>
+        Run the bot with Docker Compose. You can do this by running either: <br><code>sudo docker-compose up -d</code><br> or if that doesn't work, then try: <br><code>sudo docker-compose --env-file docker.env up -d</code>
+    </li>
+</ol>
 
-If running the `index.js` file doesn't work or outputs errors about the TOKEN missing, you will need to update the code to use your local TOKEN variable. 
 
-As this wasn't intended to run locally, I haven't tested this so I can't go into too much detail about how to run the bot this way.
+### Run Locally
+
+You can also run the bot using node, but the database has to be set up manually.
+
+<ol>
+    <li>
+        Set up your database if you haven't already. The bot was built using Postgres but other DBs can work if they allow a connection string with user/pass. If you don't use the <code>DATABASE_URL</code> environment variable, you'd have to adjust the dialect for Sequelize in data/postgres.js.
+    </li>
+    <li>
+        Run the command:
+        <br><code>node index.js</code>
+        <br>or
+        <br><code>npm start</code> 
+    </li>
+</ol>
 
 # Technology
 
-## Replit
+## PostgreSQL
 
-We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot is intended to be ran straight from Replit so that it is hosted in the cloud. 
+The database.
 
 ## node.js
 
@@ -170,21 +150,23 @@ This project is written entirely using JavaScript in the [Node.JS](https://nodej
 
 ## discord.js
 
-All interactions with discord were handled thanks to the [discord.js](https://discord.js.org/#/) library. 
+All interactions with discord were handled thanks to the [discord.js](https://discord.js.org/#/) library.
 
-## API
+## Poké-API
 
-This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot. 
+This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot.
 
 # Contributions
 
-To contribute to the bot, please fork this repository and open up a pull request to merge changes back into the repository. 
+If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`. 
 
-If your change adds a feature, please include proof that the feature is working as intended. Make sure you also test the bot to ensure other features aren't broken. I will expand this section soon to be more detailed, and add Pull Request templates to follow as well.
+# Terms of Conduct
+
+Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`. 
 
 # License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/master/LICENSE)
 
 # Additional Credit
 
