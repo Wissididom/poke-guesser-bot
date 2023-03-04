@@ -21,7 +21,7 @@ Each role has access to certain commands. You can find out more from [this wiki 
 ### Guessing / Catching
 
 You can simply guess the pokémon name by clicking or tapping on `Catch This Pokémon!`-button below the message that shows the pokémon that needs to be guessed. After that a modal opens up that asks you for the name where you need to enter it and press or tap on `Submit`.
-![catch](images/catch.png)
+![catch](docs/images/catch.png)
 
 ## Channel configuration
 
@@ -55,7 +55,7 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
     </li>
     <li>
         Create the <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links">Bot Invite Link</a>, but select the below permissions before using the invite link:
-        <img src="images/bot-4.png" alt="bot-4">
+        <img src="docs/images/bot-4.png" alt="bot-4">
     </li>
 </ol>
 
