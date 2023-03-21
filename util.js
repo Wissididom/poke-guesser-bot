@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 const Database = require("@replit/database");
 
 const db = new Database();
@@ -58,24 +58,25 @@ function instantiateDatabase() {
 }
 
 // Wraps reply in poke-guesser themed embed
-function embedReply(title, message, msg, image=null) {
+function embedReply(title, description, msg, image=null) {
 
   // Creates new embedded message
-  let embed = new Discord.MessageEmbed()
+  let embed = new EmbedBuilder()
     .setTitle(title)  // Adds title
-    .setAuthor('POKé-GUESSER BOT', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
+    .setAuthor({name: 'POKé-GUESSER BOT', iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', url: 'https://github.com/GeorgeCiesinski/poke-guesser-bot'})
     .setColor(0x00AE86)
-    .setDescription(message)  // Adds message
+    .setDescription(description) // Adds message
     .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
-    .setFooter('By borreLore, Wissididom and Valley Orion', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png');
+    .setFooter({text: 'By borreLore, Wissididom and Valley Orion', iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png'});
 
   if (image) {
-    const attachment = new Discord.MessageAttachment(image, 'pokemon.png');
-    embed.attachFiles(attachment);
+    const attachment = new AttachmentBuilder(image, { name: 'pokemon.png' });
     embed.setImage('attachment://pokemon.png');
+    msg.channel.send({embeds: [embed], files: [attachment]});  // Sends the embedded message back to channel
+    return;
   }
 
-  msg.channel.send(embed);  // Sends the embedded message back to channel
+  msg.channel.send({embeds: [embed]});  // Sends the embedded message back to channel
 
 }
 

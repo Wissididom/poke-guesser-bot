@@ -3,7 +3,7 @@ require('dotenv').config();
 LIBRARIES
 */
 
-const Discord = require("discord.js");
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
 const Database = require("@replit/database");
 
 /*
@@ -20,10 +20,25 @@ const disadvantages = require("./disadvantages");
 OBJECTS, TOKENS, GLOBAL VARIABLES
 */
 
-const client = new Discord.Client();  // Discord Object
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.MessageContent
+	],
+	partials: [
+		Partials.User,
+		Partials.Channel,
+		Partials.GuildMember,
+		Partials.Message,
+		Partials.Reaction
+	]
+}); // Discord Object
+
 const db = new Database();  // Replit Database
 
-const mySecret = process.env['TOKEN'];  // Discord Token
+const mySecret = process.env['TOKEN']; // Discord Token
 
 let guessEntered = false;
 
@@ -402,6 +417,7 @@ function checkInput(inputRequest, msg) {
           return;
         }
         // Loop through pokemon names and check against guess
+        console.log(`pokemon:${JSON.stringify(pokemon)}`);
         for (let i = 0; i < pokemon.length; i++) {
           if (pokemon[i].name ? pokemon[i].name.toLowerCase() === guess.toLowerCase() : pokemon[i].toLowerCase() === guess.toLowerCase()) {
 
@@ -465,7 +481,7 @@ client.on("ready", () => {
 })
 
 // Reads user messages, interprets commands & guesses, and authenticates channels/roles
-client.on("message", msg => {
+client.on("messageCreate", msg => {
 
   // Returns if message is from bot
   if (msg.author.bot) return;
@@ -492,6 +508,7 @@ client.on("message", msg => {
     // Check if user message starts with $ indicating guess, call checkGuess
     if (msg.content.startsWith("$")) {
       inputRequest = msg.content.split("$")[1];
+      console.log(`player command:${inputRequest}`);
       checkInput(inputRequest, msg);
     }
 
