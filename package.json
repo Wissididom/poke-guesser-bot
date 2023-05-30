@@ -25,7 +25,7 @@
   "jest": {
     "verbose": true,
     "moduleFileExtensions": ["js", "jsx", "json", "ts", "tsx"],
-    "roots": ["<rootDir>", "<rootDir>/tests"],
+    "roots": ["<rootDir>", "<rootDir>/test"],
     "transform": {
       "^.+\\.m?[tj]sx?$": [
         "ts-jest",
