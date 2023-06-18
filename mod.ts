@@ -9,22 +9,9 @@ import Database from "./data/postgres";
 export default class Mod {
 
     static async mod(interaction: ChatInputCommandInteraction, db: Database) {
-        if (!interaction.guild?.available) {
-            await interaction.reply({
-                content: 'Guild not available  (score -> score -> interaction.guild.available is either null or false)',
-                ephemeral: true
-            });
-            return;
-        }
-        if (!interaction.guildId) {
-            await interaction.reply({
-                content: 'Internal Server Error (score -> score -> interaction.guildId = null)',
-                ephemeral: true
-            });
-            return;
-        }
+
         await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
-        const lang = await Language.getLanguage(interaction.guildId, db);
+        const lang = await Language.getLanguage(interaction.guildId!, db);
         let isMod = false;
         if (await db.isMod(interaction.member as GuildMember | null)) {
             isMod = true;
@@ -49,18 +36,18 @@ export default class Mod {
                             try {
                                 let score = interaction.options.getInteger('score', false);
                                 let user = interaction.options.getUser('user', false) || interaction.user;
-                                let dbScore = await db.getScore(interaction.guildId, user.id);
+                                let dbScore = await db.getScore(interaction.guildId!, user.id);
                                 if (score) {
                                     if (dbScore) {
-                                        await db.setScore(interaction.guildId, user.id, dbScore.score + score);
+                                        await db.setScore(interaction.guildId!, user.id, dbScore.score + score);
                                     } else {
-                                        await db.setScore(interaction.guildId, user.id, score);
+                                        await db.setScore(interaction.guildId!, user.id, score);
                                     }
                                 } else {
                                     if (dbScore) {
-                                        await db.setScore(interaction.guildId, user.id, dbScore.score + 1);
+                                        await db.setScore(interaction.guildId!, user.id, dbScore.score + 1);
                                     } else {
-                                        await db.setScore(interaction.guildId, user.id, 0);
+                                        await db.setScore(interaction.guildId!, user.id, 0);
                                     }
                                 }
                                 Util.editReply(interaction, lang.obj['mod_score_add_title_success'], lang.obj['mod_score_add_description_success'], lang);
@@ -73,9 +60,9 @@ export default class Mod {
                                 let score = interaction.options.getInteger('score', false);
                                 let user = interaction.options.getUser('user') || interaction.user;
                                 if (score) {
-                                    await db.removeScore(interaction.guildId, user.id, score);
+                                    await db.removeScore(interaction.guildId!, user.id, score);
                                 } else {
-                                    await db.unsetScore(interaction.guildId, user.id);
+                                    await db.unsetScore(interaction.guildId!, user.id);
                                 }
                                 Util.editReply(interaction, lang.obj['mod_score_remove_title_success'], lang.obj['mod_score_remove_description_success'], lang);
                             } catch (err) {
@@ -87,11 +74,11 @@ export default class Mod {
                                 let score = interaction.options.getInteger('score', false);
                                 let user = interaction.options.getUser('user', false) || interaction.user;
                                 if (score != null && score >= 0) {
-                                    await db.setScore(interaction.guildId, user.id, score);
+                                    await db.setScore(interaction.guildId!, user.id, score);
                                 } else {
-                                    let dbScore = await db.getScore(interaction.guildId, user.id);
+                                    let dbScore = await db.getScore(interaction.guildId!, user.id);
                                     if (!dbScore)
-                                        await db.setScore(interaction.guildId, user.id, 0);
+                                        await db.setScore(interaction.guildId!, user.id, 0);
                                 }
                                 Util.editReply(interaction, lang.obj['mod_score_set_title_success'], lang.obj['mod_score_set_description_success'], lang);
                             } catch (err) {

@@ -7,27 +7,13 @@ import Util from "./util";
 export default class Leaderboard {
 
     static async leaderboard(interaction: ChatInputCommandInteraction, db: Database) {
-        if (!interaction.guild?.available) {
-            await interaction.reply({
-                content: 'Guild not available  (leaderboard -> leaderboard -> interaction.guild.available is either null or false)',
-                ephemeral: true
-            });
-            return;
-        }
-        if (!interaction.guildId) {
-            await interaction.reply({
-                content: 'Internal Server Error (leaderboard -> leaderboard -> interaction.guildId = null)',
-                ephemeral: true
-            });
-            return;
-        }
         await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
-        const lang = await Language.getLanguage(interaction.guildId, db);
+        const lang = await Language.getLanguage(interaction.guildId!, db);
         let table = '';
         let longestUserLength: number = 0;
         let userName = '';
         let score = '';
-        let scores = await db.getScores(interaction.guildId);
+        let scores = await db.getScores(interaction.guildId!);
         const leaderboardEmbed: EmbedBuilder = Util.returnEmbed(lang.obj['leaderboard_title'], lang.obj['leaderboard_description'], lang).embed;
         // Add fields to Embed
         for (let i: number = 0; i < Math.max(5, scores.length); i++) {
