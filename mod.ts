@@ -9,7 +9,6 @@ import Database from "./data/postgres";
 export default class Mod {
 
     static async mod(interaction: ChatInputCommandInteraction, db: Database) {
-
         await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
         const lang = await Language.getLanguage(interaction.guildId!, db);
         let isMod = false;

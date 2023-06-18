@@ -117,7 +117,7 @@ This bot was written to run locally or on docker with NodeJS and PostgreSQL and 
         <a href="https://docs.docker.com/get-started/">Set up Docker</a> if you haven't already.
     </li>
     <li>
-        Run the bot with Docker Compose. You can do this by running either: <br><code>docker compose up -d</code><br>
+        Run the bot with Docker Compose: <br><code>docker compose up -d</code><br>
     </li>
 </ol>
 
