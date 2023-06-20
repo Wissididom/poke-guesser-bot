@@ -7,7 +7,8 @@
     "test": "jest",
     "build": "tsc",
     "start": "node index.js",
-    "check-format": "npx prettier --check ."
+    "check-format": "npx prettier --check .",
+    "format": "npx prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -26,13 +27,21 @@
   },
   "jest": {
     "verbose": true,
-    "moduleFileExtensions": ["js", "jsx", "json", "ts", "tsx"],
-    "roots": ["<rootDir>", "<rootDir>/test"],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "roots": [
+      "<rootDir>",
+      "<rootDir>/test"
+    ],
     "transform": {
       "^.+\\.m?[tj]sx?$": [
         "ts-jest",
-        {
-        }
+        {}
       ]
     }
   }
