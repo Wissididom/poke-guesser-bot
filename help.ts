@@ -6,22 +6,8 @@ import Database from "./data/postgres";
 export default class Help {
 
     static async help(interaction: ChatInputCommandInteraction, db: Database) {
-        if (!interaction.guild?.available) {
-            await interaction.reply({
-                content: 'Guild not available  (help -> help -> interaction.guild.available is either null or false)',
-                ephemeral: true
-            });
-            return;
-        }
-        if (!interaction.guildId) {
-            await interaction.reply({
-                content: 'Internal Server Error (help -> help -> interaction.guildId = null)',
-                ephemeral: true
-            });
-            return;
-        }
         await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
-        const lang = await Language.getLanguage(interaction.guildId, db);
+        const lang = await Language.getLanguage(interaction.guildId!, db);
         const type = interaction.options.getString('type');
         let title = '';
         let description = '';

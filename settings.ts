@@ -7,25 +7,11 @@ import * as fs from 'fs';
 export default class Settings {
 
     static async settings(interaction: ChatInputCommandInteraction, db: Database): Promise<void> {
-        if (!interaction.guild?.available) {
-            await interaction.reply({
-                content: 'Guild not available  (settings -> settings -> interaction.guild.available is either null or false)',
-                ephemeral: true
-            });
-            return;
-        }
-        if (!interaction.guildId) {
-            await interaction.reply({
-                content: 'Internal Server Error (settings -> settings -> interaction.guildId = null)',
-                ephemeral: true
-            });
-            return;
-        }
         await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
-        const lang = await Language.getLanguage(interaction.guildId, db);
+        const lang = await Language.getLanguage(interaction.guildId!, db);
         // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
-        console.log(`Owner:${interaction.guild.ownerId == interaction.user.id}; Administrator:${interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator, false)}`);
-        if (interaction.guild.ownerId != interaction.user.id/*Is Owner*/ && !interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator, false)) {
+        console.log(`Owner:${interaction.guild!.ownerId == interaction.user.id}; Administrator:${interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator, false)}`);
+        if (interaction.guild!.ownerId != interaction.user.id/*Is Owner*/ && !interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator, false)) {
             await Util.editReply(interaction, lang.obj['settings_command_forbidden_error_title'], lang.obj['settings_command_forbidden_error_description'], lang);
             return;
         }
@@ -94,7 +80,7 @@ export default class Settings {
                 switch (subcommandgroup) {
                     case 'mods': // /settings mods show
                         title = lang.obj['settings_mods_show_title'];
-                        const mods = await db.listMods(interaction.guildId);
+                        const mods = await db.listMods(interaction.guildId!);
                         for (let i = 0; i < mods.length; i++) {
                             description += `<@${mods[i].getDataValue('isUser') ? mods[i].getDataValue('mentionableId') : '&' + mods[i].get('mentionableId')}> (${mods[i].get('mentionableId')})\n`;
                         }
@@ -103,7 +89,7 @@ export default class Settings {
                         break;
                     case 'channels': // /settings channels show
                         title = lang.obj['settings_channels_show_title'];
-                        const channels = await db.listChannels(interaction.guildId);
+                        const channels = await db.listChannels(interaction.guildId!);
                         for (let i = 0; i < channels.length; i++) {
                             description += `<#${channels[i].get('channelId')}> (${channels[i].get('channelId')})\n`;
                         }
@@ -112,7 +98,7 @@ export default class Settings {
                         break;
                     case 'language': // /settings language show
                         title = lang.obj['settings_language_show_title'];
-                        description = await db.getLanguageCode(interaction.guildId);
+                        description = await db.getLanguageCode(interaction.guildId!);
                         break;
                     default:
                         title = lang.obj['error_invalid_subcommand_title'];
@@ -129,7 +115,7 @@ export default class Settings {
                             
                             if (language) {
                                 if (fs.existsSync(`./languages/${language}.json`)) {
-                                    await db.setLanguage(interaction.guildId, language);
+                                    await db.setLanguage(interaction.guildId!, language);
                                     await Util.editReply(interaction, lang.obj['settings_language_set_title_success'], lang.obj['settings_language_set_description_success'], lang);
                                 } else {
                                     await Util.editReply(interaction, lang.obj['settings_language_set_title_unavailable'], lang.obj['settings_language_set_description_unavailable'], lang);
@@ -148,7 +134,7 @@ export default class Settings {
                 switch (subcommandgroup) {
                     case 'language': // /settings language unset
                         try {
-                            await db.unsetLanguage(interaction.guildId);
+                            await db.unsetLanguage(interaction.guildId!);
                             await Util.editReply(interaction, lang.obj['settings_language_unset_title_success'], lang.obj['settings_language_unset_description_success'], lang);
                         } catch (err) {
                             await Util.editReply(interaction, lang.obj['settings_language_unset_title_failed'], lang.obj['settings_language_unset_description_failed'], lang);
@@ -161,10 +147,10 @@ export default class Settings {
                 break;
             case 'reset': // /settings reset
                 try {
-                    await db.resetMods(interaction.guildId);
-                    await db.resetChannels(interaction.guildId);
+                    await db.resetMods(interaction.guildId!);
+                    await db.resetChannels(interaction.guildId!);
                     try {
-                        await db.unsetLanguage(interaction.guildId);
+                        await db.unsetLanguage(interaction.guildId!);
                     } catch (e) {}
                     await Util.editReply(interaction, lang.obj['settings_reset_title_success'], lang.obj['settings_reset_description_success'], lang);
                 } catch (err) {

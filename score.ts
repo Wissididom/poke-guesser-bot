@@ -6,22 +6,8 @@ import Util from './util';
 export default class Score {
 
     static async score(interaction: ChatInputCommandInteraction, db: Database) {
-        if (!interaction.guild?.available) {
-            await interaction.reply({
-                content: 'Guild not available  (score -> score -> interaction.guild.available is either null or false)',
-                ephemeral: true
-            });
-            return;
-        }
-        if (!interaction.guildId) {
-            await interaction.reply({
-                content: 'Internal Server Error (score -> score -> interaction.guildId = null)',
-                ephemeral: true
-            });
-            return;
-        }
         await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
-        const lang = await Language.getLanguage(interaction.guildId, db);
+        const lang = await Language.getLanguage(interaction.guildId!, db);
         let title = '';
         let description = '';
         const subcommand = interaction.options.getSubcommand();
@@ -30,7 +16,7 @@ export default class Score {
                 let user = interaction.options.getUser('user', false);
                 if (!user)
                     user = interaction.user;
-                let userScore = await db.getScore(interaction.guildId, user.id);
+                let userScore = await db.getScore(interaction.guildId!, user.id);
                 title = user.tag;
                 if (userScore)
                     description = `**${lang.obj['user']}**: <@${user.id}>\n**${lang.obj['position']}**: ${userScore.position}\n**${lang.obj['score']}**: ${userScore.score}`;

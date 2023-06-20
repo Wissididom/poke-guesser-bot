@@ -45,8 +45,14 @@ client.on("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.guild?.available) return;
-    if (!interaction.guildId) return;
+    if (!interaction.guild?.available) {
+        console.warn('Guild not available: interaction.guild.available is either null or false');
+        return;
+    }
+    if (!interaction.guildId) {
+        console.warn('Internal Server Error: interaction.guildId is null');
+        return;
+    }
     if (interaction.isChatInputCommand()) {
         if (interaction.channel) {
             if (await db.isAllowedChannel(interaction.channel as GuildChannel) || !(await db.isAnyAllowedChannel(interaction.guildId))) {
