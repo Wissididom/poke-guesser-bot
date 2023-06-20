@@ -1,4 +1,4 @@
-name: Jest Test
+name: Prettier Formatting
 
 on:
   push:
@@ -7,12 +7,12 @@ on:
     branches: ["master", "develop"]
 
 jobs:
-  test:
+  check-format:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
       - name: Install dependencies
         run: npm i
-      - name: Test using jest
-        run: npm test
+      - name: Check formatting using prettier
+        run: npm run check-format

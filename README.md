@@ -110,7 +110,7 @@ This bot was written to run locally or on docker with NodeJS and PostgreSQL and 
 
 ### Run in Docker
 
-**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first.*
+**Important:** _You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first._
 
 <ol>
     <li>
@@ -120,7 +120,6 @@ This bot was written to run locally or on docker with NodeJS and PostgreSQL and 
         Run the bot with Docker Compose: <br><code>docker compose up -d</code><br>
     </li>
 </ol>
-
 
 ### Run Locally
 
@@ -146,7 +145,7 @@ The database.
 
 ## node.js
 
-This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment. 
+This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment.
 
 ## discord.js
 
@@ -158,11 +157,11 @@ This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API 
 
 # Contributions
 
-If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`. 
+If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`.
 
 # Terms of Conduct
 
-Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`. 
+Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`.
 
 # License
 
