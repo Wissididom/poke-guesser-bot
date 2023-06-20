@@ -8,3 +8,6 @@ node_modules/
 build/
 package-lock.json
 *.js
+*.md
+*.yml
+*.yaml
