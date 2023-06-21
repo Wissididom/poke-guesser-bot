@@ -12,7 +12,7 @@ export default class Timeout {
     db: Database
   ): Promise<void> {
     await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
-    const lang = await Language.getLanguage(interaction.guildId, db);
+    const lang = await Language.getLanguage(interaction.guildId!, db);
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case "set":

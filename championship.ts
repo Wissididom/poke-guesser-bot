@@ -12,12 +12,12 @@ export default class Championship {
     db: Database
   ) {
     interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
-    const lang = await Language.getLanguage(interaction.guildId, db);
+    const lang = await Language.getLanguage(interaction.guildId!, db);
     let subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case "new":
         try {
-          await Championship.newChampionship(interaction.guildId);
+          await Championship.newChampionship(interaction.guildId!);
           await Util.editReply(
             interaction,
             lang.obj["mod_championship_new_title_success"],

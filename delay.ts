@@ -9,7 +9,7 @@ import Util from "./util";
 export default class Delay {
   static async delay(interaction: ChatInputCommandInteraction, db: Database) {
     await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
-    const lang = await Language.getLanguage(interaction.guildId, db);
+    const lang = await Language.getLanguage(interaction.guildId!, db);
     let subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case "set":
@@ -20,7 +20,7 @@ export default class Delay {
           let s = interaction.options.getInteger("seconds", false) || 0;
           let user = interaction.options.getUser("user");
           if (user) {
-            await Delay.setDelay(interaction.guildId, user.id, d, h, m, s);
+            await Delay.setDelay(interaction.guildId!, user.id, d, h, m, s);
             await Util.editReply(
               interaction,
               lang.obj["mod_delay_set_title_success"],
@@ -41,7 +41,7 @@ export default class Delay {
         try {
           let user = interaction.options.getUser("user");
           if (user) {
-            await Delay.unsetDelay(interaction.guildId, user.id);
+            await Delay.unsetDelay(interaction.guildId!, user.id);
             await Util.editReply(
               interaction,
               lang.obj["mod_delay_unset_title_success"],
@@ -62,7 +62,7 @@ export default class Delay {
         try {
           let user = interaction.options.getUser("user");
           if (user) {
-            await Delay.showDelay(interaction.guildId, user.id);
+            await Delay.showDelay(interaction.guildId!, user.id);
             await Util.editReply(
               interaction,
               lang.obj["mod_delay_show_title_success"],
