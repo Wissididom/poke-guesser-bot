@@ -11,22 +11,6 @@ export default class Timeout {
     interaction: ChatInputCommandInteraction,
     db: Database
   ): Promise<void> {
-    if (!interaction.guild?.available) {
-      await interaction.reply({
-        content:
-          "Guild not available  (timeout -> timeout -> interaction.guild.available is either null or false)",
-        ephemeral: true,
-      });
-      return;
-    }
-    if (!interaction.guildId) {
-      await interaction.reply({
-        content:
-          "Internal Server Error (timeout -> timeout -> interaction.guildId = null)",
-        ephemeral: true,
-      });
-      return;
-    }
     await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId, db);
     const subcommand = interaction.options.getSubcommand();

@@ -8,22 +8,6 @@ import Util from "./util";
 
 export default class Delay {
   static async delay(interaction: ChatInputCommandInteraction, db: Database) {
-    if (!interaction.guild?.available) {
-      await interaction.reply({
-        content:
-          "Guild not available  (delay -> delay -> interaction.guild.available is either null or false)",
-        ephemeral: true,
-      });
-      return;
-    }
-    if (!interaction.guildId) {
-      await interaction.reply({
-        content:
-          "Internal Server Error (delay -> delay -> interaction.guildId = null)",
-        ephemeral: true,
-      });
-      return;
-    }
     await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId, db);
     let subcommand = interaction.options.getSubcommand();

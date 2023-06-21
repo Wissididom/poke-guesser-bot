@@ -11,22 +11,6 @@ export default class Championship {
     interaction: ChatInputCommandInteraction,
     db: Database
   ) {
-    if (!interaction.guild?.available) {
-      await interaction.reply({
-        content:
-          "Guild not available  (championship -> championship -> interaction.guild.available is either null or false)",
-        ephemeral: true,
-      });
-      return;
-    }
-    if (!interaction.guildId) {
-      await interaction.reply({
-        content:
-          "Internal Server Error (championship -> championship -> interaction.guildId = null)",
-        ephemeral: true,
-      });
-      return;
-    }
     interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId, db);
     let subcommand = interaction.options.getSubcommand();
