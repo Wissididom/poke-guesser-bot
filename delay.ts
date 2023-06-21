@@ -8,7 +8,6 @@ import Util from "./util";
 
 export default class Delay {
   static async delay(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let subcommand = interaction.options.getSubcommand();
     switch (subcommand) {

@@ -11,7 +11,6 @@ export default class Timeout {
     interaction: ChatInputCommandInteraction,
     db: Database
   ): Promise<void> {
-    await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {

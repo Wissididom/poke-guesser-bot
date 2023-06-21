@@ -11,7 +11,6 @@ export default class Championship {
     interaction: ChatInputCommandInteraction,
     db: Database
   ) {
-    interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
