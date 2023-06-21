@@ -134,7 +134,7 @@ In the event that your contribution is merged into the project, please update th
 
 ## Styleguides
 
-At this time, we do not have a styleguide for this project as we did not have one picked when this project was started. This said, try to keep your code similar to existing code, especially if you are adding to an existing module. If in doubt, check out the [Airbnb Style Guide](https://airbnb.io/javascript/) which has helpful styling recommendations.
+This project uses Prettier Code Style and there is a GitHub Action that checks that, so make sure that you run `npm run format` or `npx prettier --write .` to format the code.
 
 ### Commit Messages
 
