@@ -1,4 +1,3 @@
-
 const Discord = require("discord.js");
 const Database = require("@replit/database");
 
@@ -135,13 +134,20 @@ function showLeaderboard(msg, debug=false) {
     console.log(items)
 
     // Create Embed
-    const leaderboardEmbed = new Discord.MessageEmbed()
+    const leaderboardEmbed = new Discord.EmbedBuilder()
     .setTitle('Pokémaster Leaderboard')
-    .setAuthor('POKé-GUESSER BOT', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', 'https://github.com/GeorgeCiesinski/poke-guesser-bot')
+    .setAuthor({
+      name: 'POKé-GUESSER BOT',
+      iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png',
+      url: 'https://github.com/GeorgeCiesinski/poke-guesser-bot'
+    })
     .setColor(0x00AE86)
     .setDescription("Top 20 Pokémasters in this channel.")
     .setThumbnail('https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png')
-    .setFooter('By borreLore, Wissididom and Valley Orion', 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png');
+    .setFooter({
+      text: 'By borreLore, Wissididom and Valley Orion',
+      iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png'
+    });
 
     // Add fields to Embed
     for (let i = 0; i < Math.max(5, items.length); i++) {
@@ -181,10 +187,16 @@ function showLeaderboard(msg, debug=false) {
       
       // If on element 1-4, and element exists, create new elite four member
       if (i > 0 && i < 5 && i < items.length) {
-        leaderboardEmbed.addField(`🏅 ${i+1}. ${userName}`, `${score} pokémon caught.`);
+        leaderboardEmbed.addFields({
+          name: `🏅 ${i+1}. ${userName}`,
+          value: `${score} pokémon caught.`
+        });
       // If on element 1-4 but element is empty, create TBA
       }  else if (i > 0 && i < 5 && i >= items.length) {
-        leaderboardEmbed.addField(`${i+1}. TBA`, 'Position not claimed');
+        leaderboardEmbed.addFields({
+          name: `${i+1}. TBA`,
+          value: 'Position not claimed'
+        });
       }
 
       // Creates table header for overflow leaderboard
@@ -215,7 +227,11 @@ function showLeaderboard(msg, debug=false) {
     }
   
   // Sends the completed Embed
-  msg.channel.send(leaderboardEmbed);
+  msg.channel.send({
+    embeds: [
+      leaderboardEmbed
+    ]
+  });
 
   // Update leaderboard with sanitized leaderboard
   db.set("leaderboard", sanitizedLeaderboard);
