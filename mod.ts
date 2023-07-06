@@ -46,7 +46,7 @@ export default class Mod {
                     await db.setScore(
                       interaction.guildId!,
                       user.id,
-                      dbScore.score + score
+                      dbScore.score + score,
                     );
                   } else {
                     await db.setScore(interaction.guildId!, user.id, score);
@@ -56,7 +56,7 @@ export default class Mod {
                     await db.setScore(
                       interaction.guildId!,
                       user.id,
-                      dbScore.score + 1
+                      dbScore.score + 1,
                     );
                   } else {
                     await db.setScore(interaction.guildId!, user.id, 0);
@@ -66,14 +66,14 @@ export default class Mod {
                   interaction,
                   lang.obj["mod_score_add_title_success"],
                   lang.obj["mod_score_add_description_success"],
-                  lang
+                  lang,
                 );
               } catch (err) {
                 Util.editReply(
                   interaction,
                   lang.obj["mod_score_add_title_failed"],
                   `${lang.obj["mod_score_add_description_failed"]}${err}`,
-                  lang
+                  lang,
                 );
               }
               break;
@@ -91,14 +91,14 @@ export default class Mod {
                   interaction,
                   lang.obj["mod_score_remove_title_success"],
                   lang.obj["mod_score_remove_description_success"],
-                  lang
+                  lang,
                 );
               } catch (err) {
                 Util.editReply(
                   interaction,
                   lang.obj["mod_score_remove_title_failed"],
                   `${lang.obj["mod_score_remove_description_failed"]}${err}`,
-                  lang
+                  lang,
                 );
               }
               break;
@@ -113,7 +113,7 @@ export default class Mod {
                 } else {
                   let dbScore = await db.getScore(
                     interaction.guildId!,
-                    user.id
+                    user.id,
                   );
                   if (!dbScore)
                     await db.setScore(interaction.guildId!, user.id, 0);
@@ -122,14 +122,14 @@ export default class Mod {
                   interaction,
                   lang.obj["mod_score_set_title_success"],
                   lang.obj["mod_score_set_description_success"],
-                  lang
+                  lang,
                 );
               } catch (err) {
                 Util.editReply(
                   interaction,
                   lang.obj["mod_score_set_title_failed"],
                   `${lang.obj["mod_score_set_description_failed"]}${err}`,
-                  lang
+                  lang,
                 );
               }
               break;
@@ -140,7 +140,7 @@ export default class Mod {
                 lang.obj["error_invalid_subcommand_description"]
                   .replace("<commandName>", interaction.commandName)
                   .replace("<subcommandName>", subcommand),
-                lang
+                lang,
               );
           }
           break;
@@ -160,7 +160,7 @@ export default class Mod {
             lang.obj["error_invalid_subcommand_description"]
               .replace("<commandName>", interaction.commandName)
               .replace("<subcommandName>", subcommandgroup + "" + subcommand),
-            lang
+            lang,
           );
       }
     } else {
@@ -168,7 +168,7 @@ export default class Mod {
         interaction,
         lang.obj["mod_no_mod_title"],
         lang.obj["mod_no_mod_description"],
-        lang
+        lang,
       );
     }
   }
@@ -213,7 +213,7 @@ export default class Mod {
                   .setDescriptionLocalizations({
                     de: "Der Benutzer dessen Punktzahl du anpassen willst",
                   })
-                  .setRequired(true)
+                  .setRequired(true),
               )
               .addIntegerOption((option) =>
                 option
@@ -222,12 +222,12 @@ export default class Mod {
                     de: "punktzahl",
                   })
                   .setDescription(
-                    "The amount of points you want to add to the score of the user"
+                    "The amount of points you want to add to the score of the user",
                   )
                   .setDescriptionLocalizations({
                     de: "Die Anzahl der Punkte, die du der Punktzahl des Benutzers hinzufügen willst",
-                  })
-              )
+                  }),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -249,7 +249,7 @@ export default class Mod {
                   .setDescriptionLocalizations({
                     de: "Der Benutzer dessen Punktzahl du anpassen willst",
                   })
-                  .setRequired(true)
+                  .setRequired(true),
               )
               .addIntegerOption((option) =>
                 option
@@ -258,12 +258,12 @@ export default class Mod {
                     de: "punktzahl",
                   })
                   .setDescription(
-                    "The amount of points you want to remove from the user's score"
+                    "The amount of points you want to remove from the user's score",
                   )
                   .setDescriptionLocalizations({
                     de: "Die Anzahl der Punkte, die du der Punktzahl des Benutzers entfernen willst",
-                  })
-              )
+                  }),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -285,7 +285,7 @@ export default class Mod {
                   .setDescriptionLocalizations({
                     de: "Der Benutzer dessen Punktzahl du anpassen willst",
                   })
-                  .setRequired(true)
+                  .setRequired(true),
               )
               .addIntegerOption((option) =>
                 option
@@ -294,22 +294,22 @@ export default class Mod {
                     de: "punktzahl",
                   })
                   .setDescription(
-                    "The amount of points you want to set as score of the user"
+                    "The amount of points you want to set as score of the user",
                   )
                   .setDescriptionLocalizations({
                     de: "Die Punktzahl, die du beim Benutzers setzen willst",
-                  })
-              )
-          )
+                  }),
+              ),
+          ),
       )
       .addSubcommandGroup((subcommandgroup) =>
-        Delay.getRegisterObject(subcommandgroup)
+        Delay.getRegisterObject(subcommandgroup),
       )
       .addSubcommandGroup((subcommandgroup) =>
-        Timeout.getRegisterObject(subcommandgroup)
+        Timeout.getRegisterObject(subcommandgroup),
       )
       .addSubcommandGroup((subcommandgroup) =>
-        Championship.getRegisterObject(subcommandgroup)
+        Championship.getRegisterObject(subcommandgroup),
       );
   }
 }

@@ -54,8 +54,8 @@ export default class Score {
               .setDescription("The user whose score you want to know")
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Punktzahl du wissen willst",
-              })
-          )
+              }),
+          ),
       );
   }
 }

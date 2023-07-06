@@ -57,7 +57,7 @@ export default class Help {
           lang.obj["error_invalid_subcommand_description"]
             .replace("<commandName>", interaction.commandName)
             .replace("<subcommandName>", type ? type : "null"),
-          lang
+          lang,
         );
     }
     Util.editReply(interaction, title, description, lang);
@@ -105,8 +105,8 @@ export default class Help {
                 de: "Spieler",
               },
               value: "player",
-            }
-          )
+            },
+          ),
       );
   }
 }

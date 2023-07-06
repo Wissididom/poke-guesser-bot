@@ -15,7 +15,7 @@ export default class Reveal {
       console.log("isMod: true");
       let encounter = await db.getEncounter(
         interaction.guildId!,
-        interaction.channelId
+        interaction.channelId,
       );
       if (encounter.length > 0) {
         let pokemonNames: string[] = [];
@@ -34,7 +34,7 @@ export default class Reveal {
           else inBrackets += `, ${Util.capitalize(pokemonNames[i])}`;
         }
         console.log(
-          `Mod requested reveal: ${encounter[englishIndex].name} (${inBrackets})`
+          `Mod requested reveal: ${encounter[englishIndex].name} (${inBrackets})`,
         );
         // returnEmbed(title, message, image=null)
         await Util.editReply(
@@ -43,10 +43,10 @@ export default class Reveal {
           lang.obj["reveal_pokemon_escaped_description"]
             .replace(
               "<englishPokemon>",
-              Util.capitalize(encounter[englishIndex].name)
+              Util.capitalize(encounter[englishIndex].name),
             )
             .replace("<inBrackets>", inBrackets),
-          lang
+          lang,
         );
         await db.clearEncounters(interaction.guildId!, interaction.channelId);
       } else {
@@ -55,7 +55,7 @@ export default class Reveal {
           interaction,
           lang.obj["reveal_no_encounter_title"],
           lang.obj["reveal_no_encounter_description"],
-          lang
+          lang,
         );
       }
     } else {
@@ -64,7 +64,7 @@ export default class Reveal {
         interaction,
         lang.obj["reveal_no_mod_title"],
         lang.obj["reveal_no_mod_description"],
-        lang
+        lang,
       );
     }
   }

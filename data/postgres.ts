@@ -34,7 +34,7 @@ export default class Database {
           port: parseInt(process.env["POSTGRES_PORT"] ?? "5432"),
           dialect: "postgres",
           logging: false,
-        }
+        },
       );
     }
     this.Mod.init(
@@ -61,7 +61,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "mod",
         timestamps: false,
-      }
+      },
     );
     this.Channel.init(
       {
@@ -78,7 +78,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "channel",
         timestamps: false,
-      }
+      },
     );
     this.Language.init(
       {
@@ -95,7 +95,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "language",
         timestamps: false,
-      }
+      },
     );
     this.Score.init(
       {
@@ -116,7 +116,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "score",
         timestamps: false,
-      }
+      },
     );
     this.Encounter.init(
       {
@@ -142,7 +142,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "encounter",
         timestamps: false,
-      }
+      },
     );
     this.Artwork.init(
       {
@@ -164,7 +164,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "artwork",
         timestamps: false,
-      }
+      },
     );
     this.LastExplore.init(
       {
@@ -186,7 +186,7 @@ export default class Database {
         sequelize: this.db,
         modelName: "lastexplore",
         timestamps: false,
-      }
+      },
     );
     this.prepareDb();
   }
@@ -205,11 +205,11 @@ export default class Database {
       throw Util.isUser(mentionable)
         ? lang.obj["settings_mods_add_already_existing_user"].replace(
             "{mentionable}",
-            `<@!${mentionable.id}>`
+            `<@!${mentionable.id}>`,
           )
         : lang.obj["settings_mods_add_already_existing_role"].replace(
             "{mentionable}",
-            `<@&${mentionable.id}>`
+            `<@&${mentionable.id}>`,
           );
     } else {
       return await this.Mod.create({
@@ -226,11 +226,11 @@ export default class Database {
       throw Util.isUser(mentionable)
         ? lang.obj["settings_mods_remove_not_existing_mod_user"].replace(
             "{mentionable}",
-            `<@!${mentionable.id}>`
+            `<@!${mentionable.id}>`,
           )
         : lang.obj["settings_mods_remove_not_existing_mod_role"].replace(
             "{mentionable}",
-            `<@&${mentionable.id}>`
+            `<@&${mentionable.id}>`,
           );
     } else {
       return await this.Mod.destroy({
@@ -275,7 +275,7 @@ export default class Database {
     if (await this.isAllowedChannel(channel)) {
       throw lang.obj["settings_channels_add_already_allowed"].replace(
         "{channel}",
-        `<#${channel.id}>`
+        `<#${channel.id}>`,
       );
     } else {
       return this.Channel.create({
@@ -290,7 +290,7 @@ export default class Database {
     if (!(await this.isAllowedChannel(channel))) {
       throw lang.obj["settings_channels_remove_not_allowed"].replace(
         "{channel}",
-        `<#${channel.id}>`
+        `<#${channel.id}>`,
       );
     } else {
       return await this.Channel.destroy({
@@ -344,7 +344,7 @@ export default class Database {
     if (await this.isLanguageSet(serverId, languageCode)) {
       throw lang.obj["settings_language_set_already_set"].replace(
         "{language}",
-        languageCode
+        languageCode,
       );
     } else if (await this.isAnyLanguageSet(serverId)) {
       return await this.Language.update(
@@ -353,7 +353,7 @@ export default class Database {
           where: {
             serverId,
           },
-        }
+        },
       );
     } else {
       return this.Language.create({
@@ -378,7 +378,7 @@ export default class Database {
 
   async isLanguageSet(
     serverId: string,
-    languageCode: string
+    languageCode: string,
   ): Promise<boolean> {
     return (
       (await this.Language.count({
@@ -421,12 +421,12 @@ export default class Database {
             for (let i = 0; i < filenames.length; i++) {
               filenames[i] = filenames[i].substring(
                 0,
-                filenames[i].lastIndexOf(".")
+                filenames[i].lastIndexOf("."),
               );
             }
             resolve(filenames);
           }
-        }
+        },
       );
     });
   }
@@ -437,7 +437,7 @@ export default class Database {
 
   async getScore(
     serverId: string,
-    userId: string
+    userId: string,
   ): Promise<{
     position: number;
     serverId: string;
@@ -490,7 +490,7 @@ export default class Database {
             serverId,
             userId,
           },
-        }
+        },
       );
     } else {
       return await this.Score.create({
@@ -520,7 +520,7 @@ export default class Database {
               serverId,
               userId,
             },
-          }
+          },
         );
       } else {
         throw lang.obj["mod_score_add_lower_than_1"];
@@ -541,7 +541,7 @@ export default class Database {
   async removeScore(
     serverId: string,
     userId: string,
-    score: number
+    score: number,
   ): Promise<number | [affectedCount: number]> {
     const lang = await LanguageApi.getLanguage(serverId, this);
     const current = await this.Score.findOne({
@@ -561,7 +561,7 @@ export default class Database {
               serverId,
               userId,
             },
-          }
+          },
         );
       } else {
         return this.unsetScore(serverId, userId);
@@ -604,7 +604,7 @@ export default class Database {
     serverId: string,
     channelId: string,
     name: string,
-    language: string
+    language: string,
   ) {
     return this.Encounter.create({
       serverId,
@@ -636,7 +636,7 @@ export default class Database {
 
   async getArtwork(
     serverId: string,
-    channelId: string
+    channelId: string,
   ): Promise<string | null> {
     return (
       await this.Artwork.findOne({
@@ -659,7 +659,7 @@ export default class Database {
             serverId,
             channelId,
           },
-        }
+        },
       );
     } else {
       return await this.Artwork.create({
@@ -672,7 +672,7 @@ export default class Database {
 
   async unsetArtwork(
     serverId: string,
-    channelId: string
+    channelId: string,
   ): Promise<number | null> {
     if (await this.artworkExists(serverId, channelId)) {
       return await this.Artwork.destroy({
@@ -688,7 +688,7 @@ export default class Database {
 
   async lastExploreExists(
     serverId: string,
-    channelId: string
+    channelId: string,
   ): Promise<boolean> {
     return (
       (await this.LastExplore.count({
@@ -702,7 +702,7 @@ export default class Database {
 
   async getLastExplore(
     serverId: string,
-    channelId: string
+    channelId: string,
   ): Promise<number | null> {
     return (
       await this.LastExplore.findOne({
@@ -725,7 +725,7 @@ export default class Database {
             serverId,
             channelId,
           },
-        }
+        },
       );
     } else {
       return await this.LastExplore.create({
@@ -738,7 +738,7 @@ export default class Database {
 
   async unsetLastExplore(
     serverId: string,
-    channelId: string
+    channelId: string,
   ): Promise<number | null> {
     if (await this.lastExploreExists(serverId, channelId)) {
       return await this.LastExplore.destroy({

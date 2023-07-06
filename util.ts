@@ -45,7 +45,7 @@ export default class Util {
     description: string,
     language: { code: string; obj: { [key: string]: string } },
     color: number = 0x00ae86,
-    image: string | null = null
+    image: string | null = null,
   ): { embed: EmbedBuilder; attachment: AttachmentBuilder | null } {
     // Creates new embedded message
     let embed = new EmbedBuilder()
@@ -86,7 +86,7 @@ export default class Util {
   // Finds the GuildMember by User-IDs (either string or array)
   static async findMember(
     interaction: BaseInteraction,
-    id: string
+    id: string,
   ): Promise<GuildMember | undefined> {
     // Return member or undefined if not found (force specifies if cache should be checked)
     // I could have omitted the force property, but i have put it there to make it clear
@@ -96,7 +96,7 @@ export default class Util {
   // Finds the User by User-ID
   static async findUser(
     interaction: BaseInteraction,
-    id: string
+    id: string,
   ): Promise<User | undefined> {
     let member = await this.findMember(interaction, id);
     if (!member) {
@@ -114,13 +114,13 @@ export default class Util {
   }
 
   static isUser(
-    mentionable: User | GuildMember | APIGuildMember | Role | APIRole
+    mentionable: User | GuildMember | APIGuildMember | Role | APIRole,
   ): boolean {
     return mentionable instanceof User || mentionable instanceof GuildMember;
   }
 
   static isRole(
-    mentionable: User | GuildMember | APIGuildMember | Role | APIRole
+    mentionable: User | GuildMember | APIGuildMember | Role | APIRole,
   ): boolean {
     return mentionable instanceof Role;
   }
@@ -128,7 +128,7 @@ export default class Util {
   static async generatePokemon(): Promise<{ name: string; url: string }> {
     // Fetch json of all available pokemon up to a limit of 2000 (~1200 available)
     let res: Response = await fetch(
-      "https://pokeapi.co/api/v2/pokemon/?limit=2000"
+      "https://pokeapi.co/api/v2/pokemon/?limit=2000",
     );
     let json: any = await res.json();
     let result: { name: string; url: string }[] = json.results;
@@ -168,13 +168,13 @@ export default class Util {
   }
 
   static async fetchNames(
-    nameOrId: string
+    nameOrId: string,
   ): Promise<
     { languageName: string; languageUrl: string; name: string }[] | null
   > {
     try {
       const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon-species/${nameOrId}/`
+        `https://pokeapi.co/api/v2/pokemon-species/${nameOrId}/`,
       );
       const json = await res.json();
       const names: { language: { name: string; url: string }; name: string }[] =
@@ -186,7 +186,7 @@ export default class Util {
             languageUrl: name.language.url,
             name: name.name,
           };
-        }
+        },
       );
     } catch (err) {
       // For example id 10220 returns 404 Not Found
@@ -198,7 +198,7 @@ export default class Util {
     interaction: ChatInputCommandInteraction,
     title: string,
     description: string,
-    language: { code: string; obj: { [key: string]: string } }
+    language: { code: string; obj: { [key: string]: string } },
   ): Promise<Message<boolean>> {
     return await interaction.editReply({
       embeds: [Util.returnEmbed(title, description, language).embed],
