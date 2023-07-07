@@ -13,7 +13,7 @@ import Util from "./util";
 export default class Leaderboard {
   static async leaderboard(
     interaction: ChatInputCommandInteraction,
-    db: Database
+    db: Database,
   ) {
     await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
@@ -25,7 +25,7 @@ export default class Leaderboard {
     const leaderboardEmbed: EmbedBuilder = Util.returnEmbed(
       lang.obj["leaderboard_title"],
       lang.obj["leaderboard_description"],
-      lang
+      lang,
     ).embed;
     // Add fields to Embed
     for (let i: number = 0; i < Math.max(5, scores.length); i++) {
@@ -56,13 +56,13 @@ export default class Leaderboard {
                 .replace("<username>", userName),
             value: lang.obj["leaderboard_score_value"].replace(
               "<score>",
-              score
+              score,
             ),
           },
           {
             name: lang.obj["leaderboard_elite_four"],
             value: lang.obj["leaderboard_next_runnerups"],
-          }
+          },
         );
       } else if (i == 0 && i == scores.length) {
         leaderboardEmbed.addFields(
@@ -79,7 +79,7 @@ export default class Leaderboard {
           {
             name: lang.obj["leaderboard_elite_four"],
             value: lang.obj["leaderboard_next_runnerups"],
-          }
+          },
         );
       }
       // If on element 1-4, and element exists, create new elite four member
@@ -104,7 +104,7 @@ export default class Leaderboard {
         // Get longest username starting from index 5
         longestUserLength = await this.getLongestUsername(
           interaction,
-          scores.slice(5)
+          scores.slice(5),
         );
       }
       // Adds additional users into overflow leaderboard up until 20
@@ -132,13 +132,13 @@ export default class Leaderboard {
 
   private static async getLongestUsername(
     interaction: BaseInteraction,
-    scores: Model[]
+    scores: Model[],
   ) {
     let longestUsernameLength: number = 0;
     for (let i: number = 0; i < scores.length; i++) {
       let u: User | undefined = (await Util.findUser(
         interaction,
-        scores[i].getDataValue("userId")
+        scores[i].getDataValue("userId"),
       )) as User | undefined;
       if (u) {
         if (u.username.length > longestUsernameLength) {

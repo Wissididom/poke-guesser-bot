@@ -24,7 +24,7 @@ export default class Delay {
               interaction,
               lang.obj["mod_delay_set_title_success"],
               lang.obj["mod_delay_set_description_success"],
-              lang
+              lang,
             );
           }
         } catch (err) {
@@ -32,7 +32,7 @@ export default class Delay {
             interaction,
             lang.obj["mod_delay_set_title_failed"],
             `${lang.obj["mod_delay_set_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -45,7 +45,7 @@ export default class Delay {
               interaction,
               lang.obj["mod_delay_unset_title_success"],
               lang.obj["mod_delay_unset_description_success"],
-              lang
+              lang,
             );
           }
         } catch (err) {
@@ -53,7 +53,7 @@ export default class Delay {
             interaction,
             lang.obj["mod_delay_unset_title_failed"],
             `${lang.obj["mod_delay_unset_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -66,7 +66,7 @@ export default class Delay {
               interaction,
               lang.obj["mod_delay_show_title_success"],
               lang.obj["mod_delay_show_description_success"],
-              lang
+              lang,
             );
           }
         } catch (err) {
@@ -74,7 +74,7 @@ export default class Delay {
             interaction,
             lang.obj["mod_delay_show_title_failed"],
             `${lang.obj["mod_delay_show_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -85,7 +85,7 @@ export default class Delay {
           lang.obj["error_invalid_subcommand_description"]
             .replace("<commandName>", interaction.commandName)
             .replace("<subcommandName>", subcommand),
-          lang
+          lang,
         );
     }
   }
@@ -96,7 +96,7 @@ export default class Delay {
     days: number = 0,
     hours: number = 0,
     minutes: number = 0,
-    seconds: number = 0
+    seconds: number = 0,
   ) {
     // TODO: Execute Delay Actions
   }
@@ -110,7 +110,7 @@ export default class Delay {
   }
 
   static getRegisterObject(
-    subcommandgroup: SlashCommandSubcommandGroupBuilder
+    subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {
     return subcommandgroup
       .setName("delay")
@@ -141,7 +141,7 @@ export default class Delay {
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Verzögerung gesetzt werden soll",
               })
-              .setRequired(true)
+              .setRequired(true),
           )
           .addIntegerOption((option) =>
             option
@@ -152,7 +152,7 @@ export default class Delay {
               .setDescription("The duration you want to set the delay to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Verzögerung setzen willst",
-              })
+              }),
           )
           .addIntegerOption((option) =>
             option
@@ -163,7 +163,7 @@ export default class Delay {
               .setDescription("The duration you want to set the delay to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Verzögerung setzen willst",
-              })
+              }),
           )
           .addIntegerOption((option) =>
             option
@@ -174,7 +174,7 @@ export default class Delay {
               .setDescription("The duration you want to set the delay to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Verzögerung setzen willst",
-              })
+              }),
           )
           .addIntegerOption((option) =>
             option
@@ -185,8 +185,8 @@ export default class Delay {
               .setDescription("The duration you want to set the delay to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Verzögerung setzen willst",
-              })
-          )
+              }),
+          ),
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -208,8 +208,8 @@ export default class Delay {
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Verzögerung entfernt werden soll",
               })
-              .setRequired(true)
-          )
+              .setRequired(true),
+          ),
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -231,8 +231,8 @@ export default class Delay {
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Verzögerung du sehen willst",
               })
-              .setRequired(true)
-          )
+              .setRequired(true),
+          ),
       );
   }
 }

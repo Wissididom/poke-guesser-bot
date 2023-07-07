@@ -9,7 +9,7 @@ import Util from "./util";
 export default class Championship {
   static async championship(
     interaction: ChatInputCommandInteraction,
-    db: Database
+    db: Database,
   ) {
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let subcommand = interaction.options.getSubcommand();
@@ -21,14 +21,14 @@ export default class Championship {
             interaction,
             lang.obj["mod_championship_new_title_success"],
             lang.obj["mod_championship_new_description_success"],
-            lang
+            lang,
           );
         } catch (err) {
           await Util.editReply(
             interaction,
             lang.obj["mod_championship_new_title_failed"],
             lang.obj["mod_championship_new_description_failed"],
-            lang
+            lang,
           );
         }
         break;
@@ -39,7 +39,7 @@ export default class Championship {
           lang.obj["error_invalid_subcommand_description"]
             .replace("<commandName>", interaction.commandName)
             .replace("<subcommandName>", subcommand),
-          lang
+          lang,
         );
     }
   }
@@ -49,7 +49,7 @@ export default class Championship {
   }
 
   static getRegisterObject(
-    subcommandgroup: SlashCommandSubcommandGroupBuilder
+    subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {
     return subcommandgroup
       .setName("championship")
@@ -67,11 +67,11 @@ export default class Championship {
             de: "neu",
           })
           .setDescription(
-            "Outputs the leaderboard one last time, reveals winner and clears the leaderboard"
+            "Outputs the leaderboard one last time, reveals winner and clears the leaderboard",
           )
           .setDescriptionLocalizations({
             de: "Gibt die Bestenliste ein letztes Mal aus, verkündet den Gewinner und leert die Bestenliste",
-          })
+          }),
       );
   }
 }

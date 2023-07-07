@@ -14,7 +14,7 @@ import * as fs from "fs";
 export default class Settings {
   static async settings(
     interaction: ChatInputCommandInteraction,
-    db: Database
+    db: Database,
   ): Promise<void> {
     await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
@@ -24,21 +24,21 @@ export default class Settings {
         interaction.guild!.ownerId == interaction.user.id
       }; Administrator:${interaction.memberPermissions?.has(
         PermissionsBitField.Flags.Administrator,
-        false
-      )}`
+        false,
+      )}`,
     );
     if (
       interaction.guild!.ownerId != interaction.user.id /*Is Owner*/ &&
       !interaction.memberPermissions?.has(
         PermissionsBitField.Flags.Administrator,
-        false
+        false,
       )
     ) {
       await Util.editReply(
         interaction,
         lang.obj["settings_command_forbidden_error_title"],
         lang.obj["settings_command_forbidden_error_description"],
-        lang
+        lang,
       );
       return;
     }
@@ -57,7 +57,7 @@ export default class Settings {
                   interaction,
                   lang.obj["settings_mods_add_title_success"],
                   lang.obj["settings_mods_add_description_success"],
-                  lang
+                  lang,
                 );
               }
             } catch (err) {
@@ -65,7 +65,7 @@ export default class Settings {
                 interaction,
                 lang.obj["settings_mods_add_title_failed"],
                 `${lang.obj["settings_mods_add_description_failed"]}${err}`,
-                lang
+                lang,
               );
             }
             break;
@@ -78,7 +78,7 @@ export default class Settings {
                   interaction,
                   lang.obj["settings_channels_add_title_success"],
                   lang.obj["settings_channels_add_description_success"],
-                  lang
+                  lang,
                 );
               }
             } catch (err) {
@@ -86,7 +86,7 @@ export default class Settings {
                 interaction,
                 lang.obj["settings_channels_add_title_failed"],
                 `${lang.obj["settings_channels_add_description_failed"]}${err}`,
-                lang
+                lang,
               );
             }
             break;
@@ -98,9 +98,9 @@ export default class Settings {
                 .replace("<commandName>", interaction.commandName)
                 .replace(
                   "<subcommandName>",
-                  subcommandgroup + " " + subcommand
+                  subcommandgroup + " " + subcommand,
                 ),
-              lang
+              lang,
             );
         }
         break;
@@ -116,7 +116,7 @@ export default class Settings {
                   interaction,
                   lang.obj["settings_mods_remove_title_success"],
                   lang.obj["settings_mods_remove_description_success"],
-                  lang
+                  lang,
                 );
               }
             } catch (err) {
@@ -124,7 +124,7 @@ export default class Settings {
                 interaction,
                 lang.obj["settings_mods_remove_title_failed"],
                 `${lang.obj["settings_mods_remove_description_failed"]}${err}`,
-                lang
+                lang,
               );
             }
             break;
@@ -137,7 +137,7 @@ export default class Settings {
                   interaction,
                   lang.obj["settings_channels_remove_title_success"],
                   lang.obj["settings_channels_remove_description_success"],
-                  lang
+                  lang,
                 );
               }
             } catch (err) {
@@ -145,7 +145,7 @@ export default class Settings {
                 interaction,
                 lang.obj["settings_channels_remove_title_failed"],
                 `${lang.obj["settings_channels_remove_description_failed"]}${err}`,
-                lang
+                lang,
               );
             }
             break;
@@ -157,9 +157,9 @@ export default class Settings {
                 .replace("<commandName>", interaction.commandName)
                 .replace(
                   "<subcommandName>",
-                  subcommandgroup + " " + subcommand
+                  subcommandgroup + " " + subcommand,
                 ),
-              lang
+              lang,
             );
         }
         break;
@@ -217,14 +217,14 @@ export default class Settings {
                     interaction,
                     lang.obj["settings_language_set_title_success"],
                     lang.obj["settings_language_set_description_success"],
-                    lang
+                    lang,
                   );
                 } else {
                   await Util.editReply(
                     interaction,
                     lang.obj["settings_language_set_title_unavailable"],
                     lang.obj["settings_language_set_description_unavailable"],
-                    lang
+                    lang,
                   );
                 }
               }
@@ -233,7 +233,7 @@ export default class Settings {
                 interaction,
                 lang.obj["settings_language_set_title_failed"],
                 `${lang.obj["settings_language_set_description_failed"]}${err}`,
-                lang
+                lang,
               );
             }
             break;
@@ -245,9 +245,9 @@ export default class Settings {
                 .replace("<commandName>", interaction.commandName)
                 .replace(
                   "<subcommandName>",
-                  subcommandgroup + " " + subcommand
+                  subcommandgroup + " " + subcommand,
                 ),
-              lang
+              lang,
             );
             break;
         }
@@ -261,14 +261,14 @@ export default class Settings {
                 interaction,
                 lang.obj["settings_language_unset_title_success"],
                 lang.obj["settings_language_unset_description_success"],
-                lang
+                lang,
               );
             } catch (err) {
               await Util.editReply(
                 interaction,
                 lang.obj["settings_language_unset_title_failed"],
                 lang.obj["settings_language_unset_description_failed"],
-                lang
+                lang,
               );
             }
             break;
@@ -280,9 +280,9 @@ export default class Settings {
                 .replace("<commandName>", interaction.commandName)
                 .replace(
                   "<subcommandName>",
-                  subcommandgroup + " " + subcommand
+                  subcommandgroup + " " + subcommand,
                 ),
-              lang
+              lang,
             );
             break;
         }
@@ -298,14 +298,14 @@ export default class Settings {
             interaction,
             lang.obj["settings_reset_title_success"],
             lang.obj["settings_reset_description_success"],
-            lang
+            lang,
           );
         } catch (err) {
           await Util.editReply(
             interaction,
             lang.obj["settings_reset_title_failed"],
             `${lang.obj["settings_reset_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -359,7 +359,7 @@ export default class Settings {
           lang.obj["error_invalid_subcommand_description"]
             .replace("<commandName>", interaction.commandName)
             .replace("<subcommandName>", subcommandgroup + " " + subcommand),
-          lang
+          lang,
         );
         break;
     }
@@ -406,8 +406,8 @@ export default class Settings {
                   .setDescriptionLocalizations({
                     de: "Der Benutzer oder die Rolle, die zu einem Bot Mod werden soll",
                   })
-                  .setRequired(true)
-              )
+                  .setRequired(true),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -429,8 +429,8 @@ export default class Settings {
                   .setDescriptionLocalizations({
                     de: "Der Benutzer oder die Rolle, die kein Bot Mod mehr sein soll",
                   })
-                  .setRequired(true)
-              )
+                  .setRequired(true),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -441,7 +441,7 @@ export default class Settings {
               .setDescription("Shows the current mods")
               .setDescriptionLocalizations({
                 de: "Zeigt die aktuellen bot mods an",
-              })
+              }),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -452,8 +452,8 @@ export default class Settings {
               .setDescription("Shows help for mod settings")
               .setDescriptionLocalizations({
                 de: "Zeigt Hilfe zu den Mod Einstellungen an",
-              })
-          )
+              }),
+          ),
       )
       .addSubcommandGroup((subcommandgroup) =>
         subcommandgroup
@@ -485,8 +485,8 @@ export default class Settings {
                   .setDescriptionLocalizations({
                     de: "Der Kanal, der zu einem Bot Kanal werden soll",
                   })
-                  .setRequired(true)
-              )
+                  .setRequired(true),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -508,8 +508,8 @@ export default class Settings {
                   .setDescriptionLocalizations({
                     de: "Der Kanal, der kein Bot Kanal mehr sein soll",
                   })
-                  .setRequired(true)
-              )
+                  .setRequired(true),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -520,7 +520,7 @@ export default class Settings {
               .setDescription("Shows the current bot channels")
               .setDescriptionLocalizations({
                 de: "Zeigt die aktuellen Bot Kanäle an",
-              })
+              }),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -531,8 +531,8 @@ export default class Settings {
               .setDescription("Shows help for channel settings")
               .setDescriptionLocalizations({
                 de: "Zeigt Hilfe zu den Kanal Einstellungen an",
-              })
-          )
+              }),
+          ),
       )
       .addSubcommandGroup((subcommandgroup) =>
         subcommandgroup
@@ -561,13 +561,13 @@ export default class Settings {
                     de: "sprache",
                   })
                   .setDescription(
-                    "The language code of your preferred language (e.g. en_US)"
+                    "The language code of your preferred language (e.g. en_US)",
                   )
                   .setDescriptionLocalizations({
                     de: "Der Sprachcode der bevorzugten Sprache (z. B. en_US)",
                   })
-                  .setRequired(true)
-              )
+                  .setRequired(true),
+              ),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -578,7 +578,7 @@ export default class Settings {
               .setDescription("Unsets your preferred language for this server")
               .setDescriptionLocalizations({
                 de: "Setzt die bevorzugte Sprache für diesen Server zurück",
-              })
+              }),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -587,11 +587,11 @@ export default class Settings {
                 de: "anzeigen",
               })
               .setDescription(
-                "Shows your currently set preferred language for this server"
+                "Shows your currently set preferred language for this server",
               )
               .setDescriptionLocalizations({
                 de: "Zeigt die aktuell bevorzugte Serversprache an",
-              })
+              }),
           )
           .addSubcommand((subcommand) =>
             subcommand
@@ -602,8 +602,8 @@ export default class Settings {
               .setDescription("Shows help for language settings")
               .setDescriptionLocalizations({
                 de: "Zeigt Hilfe zu den Spracheinstellungen an",
-              })
-          )
+              }),
+          ),
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -614,7 +614,7 @@ export default class Settings {
           .setDescription("Resets all current settings")
           .setDescriptionLocalizations({
             de: "Setzt alle aktuellen Einstellungen zurück",
-          })
+          }),
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -625,7 +625,7 @@ export default class Settings {
           .setDescription("Shows Help for the /settings command")
           .setDescriptionLocalizations({
             de: "Zeigt Hilfe zum /settings-Befehl an",
-          })
+          }),
       );
   }
 }
