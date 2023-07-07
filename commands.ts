@@ -3,6 +3,7 @@ import Settings from "./settings";
 import Leaderboard from "./leaderboard";
 import Score from "./score";
 import Explore from "./explore";
+import Lightning from "./lightning";
 import Reveal from "./reveal";
 import Mod from "./mod";
 import Catch from "./catch";
@@ -15,6 +16,7 @@ export default class Commands {
       leaderboard: Leaderboard.getRegisterObject(),
       score: Score.getRegisterObject(),
       explore: Explore.getRegisterObject(),
+      lightning: Lightning.getRegisterObject(),
       reveal: Reveal.getRegisterObject(),
       mod: Mod.getRegisterObject(),
     };
@@ -26,6 +28,7 @@ export default class Commands {
   static leaderboard = Leaderboard.leaderboard;
   static score = Score.score;
   static explore = Explore.explore;
+  static lightning = Lightning.lightning;
   static reveal = Reveal.reveal;
   static mod = Mod.mod;
 }

@@ -44,7 +44,7 @@
   "settings_mods_remove_title_failed": "Removing Mod failed",
   "settings_mods_remove_description_success": "Mod successfully removed!",
   "settings_mods_remove_description_failed": "Removing Mod failed due to: ",
-  "settings_channels_add_already_allowed": "Channel {channel} is already a allowed!",
+  "settings_channels_add_already_allowed": "Channel {channel} is already allowed!",
   "settings_channels_add_title_success": "Channel Added",
   "settings_channels_add_title_failed": "Adding Channel failed!",
   "settings_channels_add_description_success": "Channel successfully added to the Allowlist!",
@@ -176,5 +176,6 @@
   "user": "User",
   "position": "Position",
   "score": "Score",
-  "not_available": "N/A"
+  "not_available": "N/A",
+  "championship": "Championship"
 }

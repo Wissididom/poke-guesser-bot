@@ -80,6 +80,9 @@ client.on("interactionCreate", async (interaction) => {
           case "explore":
             Commands.explore(interaction, db);
             break;
+          case "lightning":
+            Commands.lightning(interaction, db);
+            break;
           case "reveal":
             Commands.reveal(interaction, db);
             break;
