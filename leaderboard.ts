@@ -30,7 +30,7 @@ export default class Leaderboard {
     // Add fields to Embed
     for (let i: number = 0; i < Math.max(5, scores.length); i++) {
       let userId = scores[i]?.getDataValue("userId");
-      let userObj = await Util.findUser(interaction, userId);
+      let userObj = userId ? await Util.findUser(interaction, userId) : null;
       if (userObj) {
         if (Array.isArray(userObj)) {
           userName = userObj[0].username;
