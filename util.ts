@@ -90,7 +90,7 @@ export default class Util {
   ): Promise<GuildMember | undefined> {
     // Return member or undefined if not found (force specifies if cache should be checked)
     // I could have omitted the force property, but i have put it there to make it clear
-    return await interaction.guild?.members?.fetch({ user: id, force: false });
+    return await interaction.guild?.members.fetch({ user: id, force: false });
   }
 
   // Finds the User by User-ID
@@ -98,12 +98,7 @@ export default class Util {
     interaction: BaseInteraction,
     id: string,
   ): Promise<User | undefined> {
-    let member = await this.findMember(interaction, id);
-    if (!member) {
-      console.log(`WARNING: User ID ${id} not found in guild.`);
-      return member;
-    }
-    return member.user;
+    return await interaction.client.users.fetch(id, { force: false });
   }
 
   static isAdmin(member: GuildMember): boolean {
