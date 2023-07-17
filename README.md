@@ -23,6 +23,12 @@ Each role has access to certain commands. You can find out more from [this wiki 
 You can simply guess the pokémon name by clicking or tapping on `Catch This Pokémon!`-button below the message that shows the pokémon that needs to be guessed. After that a modal opens up that asks you for the name where you need to enter it and press or tap on `Submit`.
 ![catch](docs/images/catch.png)
 
+### Lightning Round
+
+You can start a lightning round, meaning one explore after each other for a given amount of loops, by doing `/lightning start` instead of `/explore`.
+
+It will then automatically explore a new pokemon if the current one was caught or revealed.
+
 ## Channel configuration
 
 You can set which channels the bot is allowed to reply in. The bot can listen and reply on all channels if no channels are set.
