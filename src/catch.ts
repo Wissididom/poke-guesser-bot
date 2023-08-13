@@ -14,7 +14,7 @@ export default class Catch {
   static async catchModalSubmitted(
     btnInteraction: ButtonInteraction,
     modalInteraction: ModalSubmitInteraction,
-    db: Database
+    db: Database,
   ) {
     await modalInteraction.deferUpdate(); // PokeBot is thinking
     Catch.guessEntered = true;
@@ -29,7 +29,7 @@ export default class Catch {
     // TODO: Disadvantages like delay and timeout
     let encounter = await db.getEncounter(
       modalInteraction.guild.id,
-      btnInteraction.channelId
+      btnInteraction.channelId,
     );
     if (encounter.length > 0) {
       let guessed = false;
@@ -41,16 +41,16 @@ export default class Catch {
         ) {
           await db.clearEncounters(
             modalInteraction.guild.id,
-            btnInteraction.channelId
+            btnInteraction.channelId,
           );
           let artwork = await db.getArtwork(
             modalInteraction.guild.id,
-            btnInteraction.channelId
+            btnInteraction.channelId,
           );
           await db.addScore(
             modalInteraction.guild.id,
             btnInteraction.user.id,
-            1
+            1,
           );
           let englishIndex = 0;
           for (let j = 0; j < encounter.length; j++) {
@@ -65,17 +65,17 @@ export default class Catch {
           )
             title = lang.obj["catch_caught_english_title"].replace(
               "<pokemon>",
-              Util.capitalize(encounter[englishIndex].getDataValue("name"))
+              Util.capitalize(encounter[englishIndex].getDataValue("name")),
             );
           else
             title = lang.obj["catch_caught_other_language_title"]
               .replace(
                 "<englishPokemon>",
-                Util.capitalize(encounter[englishIndex].getDataValue("name"))
+                Util.capitalize(encounter[englishIndex].getDataValue("name")),
               )
               .replace(
                 "<guessedPokemon>",
-                Util.capitalize(encounter[i].getDataValue("name"))
+                Util.capitalize(encounter[i].getDataValue("name")),
               );
           console.log(`catch.js-artwork: ${artwork}`);
           let returnedEmbed: {
@@ -85,11 +85,11 @@ export default class Catch {
             title,
             lang.obj["catch_caught_description"].replace(
               "<guesser>",
-              `<@${btnInteraction.user.id}>`
+              `<@${btnInteraction.user.id}>`,
             ),
             lang,
             0x00ae86,
-            artwork
+            artwork,
           );
           if (returnedEmbed.attachment == null)
             await btnInteraction.followUp({
@@ -105,7 +105,7 @@ export default class Catch {
           guessed = true;
           await db.unsetArtwork(
             modalInteraction.guild.id,
-            btnInteraction.channelId
+            btnInteraction.channelId,
           );
           this.guessEntered = false; // Reset guessEntered
           //break;
@@ -118,7 +118,7 @@ export default class Catch {
             Util.returnEmbed(
               lang.obj["catch_guess_incorrect_title"],
               lang.obj["catch_guess_incorrect_description"],
-              lang
+              lang,
             ).embed,
           ],
           ephemeral: true,
@@ -131,7 +131,7 @@ export default class Catch {
           Util.returnEmbed(
             lang.obj["catch_no_encounter_title"],
             lang.obj["catch_no_encounter_description"],
-            lang
+            lang,
           ).embed,
         ],
         ephemeral: true,

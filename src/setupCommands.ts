@@ -38,7 +38,7 @@ client.on("ready", async () => {
 
 if (!mySecret) {
   console.log(
-    "TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot."
+    "TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.",
   );
   process.kill(process.pid, "SIGTERM"); // Kill Bot
 } else {

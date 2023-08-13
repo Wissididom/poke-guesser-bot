@@ -9,7 +9,7 @@ import Util from "./util";
 export default class Timeout {
   static async timeout(
     interaction: ChatInputCommandInteraction,
-    db: Database
+    db: Database,
   ): Promise<void> {
     const lang = await Language.getLanguage(interaction.guildId!, db);
     const subcommand = interaction.options.getSubcommand();
@@ -28,7 +28,7 @@ export default class Timeout {
               interaction,
               lang.obj["mod_timeout_set_title_success"],
               lang.obj["mod_timeout_set_description_success"],
-              lang
+              lang,
             );
           }
         } catch (err) {
@@ -36,7 +36,7 @@ export default class Timeout {
             interaction,
             lang.obj["mod_timeout_set_title_failed"],
             `${lang.obj["mod_timeout_set_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -50,7 +50,7 @@ export default class Timeout {
               interaction,
               lang.obj["mod_timeout_unset_title_success"],
               lang.obj["mod_timeout_unset_description_success"],
-              lang
+              lang,
             );
           }
         } catch (err) {
@@ -58,7 +58,7 @@ export default class Timeout {
             interaction,
             lang.obj["mod_timeout_unset_title_failed"],
             `${lang.obj["mod_timeout_unset_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -72,7 +72,7 @@ export default class Timeout {
               interaction,
               lang.obj["mod_timeout_show_title_success"],
               lang.obj["mod_timeout_show_description_success"],
-              lang
+              lang,
             );
           }
         } catch (err) {
@@ -80,7 +80,7 @@ export default class Timeout {
             interaction,
             lang.obj["mod_timeout_show_title_failed"],
             `${lang.obj["mod_timeout_show_description_failed"]}${err}`,
-            lang
+            lang,
           );
         }
         break;
@@ -91,7 +91,7 @@ export default class Timeout {
           lang.obj["error_invalid_subcommand_description"]
             .replace("<commandName>", interaction.commandName)
             .replace("<subcommandName>", subcommand),
-          lang
+          lang,
         );
     }
   }
@@ -102,7 +102,7 @@ export default class Timeout {
     days: number = 0,
     hours: number = 0,
     minutes: number = 0,
-    seconds: number = 0
+    seconds: number = 0,
   ) {
     // TODO: Execute Mod Actions
   }
@@ -116,7 +116,7 @@ export default class Timeout {
   }
 
   static getRegisterObject(
-    subcommandgroup: SlashCommandSubcommandGroupBuilder
+    subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {
     return subcommandgroup
       .setName("timeout")
@@ -147,7 +147,7 @@ export default class Timeout {
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Auszeit gesetzt werden soll",
               })
-              .setRequired(true)
+              .setRequired(true),
           )
           .addIntegerOption((option) =>
             option
@@ -158,7 +158,7 @@ export default class Timeout {
               .setDescription("The duration you want to set the timeout to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Auszeit setzen willst",
-              })
+              }),
           )
           .addIntegerOption((option) =>
             option
@@ -169,7 +169,7 @@ export default class Timeout {
               .setDescription("The duration you want to set the timeout to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Auszeit setzen willst",
-              })
+              }),
           )
           .addIntegerOption((option) =>
             option
@@ -180,7 +180,7 @@ export default class Timeout {
               .setDescription("The duration you want to set the timeout to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Auszeit setzen willst",
-              })
+              }),
           )
           .addIntegerOption((option) =>
             option
@@ -191,8 +191,8 @@ export default class Timeout {
               .setDescription("The duration you want to set the timeout to")
               .setDescriptionLocalizations({
                 de: "Die Dauer, auf die du die Auszeit setzen willst",
-              })
-          )
+              }),
+          ),
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -214,8 +214,8 @@ export default class Timeout {
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Auszeit entfernt werden soll",
               })
-              .setRequired(true)
-          )
+              .setRequired(true),
+          ),
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -237,8 +237,8 @@ export default class Timeout {
               .setDescriptionLocalizations({
                 de: "Der Benutzer dessen Auszeit du sehen willst",
               })
-              .setRequired(true)
-          )
+              .setRequired(true),
+          ),
       );
   }
 }

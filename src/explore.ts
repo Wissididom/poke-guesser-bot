@@ -16,7 +16,7 @@ export default class Explore {
   static async explore(
     interaction: ChatInputCommandInteraction,
     db: Database,
-    preventDefer: boolean = false
+    preventDefer: boolean = false,
   ) {
     if (!preventDefer) await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
@@ -43,17 +43,17 @@ export default class Explore {
         interaction.guildId!,
         interaction.channelId,
         pokemon.url.replace(/.+\/(\d+)\//g, "$1"),
-        "id"
+        "id",
       );
       let names = await Util.fetchNames(
-        pokemon.url.replace(/.+\/(\d+)\//g, "$1")
+        pokemon.url.replace(/.+\/(\d+)\//g, "$1"),
       );
       if (!names) {
         console.log(
           `Warning: 404 Not Found for pokemon ${pokemon.url.replace(
             /.+\/(\d+)\//g,
-            "$1"
-          )}. Fetching new pokemon.`
+            "$1",
+          )}. Fetching new pokemon.`,
         );
         this.explore(interaction, db, true); // Attention: Recursive
         return;
@@ -61,13 +61,13 @@ export default class Explore {
       for (let name of names) {
         // Sets current pokemon (different languages) names in database
         console.log(
-          `Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`
+          `Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`,
         );
         await db.addEncounter(
           interaction.guildId!,
           interaction.channelId,
           name.name,
-          name.languageName
+          name.languageName,
         );
       }
       // Gets sprite url for the reply to the command with the newly generated pokemon
@@ -75,7 +75,7 @@ export default class Explore {
       let spriteUrl = sprites.front_default;
       if (!spriteUrl) {
         console.log(
-          `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`
+          `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
         );
         this.explore(interaction, db, true); // Attention: Recursive
         return;
@@ -86,7 +86,7 @@ export default class Explore {
       await db.setArtwork(
         interaction.guildId!,
         interaction.channelId,
-        officialArtUrl
+        officialArtUrl,
       );
       let returnedEmbed: {
         embed: EmbedBuilder;
@@ -96,13 +96,13 @@ export default class Explore {
         lang.obj["explore_wild_pokemon_appeared_description"],
         lang,
         0x00ae86,
-        spriteUrl
+        spriteUrl,
       );
       let actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
         new ButtonBuilder()
           .setCustomId("catchBtn")
           .setLabel(lang.obj["catch_this_pokemon"])
-          .setStyle(ButtonStyle.Primary)
+          .setStyle(ButtonStyle.Primary),
       );
       if (returnedEmbed.attachment == null)
         await interaction.editReply({
@@ -118,14 +118,14 @@ export default class Explore {
       await db.setLastExplore(
         interaction.guildId!,
         interaction.channelId,
-        Date.now()
+        Date.now(),
       );
     } else {
       Util.editReply(
         interaction,
         lang.obj["explore_no_mod_title"],
         lang.obj["explore_no_mod_description"],
-        lang
+        lang,
       );
     }
   }

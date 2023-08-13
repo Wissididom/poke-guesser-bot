@@ -50,7 +50,7 @@ client.on("ready", () => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.guild?.available) {
     console.warn(
-      "Guild not available: interaction.guild.available is either null or false"
+      "Guild not available: interaction.guild.available is either null or false",
     );
     return;
   }
@@ -94,7 +94,7 @@ client.on("interactionCreate", async (interaction) => {
             Util.returnEmbed(
               lang.obj["channel_forbidden_error_title"],
               lang.obj["channel_forbidden_error_description"],
-              lang
+              lang,
             ).embed,
           ],
           ephemeral: true,
@@ -121,8 +121,8 @@ client.on("interactionCreate", async (interaction) => {
               .setMaxLength(100)
               .setMinLength(1)
               .setPlaceholder(lang.obj["catch_pokemon_name"])
-              .setStyle(TextInputStyle.Short)
-          )
+              .setStyle(TextInputStyle.Short),
+          ),
         );
       await interaction.showModal(modal);
       let submitted = await interaction
@@ -160,7 +160,7 @@ if (process.platform === "win32") {
 // Bot Login
 if (!mySecret) {
   console.log(
-    "TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot."
+    "TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.",
   );
 } else {
   client.login(mySecret);
