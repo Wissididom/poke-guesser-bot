@@ -18,6 +18,7 @@ export default class Database {
   };
   private Artwork = class extends Model {};
   private LastExplore = class extends Model {};
+  private Lightning = class extends Model {};
 
   constructor() {
     if (process.env["DATABASE_URL"]) {
@@ -185,6 +186,29 @@ export default class Database {
       {
         sequelize: this.db,
         modelName: "lastexplore",
+        timestamps: false,
+      },
+    );
+    this.Lightning.init(
+      {
+        serverId: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        channelId: {
+          // If we ever want to make it possible to have multiple guessing games in one server. I set allowNull to true because I think we can make it like `if (channelId == null)` to make independant of channels.
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        loops: {
+          // Remaining Loops
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+      },
+      {
+        sequelize: this.db,
+        modelName: "lightning",
         timestamps: false,
       },
     );
@@ -742,6 +766,69 @@ export default class Database {
   ): Promise<number | null> {
     if (await this.lastExploreExists(serverId, channelId)) {
       return await this.LastExplore.destroy({
+        where: {
+          serverId,
+          channelId,
+        },
+      });
+    } else {
+      return null;
+    }
+  }
+
+  async lightningExists(serverId: string, channelId: string): Promise<boolean> {
+    return (
+      (await this.Lightning.count({
+        where: {
+          serverId,
+          channelId,
+        },
+      })) > 0
+    );
+  }
+
+  async getLightningLoops(
+    serverId: string,
+    channelId: string,
+  ): Promise<number | null> {
+    return (
+      await this.Lightning.findOne({
+        where: {
+          serverId,
+          channelId,
+        },
+      })
+    )?.getDataValue("loops");
+  }
+
+  async setLightningLoops(serverId: string, channelId: string, loops: number) {
+    if (await this.lightningExists(serverId, channelId)) {
+      return await this.Lightning.update(
+        {
+          loops,
+        },
+        {
+          where: {
+            serverId,
+            channelId,
+          },
+        },
+      );
+    } else {
+      return await this.Lightning.create({
+        serverId,
+        channelId,
+        loops,
+      });
+    }
+  }
+
+  async unsetLightningLoops(
+    serverId: string,
+    channelId: string,
+  ): Promise<number | null> {
+    if (await this.lightningExists(serverId, channelId)) {
+      return await this.Lightning.destroy({
         where: {
           serverId,
           channelId,

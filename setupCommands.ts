@@ -31,6 +31,7 @@ client.on("ready", async () => {
   await client.application?.commands.create(registerObject.leaderboard);
   await client.application?.commands.create(registerObject.score);
   await client.application?.commands.create(registerObject.explore);
+  await client.application?.commands.create(registerObject.lightning);
   await client.application?.commands.create(registerObject.reveal);
   await client.application?.commands.create(registerObject.mod);
   process.kill(process.pid, "SIGTERM");
