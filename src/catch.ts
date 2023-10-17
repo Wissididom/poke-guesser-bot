@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
+import Lightning from "./lightning";
 import Util from "./util";
 
 export default class Catch {
@@ -108,6 +109,7 @@ export default class Catch {
             btnInteraction.channelId,
           );
           this.guessEntered = false; // Reset guessEntered
+          await Lightning.checkLightning(modalInteraction, db);
           //break;
           return true;
         }
@@ -125,7 +127,6 @@ export default class Catch {
         });
       }
     } else {
-      // returnEmbed(title, message, image=null)
       await btnInteraction.followUp({
         embeds: [
           Util.returnEmbed(

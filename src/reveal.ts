@@ -4,6 +4,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import Database from "./data/postgres";
+import Lightning from "./lightning";
 import Language from "./language";
 import Util from "./util";
 
@@ -22,6 +23,9 @@ export default class Reveal {
         let englishIndex = 0;
         for (let i = 0; i < encounter.length; i++) {
           // console.log(encounter)
+          encounter[i].name = encounter[i].getDataValue("name");
+          encounter[i].language = encounter[i].getDataValue("language");
+          if (!encounter[i].name) continue;
           let lowercaseName = encounter[i].name.toLowerCase();
           if (!pokemonNames.includes(lowercaseName))
             pokemonNames.push(lowercaseName);
@@ -30,7 +34,8 @@ export default class Reveal {
         // build string to put in between brackets
         let inBrackets = "";
         for (let i = 0; i < pokemonNames.length; i++) {
-          if ((inBrackets = "")) inBrackets = Util.capitalize(pokemonNames[i]);
+          if (i == englishIndex) continue;
+          if (inBrackets == "") inBrackets = Util.capitalize(pokemonNames[i]);
           else inBrackets += `, ${Util.capitalize(pokemonNames[i])}`;
         }
         console.log(
@@ -49,6 +54,7 @@ export default class Reveal {
           lang,
         );
         await db.clearEncounters(interaction.guildId!, interaction.channelId);
+        await Lightning.checkLightning(interaction, db);
       } else {
         // returnEmbed(title, message, image=null)
         await Util.editReply(
