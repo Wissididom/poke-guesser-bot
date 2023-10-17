@@ -6,7 +6,6 @@ COPY package-lock.json .
 COPY tsconfig.json .
 COPY src ./src
 RUN npm ci
-RUN npm i -g typescript
 RUN npm run build
 
 # Stage 2: Run
@@ -16,4 +15,4 @@ COPY --from=builder /usr/src/app/package.json .
 COPY --from=builder /usr/src/app/package-lock.json .
 COPY --from=builder /usr/src/app/build .
 RUN npm ci --omit=dev
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start" ]

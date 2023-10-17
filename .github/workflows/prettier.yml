@@ -2,9 +2,9 @@ name: Prettier Formatting
 
 on:
   push:
-    branches: ["master", "develop"]
+    branches: ["master", "main", "develop"]
   pull_request:
-    branches: ["master", "develop"]
+    branches: ["master", "main", "develop"]
 
 jobs:
   check-format:
