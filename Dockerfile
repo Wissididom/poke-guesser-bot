@@ -10,7 +10,8 @@ RUN npm run build
 
 # Stage 2: Run
 FROM node:20.3-bookworm-slim
-COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait # Add wait script
+# Add wait script
+COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/package.json .
 COPY --from=builder /usr/src/app/package-lock.json .
