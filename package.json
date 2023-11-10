@@ -8,8 +8,8 @@
     "build": "tsc",
     "start": "[ -f build/index.js ] && node build/index.js || node index.js",
     "startts": "ts-node src/index.ts",
-    "check-format": "npx prettier --check .",
-    "format": "npx prettier --write ."
+    "check-format": "prettier --check .",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",

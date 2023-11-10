@@ -11,6 +11,8 @@ import {
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Explore {
   static async explore(
@@ -132,13 +134,13 @@ export default class Explore {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("explore")
+      .setName(enLocalizations.explore_name)
       .setNameLocalizations({
-        de: "erforschen",
+        de: deLocalizations.explore_name,
       })
-      .setDescription("Generate a new pokemon")
+      .setDescription(enLocalizations.explore_description)
       .setDescriptionLocalizations({
-        de: "Neues Pokémon generieren",
+        de: deLocalizations.explore_description,
       });
   }
 }

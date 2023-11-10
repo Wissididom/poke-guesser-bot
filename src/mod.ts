@@ -9,6 +9,8 @@ import Delay from "./delay";
 import Timeout from "./timeout";
 import Championship from "./championship";
 import Database from "./data/postgres";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Mod {
   static async mod(interaction: ChatInputCommandInteraction, db: Database) {
@@ -175,129 +177,135 @@ export default class Mod {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("mod")
+      .setName(enLocalizations.mod_name)
       .setNameLocalizations({
-        de: "mod",
+        de: deLocalizations.mod_name,
       })
-      .setDescription("Manage delay, timeout and score")
+      .setDescription(enLocalizations.mod_description)
       .setDescriptionLocalizations({
-        de: "Verzögerung, Auszeit und Punktzahl verwalten",
+        de: deLocalizations.mod_description,
       })
       .addSubcommandGroup((subcommandgroup) =>
         subcommandgroup
-          .setName("score")
+          .setName(enLocalizations.mod_score_name)
           .setNameLocalizations({
-            de: "punktzahl",
+            de: deLocalizations.mod_score_name,
           })
-          .setDescription("Manage the score of someone")
+          .setDescription(enLocalizations.mod_score_description)
           .setDescriptionLocalizations({
-            de: "Die Punktzahl eines Benutzers verwalten",
+            de: deLocalizations.mod_score_description,
           })
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("add")
+              .setName(enLocalizations.mod_score_add_name)
               .setNameLocalizations({
-                de: "hinzufügen",
+                de: deLocalizations.mod_score_add_name,
               })
-              .setDescription("Add a score to a user")
+              .setDescription(enLocalizations.mod_score_add_description)
               .setDescriptionLocalizations({
-                de: "Punktzahl zu einem Benutzer hinzufügen",
+                de: deLocalizations.mod_score_add_description,
               })
               .addUserOption((option) =>
                 option
-                  .setName("user")
+                  .setName(enLocalizations.mod_score_add_user_name)
                   .setNameLocalizations({
-                    de: "benutzer",
+                    de: deLocalizations.mod_score_add_user_name,
                   })
-                  .setDescription("The user whose score you want to update")
+                  .setDescription(
+                    enLocalizations.mod_score_add_user_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Benutzer dessen Punktzahl du anpassen willst",
+                    de: deLocalizations.mod_score_add_user_description,
                   })
                   .setRequired(true),
               )
               .addIntegerOption((option) =>
                 option
-                  .setName("score")
+                  .setName(enLocalizations.mod_score_add_score_name)
                   .setNameLocalizations({
-                    de: "punktzahl",
+                    de: deLocalizations.mod_score_add_score_name,
                   })
                   .setDescription(
-                    "The amount of points you want to add to the score of the user",
+                    enLocalizations.mod_score_add_score_description,
                   )
                   .setDescriptionLocalizations({
-                    de: "Die Anzahl der Punkte, die du der Punktzahl des Benutzers hinzufügen willst",
+                    de: deLocalizations.mod_score_add_score_description,
                   }),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("remove")
+              .setName(enLocalizations.mod_score_remove_name)
               .setNameLocalizations({
-                de: "entfernen",
+                de: deLocalizations.mod_score_remove_name,
               })
-              .setDescription("Remove a score from a user")
+              .setDescription(enLocalizations.mod_score_remove_description)
               .setDescriptionLocalizations({
-                de: "Punktzahl eines Benutzers entfernen/verringern",
+                de: deLocalizations.mod_score_remove_description,
               })
               .addUserOption((option) =>
                 option
-                  .setName("user")
+                  .setName(enLocalizations.mod_score_remove_user_name)
                   .setNameLocalizations({
-                    de: "benutzer",
+                    de: deLocalizations.mod_score_remove_user_name,
                   })
-                  .setDescription("The user whose score you want to update")
+                  .setDescription(
+                    enLocalizations.mod_score_remove_user_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Benutzer dessen Punktzahl du anpassen willst",
+                    de: deLocalizations.mod_score_remove_user_description,
                   })
                   .setRequired(true),
               )
               .addIntegerOption((option) =>
                 option
-                  .setName("score")
+                  .setName(enLocalizations.mod_score_remove_score_name)
                   .setNameLocalizations({
-                    de: "punktzahl",
+                    de: deLocalizations.mod_score_remove_score_name,
                   })
                   .setDescription(
-                    "The amount of points you want to remove from the user's score",
+                    enLocalizations.mod_score_remove_score_description,
                   )
                   .setDescriptionLocalizations({
-                    de: "Die Anzahl der Punkte, die du der Punktzahl des Benutzers entfernen willst",
+                    de: deLocalizations.mod_score_remove_score_description,
                   }),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("set")
+              .setName(enLocalizations.mod_score_set_name)
               .setNameLocalizations({
-                de: "setzen",
+                de: deLocalizations.mod_score_set_name,
               })
-              .setDescription("Set the score of a user")
+              .setDescription(enLocalizations.mod_score_set_description)
               .setDescriptionLocalizations({
-                de: "Punktzahl eines Benutzers setzen",
+                de: deLocalizations.mod_score_set_description,
               })
               .addUserOption((option) =>
                 option
-                  .setName("user")
+                  .setName(enLocalizations.mod_score_set_user_name)
                   .setNameLocalizations({
-                    de: "benutzer",
+                    de: deLocalizations.mod_score_set_user_name,
                   })
-                  .setDescription("The user whose score you want to update")
+                  .setDescription(
+                    enLocalizations.mod_score_set_user_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Benutzer dessen Punktzahl du anpassen willst",
+                    de: deLocalizations.mod_score_set_user_description,
                   })
                   .setRequired(true),
               )
               .addIntegerOption((option) =>
                 option
-                  .setName("score")
+                  .setName(enLocalizations.mod_score_set_score_name)
                   .setNameLocalizations({
-                    de: "punktzahl",
+                    de: deLocalizations.mod_score_set_score_name,
                   })
                   .setDescription(
-                    "The amount of points you want to set as score of the user",
+                    enLocalizations.mod_score_set_score_description,
                   )
                   .setDescriptionLocalizations({
-                    de: "Die Punktzahl, die du beim Benutzers setzen willst",
+                    de: deLocalizations.mod_score_set_score_description,
                   }),
               ),
           ),

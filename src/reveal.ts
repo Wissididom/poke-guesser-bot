@@ -7,6 +7,8 @@ import Database from "./data/postgres";
 import Lightning from "./lightning";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Reveal {
   static async reveal(interaction: ChatInputCommandInteraction, db: Database) {
@@ -77,13 +79,13 @@ export default class Reveal {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("reveal")
+      .setName(enLocalizations.reveal_name)
       .setNameLocalizations({
-        de: "aufloesen",
+        de: deLocalizations.reveal_name,
       })
-      .setDescription("Reveals the current pokemon")
+      .setDescription(enLocalizations.reveal_description)
       .setDescriptionLocalizations({
-        de: "Löst das aktuell gesuchte Pokemon auf",
+        de: deLocalizations.reveal_description,
       });
   }
 }

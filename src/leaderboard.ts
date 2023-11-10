@@ -9,6 +9,8 @@ import { Model } from "sequelize";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Leaderboard {
   static async leaderboard(
@@ -151,13 +153,13 @@ export default class Leaderboard {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("leaderboard")
+      .setName(enLocalizations.leaderboard_name)
       .setNameLocalizations({
-        de: "bestenliste",
+        de: deLocalizations.leaderboard_name,
       })
-      .setDescription("Shows the Leaderboard")
+      .setDescription(enLocalizations.leaderboard_description)
       .setDescriptionLocalizations({
-        de: "Zeigt die Bestenliste",
+        de: deLocalizations.leaderboard_description,
       });
   }
 }
