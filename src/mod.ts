@@ -35,23 +35,23 @@ export default class Mod {
       const subcommand = interaction.options.getSubcommand();
       switch (subcommandgroup) {
         case "score": // /mod score ?
-          switch (subcommand) {
+          let user =
+            interaction.options.getUser("user", false) || interaction.user;
+          let action = interaction.options.getString("action", false);
+          let amount = interaction.options.getInteger("amount", false);
+          switch (action) {
             case "add":
               try {
-                let score = interaction.options.getInteger("score", false);
-                let user =
-                  interaction.options.getUser("user", false) ||
-                  interaction.user;
                 let dbScore = await db.getScore(interaction.guildId!, user.id);
-                if (score) {
+                if (amount) {
                   if (dbScore) {
                     await db.setScore(
                       interaction.guildId!,
                       user.id,
-                      dbScore.score + score,
+                      dbScore.score + amount,
                     );
                   } else {
-                    await db.setScore(interaction.guildId!, user.id, score);
+                    await db.setScore(interaction.guildId!, user.id, amount);
                   }
                 } else {
                   if (dbScore) {
@@ -81,11 +81,8 @@ export default class Mod {
               break;
             case "remove":
               try {
-                let score = interaction.options.getInteger("score", false);
-                let user =
-                  interaction.options.getUser("user") || interaction.user;
-                if (score) {
-                  await db.removeScore(interaction.guildId!, user.id, score);
+                if (amount) {
+                  await db.removeScore(interaction.guildId!, user.id, amount);
                 } else {
                   await db.unsetScore(interaction.guildId!, user.id);
                 }
@@ -106,12 +103,8 @@ export default class Mod {
               break;
             case "set":
               try {
-                let score = interaction.options.getInteger("score", false);
-                let user =
-                  interaction.options.getUser("user", false) ||
-                  interaction.user;
-                if (score != null && score >= 0) {
-                  await db.setScore(interaction.guildId!, user.id, score);
+                if (amount && amount >= 0) {
+                  await db.setScore(interaction.guildId!, user.id, amount);
                 } else {
                   let dbScore = await db.getScore(
                     interaction.guildId!,
@@ -136,12 +129,12 @@ export default class Mod {
               }
               break;
             default:
-              await Util.editReply(
+              Util.editReply(
                 interaction,
                 lang.obj["error_invalid_subcommand_title"],
                 lang.obj["error_invalid_subcommand_description"]
                   .replace("<commandName>", interaction.commandName)
-                  .replace("<subcommandName>", subcommand),
+                  .replace("<subcommandName>", action!),
                 lang,
               );
           }
@@ -185,8 +178,8 @@ export default class Mod {
       .setDescriptionLocalizations({
         de: deLocalizations.mod_description,
       })
-      .addSubcommandGroup((subcommandgroup) =>
-        subcommandgroup
+      .addSubcommand((subcommand) =>
+        subcommand
           .setName(enLocalizations.mod_score_name)
           .setNameLocalizations({
             de: deLocalizations.mod_score_name,
@@ -195,119 +188,62 @@ export default class Mod {
           .setDescriptionLocalizations({
             de: deLocalizations.mod_score_description,
           })
-          .addSubcommand((subcommand) =>
-            subcommand
-              .setName(enLocalizations.mod_score_add_name)
-              .setNameLocalizations({
-                de: deLocalizations.mod_score_add_name,
-              })
-              .setDescription(enLocalizations.mod_score_add_description)
+          .addUserOption((option) =>
+            option
+              .setName(enLocalizations.mod_score_user_name)
+              .setNameLocalizations({ de: deLocalizations.mod_score_user_name })
+              .setDescription(enLocalizations.mod_score_user_description)
               .setDescriptionLocalizations({
-                de: deLocalizations.mod_score_add_description,
+                de: deLocalizations.mod_score_user_description,
               })
-              .addUserOption((option) =>
-                option
-                  .setName(enLocalizations.mod_score_add_user_name)
-                  .setNameLocalizations({
-                    de: deLocalizations.mod_score_add_user_name,
-                  })
-                  .setDescription(
-                    enLocalizations.mod_score_add_user_description,
-                  )
-                  .setDescriptionLocalizations({
-                    de: deLocalizations.mod_score_add_user_description,
-                  })
-                  .setRequired(true),
-              )
-              .addIntegerOption((option) =>
-                option
-                  .setName(enLocalizations.mod_score_add_score_name)
-                  .setNameLocalizations({
-                    de: deLocalizations.mod_score_add_score_name,
-                  })
-                  .setDescription(
-                    enLocalizations.mod_score_add_score_description,
-                  )
-                  .setDescriptionLocalizations({
-                    de: deLocalizations.mod_score_add_score_description,
-                  }),
-              ),
+              .setRequired(true),
           )
-          .addSubcommand((subcommand) =>
-            subcommand
-              .setName(enLocalizations.mod_score_remove_name)
+          .addStringOption((option) =>
+            option
+              .setName(enLocalizations.mod_score_action_name)
               .setNameLocalizations({
-                de: deLocalizations.mod_score_remove_name,
+                de: deLocalizations.mod_score_action_name,
               })
-              .setDescription(enLocalizations.mod_score_remove_description)
+              .setDescription(enLocalizations.mod_score_action_description)
               .setDescriptionLocalizations({
-                de: deLocalizations.mod_score_remove_description,
+                de: deLocalizations.mod_score_action_description,
               })
-              .addUserOption((option) =>
-                option
-                  .setName(enLocalizations.mod_score_remove_user_name)
-                  .setNameLocalizations({
-                    de: deLocalizations.mod_score_remove_user_name,
-                  })
-                  .setDescription(
-                    enLocalizations.mod_score_remove_user_description,
-                  )
-                  .setDescriptionLocalizations({
-                    de: deLocalizations.mod_score_remove_user_description,
-                  })
-                  .setRequired(true),
+              .setChoices(
+                {
+                  name: enLocalizations.mod_score_action_choice_add,
+                  name_localizations: {
+                    de: deLocalizations.mod_score_action_choice_add,
+                  },
+                  value: "add",
+                },
+                {
+                  name: enLocalizations.mod_score_action_choice_remove,
+                  name_localizations: {
+                    de: deLocalizations.mod_score_action_choice_remove,
+                  },
+                  value: "remove",
+                },
+                {
+                  name: enLocalizations.mod_score_action_choice_set,
+                  name_localizations: {
+                    de: deLocalizations.mod_score_action_choice_set,
+                  },
+                  value: "set",
+                },
               )
-              .addIntegerOption((option) =>
-                option
-                  .setName(enLocalizations.mod_score_remove_score_name)
-                  .setNameLocalizations({
-                    de: deLocalizations.mod_score_remove_score_name,
-                  })
-                  .setDescription(
-                    enLocalizations.mod_score_remove_score_description,
-                  )
-                  .setDescriptionLocalizations({
-                    de: deLocalizations.mod_score_remove_score_description,
-                  }),
-              ),
+              .setRequired(true),
           )
-          .addSubcommand((subcommand) =>
-            subcommand
-              .setName(enLocalizations.mod_score_set_name)
+          .addIntegerOption((option) =>
+            option
+              .setName(enLocalizations.mod_score_amount_name)
               .setNameLocalizations({
-                de: deLocalizations.mod_score_set_name,
+                de: deLocalizations.mod_score_amount_name,
               })
-              .setDescription(enLocalizations.mod_score_set_description)
+              .setDescription(enLocalizations.mod_score_amount_description)
               .setDescriptionLocalizations({
-                de: deLocalizations.mod_score_set_description,
+                de: deLocalizations.mod_score_amount_description,
               })
-              .addUserOption((option) =>
-                option
-                  .setName(enLocalizations.mod_score_set_user_name)
-                  .setNameLocalizations({
-                    de: deLocalizations.mod_score_set_user_name,
-                  })
-                  .setDescription(
-                    enLocalizations.mod_score_set_user_description,
-                  )
-                  .setDescriptionLocalizations({
-                    de: deLocalizations.mod_score_set_user_description,
-                  })
-                  .setRequired(true),
-              )
-              .addIntegerOption((option) =>
-                option
-                  .setName(enLocalizations.mod_score_set_score_name)
-                  .setNameLocalizations({
-                    de: deLocalizations.mod_score_set_score_name,
-                  })
-                  .setDescription(
-                    enLocalizations.mod_score_set_score_description,
-                  )
-                  .setDescriptionLocalizations({
-                    de: deLocalizations.mod_score_set_score_description,
-                  }),
-              ),
+              .setRequired(true),
           ),
       )
       .addSubcommandGroup((subcommandgroup) =>
