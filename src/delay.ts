@@ -5,6 +5,8 @@ import {
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Delay {
   static async delay(interaction: ChatInputCommandInteraction, db: Database) {
@@ -113,123 +115,123 @@ export default class Delay {
     subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {
     return subcommandgroup
-      .setName("delay")
+      .setName(enLocalizations.delay_name)
       .setNameLocalizations({
-        de: "verzoegerung",
+        de: deLocalizations.delay_name,
       })
-      .setDescription("Manage the delay of a user")
+      .setDescription(enLocalizations.delay_description)
       .setDescriptionLocalizations({
-        de: "Die Verzögerung eines Benutzers verwalten",
+        de: deLocalizations.delay_description,
       })
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("set")
+          .setName(enLocalizations.delay_set_name)
           .setNameLocalizations({
-            de: "setzen",
+            de: deLocalizations.delay_set_name,
           })
-          .setDescription("Sets a users delay")
+          .setDescription(enLocalizations.delay_set_description)
           .setDescriptionLocalizations({
-            de: "Setzt eine Verzögerung eines Benutzers",
+            de: deLocalizations.delay_set_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.delay_set_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.delay_set_user_name,
               })
-              .setDescription("The user whose delay you want to set")
+              .setDescription(enLocalizations.delay_set_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Verzögerung gesetzt werden soll",
+                de: deLocalizations.delay_set_user_description,
               })
               .setRequired(true),
           )
           .addIntegerOption((option) =>
             option
-              .setName("days")
+              .setName(enLocalizations.delay_set_days_name)
               .setNameLocalizations({
-                de: "tage",
+                de: deLocalizations.delay_set_days_name,
               })
-              .setDescription("The duration you want to set the delay to")
+              .setDescription(enLocalizations.delay_set_days_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Verzögerung setzen willst",
+                de: deLocalizations.delay_set_days_description,
               }),
           )
           .addIntegerOption((option) =>
             option
-              .setName("hours")
+              .setName(enLocalizations.delay_set_hours_name)
               .setNameLocalizations({
-                de: "stunden",
+                de: deLocalizations.delay_set_hours_name,
               })
-              .setDescription("The duration you want to set the delay to")
+              .setDescription(enLocalizations.delay_set_hours_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Verzögerung setzen willst",
+                de: deLocalizations.delay_set_hours_description,
               }),
           )
           .addIntegerOption((option) =>
             option
-              .setName("minutes")
+              .setName(enLocalizations.delay_set_minutes_name)
               .setNameLocalizations({
-                de: "minuten",
+                de: deLocalizations.delay_set_minutes_name,
               })
-              .setDescription("The duration you want to set the delay to")
+              .setDescription(enLocalizations.delay_set_minutes_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Verzögerung setzen willst",
+                de: deLocalizations.delay_set_minutes_description,
               }),
           )
           .addIntegerOption((option) =>
             option
-              .setName("seconds")
+              .setName(enLocalizations.delay_set_seconds_name)
               .setNameLocalizations({
-                de: "sekunden",
+                de: deLocalizations.delay_set_seconds_name,
               })
-              .setDescription("The duration you want to set the delay to")
+              .setDescription(enLocalizations.delay_set_seconds_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Verzögerung setzen willst",
+                de: deLocalizations.delay_set_seconds_name,
               }),
           ),
       )
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("unset")
+          .setName(enLocalizations.delay_unset_name)
           .setNameLocalizations({
-            de: "entfernen",
+            de: deLocalizations.delay_unset_name,
           })
-          .setDescription("Unsets a users delay")
+          .setDescription(enLocalizations.delay_unset_description)
           .setDescriptionLocalizations({
-            de: "Entfernt die Verzögerung eines Benutzers",
+            de: deLocalizations.delay_unset_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.delay_unset_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.delay_unset_user_name,
               })
-              .setDescription("The user whose delay you want to unset")
+              .setDescription(enLocalizations.delay_unset_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Verzögerung entfernt werden soll",
+                de: deLocalizations.delay_unset_user_description,
               })
               .setRequired(true),
           ),
       )
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("show")
+          .setName(enLocalizations.delay_show_name)
           .setNameLocalizations({
-            de: "anzeigen",
+            de: deLocalizations.delay_show_name,
           })
-          .setDescription("Shows a users delay")
+          .setDescription(enLocalizations.delay_show_description)
           .setDescriptionLocalizations({
-            de: "Zeigt die Deuer der Verzögerung eines Benutzers an",
+            de: deLocalizations.delay_show_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.delay_show_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.delay_show_user_name,
               })
-              .setDescription("The user whose delay you want to see")
+              .setDescription(enLocalizations.delay_show_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Verzögerung du sehen willst",
+                de: deLocalizations.delay_show_user_description,
               })
               .setRequired(true),
           ),

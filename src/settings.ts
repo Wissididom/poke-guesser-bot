@@ -10,6 +10,8 @@ import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
 import * as fs from "fs";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Settings {
   static async settings(
@@ -368,263 +370,285 @@ export default class Settings {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("settings")
+      .setName(enLocalizations.settings_name)
       .setNameLocalizations({
-        de: "einstellungen",
+        de: deLocalizations.settings_name,
       })
-      .setDescription("View or manage settings in ephemeral messages")
+      .setDescription(enLocalizations.settings_description)
       .setDescriptionLocalizations({
-        de: "Einstellungen in kurzlebigen Nachrichten anzeigen oder verwalten",
+        de: deLocalizations.settings_description,
       })
       .addSubcommandGroup((subcommandgroup) =>
         subcommandgroup
-          .setName("mods")
+          .setName(enLocalizations.settings_mods_name)
           .setNameLocalizations({
-            de: "mods",
+            de: deLocalizations.settings_mods_name,
           })
-          .setDescription("View or manage bot mods")
+          .setDescription(enLocalizations.settings_mods_description)
           .setDescriptionLocalizations({
-            de: "Bot Mods anzeigen oder verwalten",
+            de: deLocalizations.settings_mods_description,
           })
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("add")
+              .setName(enLocalizations.settings_mods_add_name)
               .setNameLocalizations({
-                de: "hinzufuegen",
+                de: deLocalizations.settings_mods_add_name,
               })
-              .setDescription("Add a bot mod")
+              .setDescription(enLocalizations.settings_mods_add_description)
               .setDescriptionLocalizations({
-                de: "Einen Bot Mod hinzufügen",
+                de: deLocalizations.settings_mods_add_description,
               })
               .addMentionableOption((option) =>
                 option
-                  .setName("mentionable")
+                  .setName(enLocalizations.settings_mods_add_mentionable_name)
                   .setNameLocalizations({
-                    de: "erwaehnbares",
+                    de: deLocalizations.settings_mods_add_mentionable_name,
                   })
-                  .setDescription("The user or role to add as a bot mod")
+                  .setDescription(
+                    enLocalizations.settings_mods_add_mentionable_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Benutzer oder die Rolle, die zu einem Bot Mod werden soll",
+                    de: deLocalizations.settings_mods_add_mentionable_description,
                   })
                   .setRequired(true),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("remove")
+              .setName(enLocalizations.settings_mods_remove_name)
               .setNameLocalizations({
-                de: "entfernen",
+                de: deLocalizations.settings_mods_remove_name,
               })
-              .setDescription("Remove a bot mod")
+              .setDescription(enLocalizations.settings_mods_remove_description)
               .setDescriptionLocalizations({
-                de: "Einen Bot Mod entfernen",
+                de: deLocalizations.settings_mods_remove_description,
               })
               .addMentionableOption((option) =>
                 option
-                  .setName("mentionable")
+                  .setName(
+                    enLocalizations.settings_mods_remove_mentionable_name,
+                  )
                   .setNameLocalizations({
-                    de: "erwaehnbares",
+                    de: deLocalizations.settings_mods_remove_mentionable_name,
                   })
-                  .setDescription("The user or role to remove from a Bot Mod")
+                  .setDescription(
+                    enLocalizations.settings_mods_remove_mentionable_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Benutzer oder die Rolle, die kein Bot Mod mehr sein soll",
+                    de: deLocalizations.settings_mods_remove_mentionable_description,
                   })
                   .setRequired(true),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("show")
+              .setName(enLocalizations.settings_mods_show_name)
               .setNameLocalizations({
-                de: "anzeigen",
+                de: deLocalizations.settings_mods_show_name,
               })
-              .setDescription("Shows the current mods")
+              .setDescription(enLocalizations.settings_mods_show_description)
               .setDescriptionLocalizations({
-                de: "Zeigt die aktuellen bot mods an",
+                de: deLocalizations.settings_mods_show_description,
               }),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("help")
+              .setName(enLocalizations.settings_mods_help_name)
               .setNameLocalizations({
-                de: "hilfe",
+                de: deLocalizations.settings_mods_help_name,
               })
-              .setDescription("Shows help for mod settings")
+              .setDescription(enLocalizations.settings_mods_help_description)
               .setDescriptionLocalizations({
-                de: "Zeigt Hilfe zu den Mod Einstellungen an",
+                de: deLocalizations.settings_mods_help_description,
               }),
           ),
       )
       .addSubcommandGroup((subcommandgroup) =>
         subcommandgroup
-          .setName("channels")
+          .setName(enLocalizations.settings_channels_name)
           .setNameLocalizations({
-            de: "kanaele",
+            de: deLocalizations.settings_channels_name,
           })
-          .setDescription("View or manage bot channels")
+          .setDescription(enLocalizations.settings_channels_description)
           .setDescriptionLocalizations({
-            de: "Bot Kanäle anzeigen oder verwalten",
+            de: deLocalizations.settings_channels_description,
           })
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("add")
+              .setName(enLocalizations.settings_channels_add_name)
               .setNameLocalizations({
-                de: "hinzufuegen",
+                de: deLocalizations.settings_channels_add_name,
               })
-              .setDescription("Add a bot channel")
+              .setDescription(enLocalizations.settings_channels_add_description)
               .setDescriptionLocalizations({
-                de: "Einen Bot Kanal hinzufügen",
+                de: deLocalizations.settings_channels_add_description,
               })
               .addChannelOption((option) =>
                 option
-                  .setName("mentionable")
+                  .setName(enLocalizations.settings_channels_add_channel_name)
                   .setNameLocalizations({
-                    de: "erwaehnbares",
+                    de: deLocalizations.settings_channels_add_channel_name,
                   })
-                  .setDescription("The channel to add as a bot channel")
+                  .setDescription(
+                    enLocalizations.settings_channels_add_channel_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Kanal, der zu einem Bot Kanal werden soll",
+                    de: deLocalizations.settings_channels_add_channel_description,
                   })
                   .setRequired(true),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("remove")
+              .setName(enLocalizations.settings_channels_remove_name)
               .setNameLocalizations({
-                de: "entfernen",
+                de: deLocalizations.settings_channels_remove_name,
               })
-              .setDescription("Remove a bot channel")
+              .setDescription(
+                enLocalizations.settings_channels_remove_description,
+              )
               .setDescriptionLocalizations({
-                de: "Einen Bot Kanal entfernen",
+                de: deLocalizations.settings_channels_remove_description,
               })
-              .addMentionableOption((option) =>
+              .addChannelOption((option) =>
                 option
-                  .setName("mentionable")
+                  .setName(
+                    enLocalizations.settings_channels_remove_channel_name,
+                  )
                   .setNameLocalizations({
-                    de: "erwaehnbares",
+                    de: deLocalizations.settings_channels_remove_channel_name,
                   })
-                  .setDescription("The channel to remove from the bot channels")
+                  .setDescription(
+                    enLocalizations.settings_channels_remove_channel_description,
+                  )
                   .setDescriptionLocalizations({
-                    de: "Der Kanal, der kein Bot Kanal mehr sein soll",
+                    de: deLocalizations.settings_channels_remove_channel_description,
                   })
                   .setRequired(true),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("show")
+              .setName(enLocalizations.settings_channels_show_name)
               .setNameLocalizations({
-                de: "anzeigen",
+                de: deLocalizations.settings_channels_show_name,
               })
-              .setDescription("Shows the current bot channels")
+              .setDescription(
+                enLocalizations.settings_channels_show_description,
+              )
               .setDescriptionLocalizations({
-                de: "Zeigt die aktuellen Bot Kanäle an",
+                de: deLocalizations.settings_channels_show_description,
               }),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("help")
+              .setName(enLocalizations.settings_channels_help_name)
               .setNameLocalizations({
-                de: "hilfe",
+                de: deLocalizations.settings_channels_help_name,
               })
-              .setDescription("Shows help for channel settings")
+              .setDescription(
+                enLocalizations.settings_channels_help_description,
+              )
               .setDescriptionLocalizations({
-                de: "Zeigt Hilfe zu den Kanal Einstellungen an",
+                de: deLocalizations.settings_channels_help_description,
               }),
           ),
       )
       .addSubcommandGroup((subcommandgroup) =>
         subcommandgroup
-          .setName("language")
+          .setName(enLocalizations.settings_language_name)
           .setNameLocalizations({
-            de: "sprache",
+            de: deLocalizations.settings_language_name,
           })
-          .setDescription("View or manage a preferred language")
+          .setDescription(enLocalizations.settings_language_description)
           .setDescriptionLocalizations({
-            de: "Die bevorzugte Sprache ansehen und verwalten",
+            de: deLocalizations.settings_language_description,
           })
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("set")
+              .setName(enLocalizations.settings_language_set_name)
               .setNameLocalizations({
-                de: "setzen",
+                de: deLocalizations.settings_language_set_name,
               })
-              .setDescription("Set the preferred language for this server")
+              .setDescription(enLocalizations.settings_language_set_description)
               .setDescriptionLocalizations({
-                de: "Die bevorzugte Sprache für diesen Server setzen",
+                de: deLocalizations.settings_language_set_description,
               })
               .addStringOption((option) =>
                 option
-                  .setName("language")
+                  .setName(enLocalizations.settings_language_set_language_name)
                   .setNameLocalizations({
-                    de: "sprache",
+                    de: deLocalizations.settings_language_set_language_name,
                   })
                   .setDescription(
-                    "The language code of your preferred language (e.g. en_US)",
+                    enLocalizations.settings_language_set_language_description,
                   )
                   .setDescriptionLocalizations({
-                    de: "Der Sprachcode der bevorzugten Sprache (z. B. en_US)",
+                    de: deLocalizations.settings_language_set_language_description,
                   })
                   .setRequired(true),
               ),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("unset")
+              .setName(enLocalizations.settings_language_unset_name)
               .setNameLocalizations({
-                de: "zuruecksetzen",
-              })
-              .setDescription("Unsets your preferred language for this server")
-              .setDescriptionLocalizations({
-                de: "Setzt die bevorzugte Sprache für diesen Server zurück",
-              }),
-          )
-          .addSubcommand((subcommand) =>
-            subcommand
-              .setName("show")
-              .setNameLocalizations({
-                de: "anzeigen",
+                de: deLocalizations.settings_language_unset_name,
               })
               .setDescription(
-                "Shows your currently set preferred language for this server",
+                enLocalizations.settings_language_unset_description,
               )
               .setDescriptionLocalizations({
-                de: "Zeigt die aktuell bevorzugte Serversprache an",
+                de: deLocalizations.settings_language_unset_description,
               }),
           )
           .addSubcommand((subcommand) =>
             subcommand
-              .setName("help")
+              .setName(enLocalizations.settings_language_show_name)
               .setNameLocalizations({
-                de: "hilfe",
+                de: deLocalizations.settings_language_show_name,
               })
-              .setDescription("Shows help for language settings")
+              .setDescription(
+                enLocalizations.settings_language_show_description,
+              )
               .setDescriptionLocalizations({
-                de: "Zeigt Hilfe zu den Spracheinstellungen an",
+                de: deLocalizations.settings_language_show_description,
+              }),
+          )
+          .addSubcommand((subcommand) =>
+            subcommand
+              .setName(enLocalizations.settings_language_help_name)
+              .setNameLocalizations({
+                de: deLocalizations.settings_language_help_name,
+              })
+              .setDescription(
+                enLocalizations.settings_language_help_description,
+              )
+              .setDescriptionLocalizations({
+                de: deLocalizations.settings_language_help_description,
               }),
           ),
       )
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("reset")
+          .setName(enLocalizations.settings_reset_name)
           .setNameLocalizations({
-            de: "zuruecksetzen",
+            de: deLocalizations.settings_reset_name,
           })
-          .setDescription("Resets all current settings")
+          .setDescription(enLocalizations.settings_reset_description)
           .setDescriptionLocalizations({
-            de: "Setzt alle aktuellen Einstellungen zurück",
+            de: deLocalizations.settings_reset_description,
           }),
       )
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("help")
+          .setName(enLocalizations.settings_help_name)
           .setNameLocalizations({
-            de: "hilfe",
+            de: deLocalizations.settings_help_name,
           })
-          .setDescription("Shows Help for the /settings command")
+          .setDescription(enLocalizations.settings_help_description)
           .setDescriptionLocalizations({
-            de: "Zeigt Hilfe zum /settings-Befehl an",
+            de: deLocalizations.settings_help_description,
           }),
       );
   }

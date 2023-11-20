@@ -5,6 +5,8 @@ import {
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Championship {
   static async championship(
@@ -52,25 +54,23 @@ export default class Championship {
     subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {
     return subcommandgroup
-      .setName("championship")
+      .setName(enLocalizations.championship_name)
       .setNameLocalizations({
-        de: "meisterschaft",
+        de: deLocalizations.championship_name,
       })
-      .setDescription("Manages the championship")
+      .setDescription(enLocalizations.championship_description)
       .setDescriptionLocalizations({
-        de: "Meisterschaft verwalten",
+        de: deLocalizations.championship_description,
       })
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("new")
+          .setName(enLocalizations.championship_new_name)
           .setNameLocalizations({
-            de: "neu",
+            de: deLocalizations.championship_new_name,
           })
-          .setDescription(
-            "Outputs the leaderboard one last time, reveals winner and clears the leaderboard",
-          )
+          .setDescription(enLocalizations.championship_new_description)
           .setDescriptionLocalizations({
-            de: "Gibt die Bestenliste ein letztes Mal aus, verkündet den Gewinner und leert die Bestenliste",
+            de: deLocalizations.championship_new_description,
           }),
       );
   }

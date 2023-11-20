@@ -2,6 +2,8 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Score {
   static async score(interaction: ChatInputCommandInteraction, db: Database) {
@@ -27,33 +29,33 @@ export default class Score {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("score")
+      .setName(enLocalizations.score_name)
       .setNameLocalizations({
-        de: "punktzahl",
+        de: deLocalizations.score_name,
       })
-      .setDescription("Shows the score of someone or yourself")
+      .setDescription(enLocalizations.score_description)
       .setDescriptionLocalizations({
-        de: "Zeigt die Punktzahl von jemandem oder dir selbst an",
+        de: deLocalizations.score_description,
       })
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("show")
+          .setName(enLocalizations.score_show_name)
           .setNameLocalizations({
-            de: "anzeigen",
+            de: deLocalizations.score_show_name,
           })
-          .setDescription("Shows the score of someone or yourself")
+          .setDescription(enLocalizations.score_show_description)
           .setDescriptionLocalizations({
-            de: "Zeigt die Punktzahl von jemandem oder dir selbst an",
+            de: deLocalizations.score_show_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.score_show_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.score_show_user_name,
               })
-              .setDescription("The user whose score you want to know")
+              .setDescription(enLocalizations.score_show_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Punktzahl du wissen willst",
+                de: deLocalizations.score_show_user_description,
               }),
           ),
       );

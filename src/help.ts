@@ -2,6 +2,8 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Util from "./util";
 import Language from "./language";
 import Database from "./data/postgres";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Help {
   static async help(interaction: ChatInputCommandInteraction, db: Database) {
@@ -65,44 +67,44 @@ export default class Help {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("help")
+      .setName(enLocalizations.help_name)
       .setNameLocalizations({
-        de: "hilfe",
+        de: deLocalizations.help_name,
       })
-      .setDescription("Shows help in an ephemeral message")
+      .setDescription(enLocalizations.help_description)
       .setDescriptionLocalizations({
-        de: "Zeigt Hilfe in einer kurzlebigen Nachricht",
+        de: deLocalizations.help_description,
       })
       .addStringOption((option) =>
         option
-          .setName("type")
+          .setName(enLocalizations.help_type_name)
           .setNameLocalizations({
-            de: "typ",
+            de: deLocalizations.help_type_name,
           })
-          .setDescription("Choose which help to show")
+          .setDescription(enLocalizations.help_type_description)
           .setDescriptionLocalizations({
-            de: "Wähle welche Hilfe gezeigt werden soll",
+            de: deLocalizations.help_type_description,
           })
           .setRequired(true)
           .setChoices(
             {
-              name: "Admin",
+              name: enLocalizations.help_type_admin_name,
               name_localizations: {
-                de: "Admin",
+                de: deLocalizations.help_type_admin_name,
               },
               value: "admin",
             },
             {
-              name: "Mod",
+              name: enLocalizations.help_type_mod_name,
               name_localizations: {
-                de: "Mod",
+                de: deLocalizations.help_type_mod_name,
               },
               value: "mod",
             },
             {
-              name: "Player",
+              name: enLocalizations.help_type_player_name,
               name_localizations: {
-                de: "Spieler",
+                de: deLocalizations.help_type_player_name,
               },
               value: "player",
             },

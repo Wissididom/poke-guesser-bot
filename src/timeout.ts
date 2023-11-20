@@ -5,6 +5,8 @@ import {
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Timeout {
   static async timeout(
@@ -119,123 +121,123 @@ export default class Timeout {
     subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {
     return subcommandgroup
-      .setName("timeout")
+      .setName(enLocalizations.timeout_name)
       .setNameLocalizations({
-        de: "auszeit",
+        de: deLocalizations.timeout_name,
       })
-      .setDescription("Manage the timeout of a user")
+      .setDescription(enLocalizations.timeout_description)
       .setDescriptionLocalizations({
-        de: "Die Auszeit eines Benutzers verwalten",
+        de: deLocalizations.timeout_description,
       })
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("set")
+          .setName(enLocalizations.timeout_set_name)
           .setNameLocalizations({
-            de: "setzen",
+            de: deLocalizations.timeout_set_name,
           })
-          .setDescription("Sets a users timeout")
+          .setDescription(enLocalizations.timeout_set_description)
           .setDescriptionLocalizations({
-            de: "Setzt eine Auszeit eines Benutzers",
+            de: deLocalizations.timeout_set_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.timeout_set_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.timeout_set_user_name,
               })
-              .setDescription("The user whose timeout you want to set")
+              .setDescription(enLocalizations.timeout_set_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Auszeit gesetzt werden soll",
+                de: deLocalizations.timeout_set_user_description,
               })
               .setRequired(true),
           )
           .addIntegerOption((option) =>
             option
-              .setName("days")
+              .setName(enLocalizations.timeout_set_days_name)
               .setNameLocalizations({
-                de: "tage",
+                de: deLocalizations.timeout_set_days_name,
               })
-              .setDescription("The duration you want to set the timeout to")
+              .setDescription(enLocalizations.timeout_set_days_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Auszeit setzen willst",
+                de: deLocalizations.timeout_set_days_description,
               }),
           )
           .addIntegerOption((option) =>
             option
-              .setName("hours")
+              .setName(enLocalizations.timeout_set_hours_name)
               .setNameLocalizations({
-                de: "stunden",
+                de: deLocalizations.timeout_set_hours_name,
               })
-              .setDescription("The duration you want to set the timeout to")
+              .setDescription(enLocalizations.timeout_set_hours_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Auszeit setzen willst",
+                de: deLocalizations.timeout_set_hours_description,
               }),
           )
           .addIntegerOption((option) =>
             option
-              .setName("minutes")
+              .setName(enLocalizations.timeout_set_minutes_name)
               .setNameLocalizations({
-                de: "minuten",
+                de: deLocalizations.timeout_set_minutes_name,
               })
-              .setDescription("The duration you want to set the timeout to")
+              .setDescription(enLocalizations.timeout_set_minutes_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Auszeit setzen willst",
+                de: deLocalizations.timeout_set_minutes_description,
               }),
           )
           .addIntegerOption((option) =>
             option
-              .setName("seconds")
+              .setName(enLocalizations.timeout_set_seconds_name)
               .setNameLocalizations({
-                de: "sekunden",
+                de: deLocalizations.timeout_set_seconds_name,
               })
-              .setDescription("The duration you want to set the timeout to")
+              .setDescription(enLocalizations.timeout_set_seconds_description)
               .setDescriptionLocalizations({
-                de: "Die Dauer, auf die du die Auszeit setzen willst",
+                de: deLocalizations.timeout_set_seconds_description,
               }),
           ),
       )
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("unset")
+          .setName(enLocalizations.timeout_unset_name)
           .setNameLocalizations({
-            de: "entfernen",
+            de: deLocalizations.timeout_unset_name,
           })
-          .setDescription("Unsets a users timeout")
+          .setDescription(enLocalizations.timeout_unset_description)
           .setDescriptionLocalizations({
-            de: "Entfernt die Auszeit eines Benutzers",
+            de: deLocalizations.timeout_unset_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.timeout_unset_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.timeout_unset_user_name,
               })
-              .setDescription("The user whose timeout you want to unset")
+              .setDescription(enLocalizations.timeout_unset_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Auszeit entfernt werden soll",
+                de: deLocalizations.timeout_unset_user_description,
               })
               .setRequired(true),
           ),
       )
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("show")
+          .setName(enLocalizations.timeout_show_name)
           .setNameLocalizations({
-            de: "anzeigen",
+            de: deLocalizations.timeout_show_name,
           })
-          .setDescription("Shows a users timeout")
+          .setDescription(enLocalizations.timeout_show_description)
           .setDescriptionLocalizations({
-            de: "Zeigt die Deuer der Auszeit eines Benutzers an",
+            de: deLocalizations.timeout_show_description,
           })
           .addUserOption((option) =>
             option
-              .setName("user")
+              .setName(enLocalizations.timeout_show_user_name)
               .setNameLocalizations({
-                de: "benutzer",
+                de: deLocalizations.timeout_show_user_name,
               })
-              .setDescription("The user whose timeout you want to see")
+              .setDescription(enLocalizations.timeout_show_user_description)
               .setDescriptionLocalizations({
-                de: "Der Benutzer dessen Auszeit du sehen willst",
+                de: deLocalizations.timeout_show_user_description,
               })
               .setRequired(true),
           ),

@@ -13,6 +13,8 @@ import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
 import Explore from "./explore";
+import enLocalizations from "./languages/slash-commands/en.json";
+import deLocalizations from "./languages/slash-commands/de.json";
 
 export default class Lightning {
   static async lightning(
@@ -144,35 +146,33 @@ export default class Lightning {
 
   static getRegisterObject() {
     return new SlashCommandBuilder()
-      .setName("lightning")
+      .setName(enLocalizations.lightning_name)
       .setNameLocalizations({
-        de: "blitz",
+        de: deLocalizations.lightning_name,
       })
-      .setDescription("Generate one or more new pokemon")
+      .setDescription(enLocalizations.lightning_description)
       .setDescriptionLocalizations({
-        de: "Ein oder mehrere Pokémon generieren",
+        de: deLocalizations.lightning_description,
       })
       .addSubcommand((subcommand) =>
         subcommand
-          .setName("start")
+          .setName(enLocalizations.lightning_start_name)
           .setNameLocalizations({
-            de: "starten",
+            de: deLocalizations.lightning_start_name,
           })
-          .setDescription(
-            "Starts a new Lightning Round (multiple explores after each other)",
-          )
+          .setDescription(enLocalizations.lightning_start_description)
           .setDescriptionLocalizations({
-            de: "Eine neue Blitzrunde starten (mehrere Erforschungen nacheinander)",
+            de: deLocalizations.lightning_start_description,
           })
           .addIntegerOption((option) =>
             option
-              .setName("loops")
+              .setName(enLocalizations.lightning_start_loops_name)
               .setNameLocalizations({
-                de: "schleifen",
+                de: deLocalizations.lightning_start_loops_name,
               })
-              .setDescription("How often new pokémons should be generated") // TODO: Decide on a default value or make this option required
+              .setDescription(enLocalizations.lightning_start_loops_description)
               .setDescriptionLocalizations({
-                de: "Wie oft sollten neue Pokémon generiert werden",
+                de: deLocalizations.lightning_start_loops_description,
               })
               .setRequired(true),
           ),
