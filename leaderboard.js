@@ -223,7 +223,10 @@ function showLeaderboard(msg, debug=false) {
     }
 
     if (items.length > 5) {
-      leaderboardEmbed.addField('--------- RUNNERUPS ---------', "```" + table + "```")
+      leaderboardEmbed.addFields({
+        name: '--------- RUNNERUPS ---------',
+        value: "```" + table + "```"
+      });
     }
   
   // Sends the completed Embed
