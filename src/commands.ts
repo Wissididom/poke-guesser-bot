@@ -9,17 +9,17 @@ import Mod from "./mod";
 import Catch from "./catch";
 
 export default class Commands {
-  static getRegisterObject() {
-    return {
-      help: Help.getRegisterObject(),
-      settings: Settings.getRegisterObject(),
-      leaderboard: Leaderboard.getRegisterObject(),
-      score: Score.getRegisterObject(),
-      explore: Explore.getRegisterObject(),
-      lightning: Lightning.getRegisterObject(),
-      reveal: Reveal.getRegisterObject(),
-      mod: Mod.getRegisterObject(),
-    };
+  static getRegisterArray() {
+    return [
+      Help.getRegisterObject(),
+      Settings.getRegisterObject(),
+      Leaderboard.getRegisterObject(),
+      Score.getRegisterObject(),
+      Explore.getRegisterObject(),
+      Lightning.getRegisterObject(),
+      Reveal.getRegisterObject(),
+      Mod.getRegisterObject(),
+    ];
   }
 
   static help = Help.help;
