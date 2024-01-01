@@ -4,7 +4,7 @@ import {
   User,
   BaseInteraction,
   SlashCommandBuilder,
-  GuildMember
+  GuildMember,
 } from "discord.js";
 import { Model } from "sequelize";
 import Database from "./data/postgres";
@@ -25,7 +25,9 @@ export default class Leaderboard {
     let userName = "";
     let score = "";
     let scores = await db.getScores(interaction.guildId!);
-    let usernameMode = (await db.getUsernameMode(interaction.guildId!))?.getDataValue("mode");
+    let usernameMode = (
+      await db.getUsernameMode(interaction.guildId!)
+    )?.getDataValue("mode");
     const leaderboardEmbed: EmbedBuilder = Util.returnEmbed(
       lang.obj["leaderboard_title"],
       lang.obj["leaderboard_description"],
@@ -34,7 +36,9 @@ export default class Leaderboard {
     // Add fields to Embed
     for (let i: number = 0; i < Math.max(5, scores.length); i++) {
       let userId = scores[i]?.getDataValue("userId");
-      let memberObj = userId ? await Util.findMember(interaction, userId) : null;
+      let memberObj = userId
+        ? await Util.findMember(interaction, userId)
+        : null;
       if (memberObj) {
         if (Array.isArray(memberObj)) {
           userName = Util.getCorrectUsernameFormat(usernameMode, memberObj[0]);
@@ -109,7 +113,7 @@ export default class Leaderboard {
         longestUserLength = await this.getLongestUsername(
           interaction,
           scores.slice(5),
-          usernameMode
+          usernameMode,
         );
       }
       // Adds additional users into overflow leaderboard up until 20
@@ -138,7 +142,7 @@ export default class Leaderboard {
   private static async getLongestUsername(
     interaction: BaseInteraction,
     scores: Model[],
-    usernameModeId: number
+    usernameModeId: number,
   ) {
     let longestUsernameLength: number = 0;
     for (let i: number = 0; i < scores.length; i++) {
