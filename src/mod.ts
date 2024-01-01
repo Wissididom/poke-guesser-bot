@@ -35,109 +35,7 @@ export default class Mod {
       const subcommand = interaction.options.getSubcommand();
       switch (subcommandgroup) {
         case "score": // /mod score ?
-          let user =
-            interaction.options.getUser("user", false) || interaction.user;
-          let action = interaction.options.getString("action", false);
-          let amount = interaction.options.getInteger("amount", false);
-          switch (action) {
-            case "add":
-              try {
-                let dbScore = await db.getScore(interaction.guildId!, user.id);
-                if (amount) {
-                  if (dbScore) {
-                    await db.setScore(
-                      interaction.guildId!,
-                      user.id,
-                      dbScore.score + amount,
-                    );
-                  } else {
-                    await db.setScore(interaction.guildId!, user.id, amount);
-                  }
-                } else {
-                  if (dbScore) {
-                    await db.setScore(
-                      interaction.guildId!,
-                      user.id,
-                      dbScore.score + 1,
-                    );
-                  } else {
-                    await db.setScore(interaction.guildId!, user.id, 0);
-                  }
-                }
-                Util.editReply(
-                  interaction,
-                  lang.obj["mod_score_add_title_success"],
-                  lang.obj["mod_score_add_description_success"],
-                  lang,
-                );
-              } catch (err) {
-                Util.editReply(
-                  interaction,
-                  lang.obj["mod_score_add_title_failed"],
-                  `${lang.obj["mod_score_add_description_failed"]}${err}`,
-                  lang,
-                );
-              }
-              break;
-            case "remove":
-              try {
-                if (amount) {
-                  await db.removeScore(interaction.guildId!, user.id, amount);
-                } else {
-                  await db.unsetScore(interaction.guildId!, user.id);
-                }
-                Util.editReply(
-                  interaction,
-                  lang.obj["mod_score_remove_title_success"],
-                  lang.obj["mod_score_remove_description_success"],
-                  lang,
-                );
-              } catch (err) {
-                Util.editReply(
-                  interaction,
-                  lang.obj["mod_score_remove_title_failed"],
-                  `${lang.obj["mod_score_remove_description_failed"]}${err}`,
-                  lang,
-                );
-              }
-              break;
-            case "set":
-              try {
-                if (amount && amount >= 0) {
-                  await db.setScore(interaction.guildId!, user.id, amount);
-                } else {
-                  let dbScore = await db.getScore(
-                    interaction.guildId!,
-                    user.id,
-                  );
-                  if (!dbScore)
-                    await db.setScore(interaction.guildId!, user.id, 0);
-                }
-                Util.editReply(
-                  interaction,
-                  lang.obj["mod_score_set_title_success"],
-                  lang.obj["mod_score_set_description_success"],
-                  lang,
-                );
-              } catch (err) {
-                Util.editReply(
-                  interaction,
-                  lang.obj["mod_score_set_title_failed"],
-                  `${lang.obj["mod_score_set_description_failed"]}${err}`,
-                  lang,
-                );
-              }
-              break;
-            default:
-              Util.editReply(
-                interaction,
-                lang.obj["error_invalid_subcommand_title"],
-                lang.obj["error_invalid_subcommand_description"]
-                  .replace("<commandName>", interaction.commandName)
-                  .replace("<subcommandName>", action!),
-                lang,
-              );
-          }
+          // See default case
           break;
         case "delay": // /mod delay ?
           await Delay.delay(interaction, db);
@@ -149,14 +47,138 @@ export default class Mod {
           await Championship.championship(interaction, db);
           break;
         default:
-          await Util.editReply(
-            interaction,
-            lang.obj["error_invalid_subcommand_title"],
-            lang.obj["error_invalid_subcommand_description"]
-              .replace("<commandName>", interaction.commandName)
-              .replace("<subcommandName>", subcommandgroup + "" + subcommand),
-            lang,
-          );
+          switch (subcommand) {
+            case "score":
+              let user =
+                interaction.options.getUser("user", false) || interaction.user;
+              let action = interaction.options.getString("action", false);
+              let amount = interaction.options.getInteger("amount", false);
+              switch (action) {
+                case "add":
+                  try {
+                    let dbScore = await db.getScore(
+                      interaction.guildId!,
+                      user.id,
+                    );
+                    if (amount) {
+                      if (dbScore) {
+                        await db.setScore(
+                          interaction.guildId!,
+                          user.id,
+                          dbScore.score + amount,
+                        );
+                      } else {
+                        await db.setScore(
+                          interaction.guildId!,
+                          user.id,
+                          amount,
+                        );
+                      }
+                    } else {
+                      if (dbScore) {
+                        await db.setScore(
+                          interaction.guildId!,
+                          user.id,
+                          dbScore.score + 1,
+                        );
+                      } else {
+                        await db.setScore(interaction.guildId!, user.id, 0);
+                      }
+                    }
+                    Util.editReply(
+                      interaction,
+                      lang.obj["mod_score_add_title_success"],
+                      lang.obj["mod_score_add_description_success"],
+                      lang,
+                    );
+                  } catch (err) {
+                    Util.editReply(
+                      interaction,
+                      lang.obj["mod_score_add_title_failed"],
+                      `${lang.obj["mod_score_add_description_failed"]}${err}`,
+                      lang,
+                    );
+                  }
+                  break;
+                case "remove":
+                  try {
+                    if (amount) {
+                      await db.removeScore(
+                        interaction.guildId!,
+                        user.id,
+                        amount,
+                      );
+                    } else {
+                      await db.unsetScore(interaction.guildId!, user.id);
+                    }
+                    Util.editReply(
+                      interaction,
+                      lang.obj["mod_score_remove_title_success"],
+                      lang.obj["mod_score_remove_description_success"],
+                      lang,
+                    );
+                  } catch (err) {
+                    Util.editReply(
+                      interaction,
+                      lang.obj["mod_score_remove_title_failed"],
+                      `${lang.obj["mod_score_remove_description_failed"]}${err}`,
+                      lang,
+                    );
+                  }
+                  break;
+                case "set":
+                  try {
+                    if (amount && amount >= 0) {
+                      await db.setScore(interaction.guildId!, user.id, amount);
+                    } else {
+                      let dbScore = await db.getScore(
+                        interaction.guildId!,
+                        user.id,
+                      );
+                      if (!dbScore)
+                        await db.setScore(interaction.guildId!, user.id, 0);
+                    }
+                    Util.editReply(
+                      interaction,
+                      lang.obj["mod_score_set_title_success"],
+                      lang.obj["mod_score_set_description_success"],
+                      lang,
+                    );
+                  } catch (err) {
+                    Util.editReply(
+                      interaction,
+                      lang.obj["mod_score_set_title_failed"],
+                      `${lang.obj["mod_score_set_description_failed"]}${err}`,
+                      lang,
+                    );
+                  }
+                  break;
+                default:
+                  Util.editReply(
+                    interaction,
+                    lang.obj["error_invalid_subcommand_title"],
+                    lang.obj["error_invalid_subcommand_description"]
+                      .replace("<commandName>", interaction.commandName)
+                      .replace("<subcommandName>", action!),
+                    lang,
+                  );
+              }
+              break;
+            default:
+              await Util.editReply(
+                interaction,
+                lang.obj["error_invalid_subcommand_title"],
+                lang.obj["error_invalid_subcommand_description"]
+                  .replace("<commandName>", interaction.commandName)
+                  .replace(
+                    "<subcommandName>",
+                    subcommandgroup + " " + subcommand,
+                  ),
+                lang,
+              );
+              break;
+          }
+          break;
       }
     } else {
       Util.editReply(
