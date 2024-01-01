@@ -199,4 +199,48 @@ export default class Util {
       embeds: [Util.returnEmbed(title, description, language).embed],
     });
   }
+
+  static translateUsernameModeId(
+    usernameModeId: number,
+    languageObject: any,
+  ): string {
+    switch (usernameModeId) {
+      case 0:
+        return languageObject.username_mode_0;
+      case 1:
+        return languageObject.username_mode_1;
+      case 2:
+        return languageObject.username_mode_2;
+      case 3:
+        return languageObject.username_mode_3;
+      case 4:
+      default:
+        return languageObject.username_mode_4;
+    }
+  }
+
+  static getCorrectUsernameFormat(
+    usernameModeId: number,
+    member: GuildMember,
+  ): string {
+    switch (usernameModeId) {
+      case 0:
+        if (member.nickname) return member.nickname;
+        if (member.user.globalName) return member.user?.globalName;
+        return member.user?.username;
+      case 1:
+        if (member.nickname) return member.nickname;
+        return member.user?.username;
+      case 2:
+        if (member.user.globalName) return member.user?.globalName;
+        return member.user?.username;
+      case 3:
+        if (member.user.globalName) return member.user?.globalName;
+        if (member.nickname) return member.nickname;
+        return member.user?.username;
+      case 4:
+      default:
+        return member.user?.username;
+    }
+  }
 }
