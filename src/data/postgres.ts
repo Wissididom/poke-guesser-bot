@@ -8,6 +8,7 @@ import { GuildChannel, GuildMember, Role } from "discord.js";
 export default class Database {
   private db: Sequelize;
 
+  private Username = class extends Model {};
   private Mod = class extends Model {};
   private Channel = class extends Model {};
   private Language = class extends Model {};
@@ -38,6 +39,29 @@ export default class Database {
         },
       );
     }
+    this.Username.init(
+      {
+        /*id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true
+            },*/
+        serverId: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        mode: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 4,
+        },
+      },
+      {
+        sequelize: this.db,
+        modelName: "username",
+        timestamps: false,
+      },
+    );
     this.Mod.init(
       {
         /*id: {
@@ -221,6 +245,31 @@ export default class Database {
 
   async prepareDb(): Promise<Sequelize> {
     return await this.db.sync({ alter: true });
+  }
+
+  async getUsernameMode(serverId: string) {
+    return await this.Username.findOne({
+      where: {
+        serverId,
+      },
+    });
+  }
+
+  /**
+   * 0 = Nickname if exists -> Display Name if exists -> Username in any other case
+   * 1 = Nickname if exists -> Username in any other case
+   * 2 = Display Name if exists -> Username in any other case
+   * 3 = Display Name if exists -> Nickname if exists -> Username in any other case
+   * 4 = Always Username
+   */
+  async setUsernameMode(serverId: string, mode: number) {
+    if (mode < 0 || mode > 4) throw new Error("mode must be between 0 and 4");
+    let oldMode = await this.getUsernameMode(serverId);
+    if (oldMode == null || oldMode == undefined) {
+      return await this.Username.create({ serverId, mode });
+    } else {
+      return await this.Username.update({ mode }, { where: { serverId } });
+    }
   }
 
   async addMod(mentionable: GuildMember | Role) {

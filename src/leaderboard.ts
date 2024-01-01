@@ -4,6 +4,7 @@ import {
   User,
   BaseInteraction,
   SlashCommandBuilder,
+  GuildMember,
 } from "discord.js";
 import { Model } from "sequelize";
 import Database from "./data/postgres";
@@ -24,6 +25,9 @@ export default class Leaderboard {
     let userName = "";
     let score = "";
     let scores = await db.getScores(interaction.guildId!);
+    let usernameMode = (
+      await db.getUsernameMode(interaction.guildId!)
+    )?.getDataValue("mode");
     const leaderboardEmbed: EmbedBuilder = Util.returnEmbed(
       lang.obj["leaderboard_title"],
       lang.obj["leaderboard_description"],
@@ -32,12 +36,14 @@ export default class Leaderboard {
     // Add fields to Embed
     for (let i: number = 0; i < Math.max(5, scores.length); i++) {
       let userId = scores[i]?.getDataValue("userId");
-      let userObj = userId ? await Util.findUser(interaction, userId) : null;
-      if (userObj) {
-        if (Array.isArray(userObj)) {
-          userName = userObj[0].username;
+      let memberObj = userId
+        ? await Util.findMember(interaction, userId)
+        : null;
+      if (memberObj) {
+        if (Array.isArray(memberObj)) {
+          userName = Util.getCorrectUsernameFormat(usernameMode, memberObj[0]);
         } else {
-          userName = userObj.username;
+          userName = Util.getCorrectUsernameFormat(usernameMode, memberObj);
         }
       } else {
         userName = userId;
@@ -107,6 +113,7 @@ export default class Leaderboard {
         longestUserLength = await this.getLongestUsername(
           interaction,
           scores.slice(5),
+          usernameMode,
         );
       }
       // Adds additional users into overflow leaderboard up until 20
@@ -135,16 +142,18 @@ export default class Leaderboard {
   private static async getLongestUsername(
     interaction: BaseInteraction,
     scores: Model[],
+    usernameModeId: number,
   ) {
     let longestUsernameLength: number = 0;
     for (let i: number = 0; i < scores.length; i++) {
-      let u: User | undefined = (await Util.findUser(
+      let m: GuildMember | undefined = (await Util.findMember(
         interaction,
         scores[i].getDataValue("userId"),
-      )) as User | undefined;
-      if (u) {
-        if (u.username.length > longestUsernameLength) {
-          longestUsernameLength = u.username.length;
+      )) as GuildMember | undefined;
+      if (m) {
+        let memberUsername = Util.getCorrectUsernameFormat(usernameModeId, m);
+        if (memberUsername.length > longestUsernameLength) {
+          longestUsernameLength = memberUsername.length;
         }
       }
     }
