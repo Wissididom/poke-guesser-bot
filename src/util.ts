@@ -226,16 +226,16 @@ export default class Util {
     switch (usernameModeId) {
       case 0:
         if (member.nickname) return member.nickname;
-        if (member.user.globalName) return member.user?.globalName;
+        if (member.user?.globalName) return member.user?.globalName;
         return member.user?.username;
       case 1:
         if (member.nickname) return member.nickname;
         return member.user?.username;
       case 2:
-        if (member.user.globalName) return member.user?.globalName;
+        if (member.user?.globalName) return member.user?.globalName;
         return member.user?.username;
       case 3:
-        if (member.user.globalName) return member.user?.globalName;
+        if (member.user?.globalName) return member.user?.globalName;
         if (member.nickname) return member.nickname;
         return member.user?.username;
       case 4:
