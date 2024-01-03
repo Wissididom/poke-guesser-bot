@@ -197,6 +197,17 @@ export default class Settings {
             title = lang.obj["settings_language_show_title"];
             description = await db.getLanguageCode(interaction.guildId!);
             break;
+          case "username": // /settings username show
+            title = lang.obj["settings_username_show_title"];
+            let usernameModeId: any = await db.getUsernameMode(
+              interaction.guildId!,
+            );
+            let usernameMode = Util.translateUsernameModeId(
+              usernameModeId?.getDataValue("mode"),
+              lang.obj,
+            );
+            description = usernameMode;
+            break;
           default:
             title = lang.obj["error_invalid_subcommand_title"];
             description = lang.obj["error_invalid_subcommand_description"]
@@ -239,6 +250,34 @@ export default class Settings {
               );
             }
             break;
+          case "username": // /settings username set
+            try {
+              let mode = interaction.options.getInteger("mode");
+              if (mode != undefined && mode != null) {
+                await db.setUsernameMode(interaction.guildId!, mode);
+                await Util.editReply(
+                  interaction,
+                  lang.obj["settings_username_set_title_success"],
+                  lang.obj["settings_username_set_description_success"],
+                  lang,
+                );
+              } else {
+                await Util.editReply(
+                  interaction,
+                  lang.obj["settings_username_set_title_failed"],
+                  `${lang.obj["settings_username_set_description_failed"]}mode = ${mode}`,
+                  lang,
+                );
+              }
+            } catch (err) {
+              await Util.editReply(
+                interaction,
+                lang.obj["settings_username_set_title_failed"],
+                `${lang.obj["settings_username_set_description_failed"]}${err}`,
+                lang,
+              );
+            }
+            break;
           default:
             await Util.editReply(
               interaction,
@@ -274,6 +313,24 @@ export default class Settings {
               );
             }
             break;
+          case "username": // /settings username unset
+            try {
+              await db.setUsernameMode(interaction.guildId!, 4);
+              await Util.editReply(
+                interaction,
+                lang.obj["settings_username_unset_title_success"],
+                lang.obj["settings_username_unset_description_success"],
+                lang,
+              );
+            } catch (err) {
+              await Util.editReply(
+                interaction,
+                lang.obj["settings_username_unset_title_failed"],
+                lang.obj["settings_username_unset_description_failed"],
+                lang,
+              );
+            }
+            break;
           default:
             await Util.editReply(
               interaction,
@@ -293,6 +350,7 @@ export default class Settings {
         try {
           await db.resetMods(interaction.guildId!);
           await db.resetChannels(interaction.guildId!);
+          await db.setUsernameMode(interaction.guildId!, 4);
           try {
             await db.unsetLanguage(interaction.guildId!);
           } catch (e) {}
@@ -334,7 +392,14 @@ export default class Settings {
             helpDescription =
               `\`/settings language set <language code>\` - ${lang.obj["settings_language_set"]}\n` +
               `\`/settings language unset\` - ${lang.obj["settings_language_unset"]}\n` +
-              `\`/settings channels show\` - ${lang.obj["settings_language_show"]}`;
+              `\`/settings language show\` - ${lang.obj["settings_language_show"]}`;
+            break;
+          case "username": // /settings username help
+            helpTitle = lang.obj["settings_username_help"];
+            helpDescription =
+              `\`/settings username set <mode>\` - ${lang.obj["settings_username_set"]}\n` +
+              `\`/settings username unset\` - ${lang.obj["settings_username_unset"]}\n` +
+              `\`/settings username show\` - ${lang.obj["settings_username_show"]}`;
             break;
           default:
             helpTitle = lang.obj["settings_help"];
@@ -626,6 +691,118 @@ export default class Settings {
               )
               .setDescriptionLocalizations({
                 de: deLocalizations.settings_language_help_description,
+              }),
+          ),
+      )
+      .addSubcommandGroup((subcommandgroup) =>
+        subcommandgroup
+          .setName(enLocalizations.settings_username_name)
+          .setNameLocalizations({
+            de: deLocalizations.settings_username_name,
+          })
+          .setDescription(enLocalizations.settings_username_description)
+          .setDescriptionLocalizations({
+            de: deLocalizations.settings_username_description,
+          })
+          .addSubcommand((subcommand) =>
+            subcommand
+              .setName(enLocalizations.settings_username_set_name)
+              .setNameLocalizations({
+                de: deLocalizations.settings_username_set_name,
+              })
+              .setDescription(enLocalizations.settings_username_set_description)
+              .setDescriptionLocalizations({
+                de: deLocalizations.settings_username_set_description,
+              })
+              .addIntegerOption((option) =>
+                option
+                  .setName(enLocalizations.settings_username_set_mode_name)
+                  .setNameLocalizations({
+                    de: deLocalizations.settings_username_set_mode_name,
+                  })
+                  .setDescription(
+                    enLocalizations.settings_username_set_mode_description,
+                  )
+                  .setDescriptionLocalizations({
+                    de: deLocalizations.settings_username_set_mode_description,
+                  })
+                  .setRequired(true)
+                  .addChoices(
+                    {
+                      name: Util.translateUsernameModeId(0, enLocalizations),
+                      name_localizations: {
+                        de: Util.translateUsernameModeId(0, deLocalizations),
+                      },
+                      value: 0,
+                    },
+                    {
+                      name: Util.translateUsernameModeId(1, enLocalizations),
+                      name_localizations: {
+                        de: Util.translateUsernameModeId(1, deLocalizations),
+                      },
+                      value: 1,
+                    },
+                    {
+                      name: Util.translateUsernameModeId(2, enLocalizations),
+                      name_localizations: {
+                        de: Util.translateUsernameModeId(2, deLocalizations),
+                      },
+                      value: 2,
+                    },
+                    {
+                      name: Util.translateUsernameModeId(3, enLocalizations),
+                      name_localizations: {
+                        de: Util.translateUsernameModeId(3, deLocalizations),
+                      },
+                      value: 3,
+                    },
+                    {
+                      name: Util.translateUsernameModeId(4, enLocalizations),
+                      name_localizations: {
+                        de: Util.translateUsernameModeId(4, deLocalizations),
+                      },
+                      value: 4,
+                    },
+                  ),
+              ),
+          )
+          .addSubcommand((subcommand) =>
+            subcommand
+              .setName(enLocalizations.settings_username_unset_name)
+              .setNameLocalizations({
+                de: deLocalizations.settings_username_unset_name,
+              })
+              .setDescription(
+                enLocalizations.settings_username_unset_description,
+              )
+              .setDescriptionLocalizations({
+                de: deLocalizations.settings_username_unset_description,
+              }),
+          )
+          .addSubcommand((subcommand) =>
+            subcommand
+              .setName(enLocalizations.settings_username_show_name)
+              .setNameLocalizations({
+                de: deLocalizations.settings_username_show_name,
+              })
+              .setDescription(
+                enLocalizations.settings_username_show_description,
+              )
+              .setDescriptionLocalizations({
+                de: deLocalizations.settings_username_show_description,
+              }),
+          )
+          .addSubcommand((subcommand) =>
+            subcommand
+              .setName(enLocalizations.settings_username_help_name)
+              .setNameLocalizations({
+                de: deLocalizations.settings_username_help_name,
+              })
+              .setDescription(
+                enLocalizations.settings_username_help_description,
+              )
+              .setDescriptionLocalizations({
+                de: deLocalizations.settings_username_help_description,
               }),
           ),
       )
