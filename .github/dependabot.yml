@@ -20,3 +20,8 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "legacy"
+  - package-ecosystem: "github-actions" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    target-branch: "legacy"
