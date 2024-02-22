@@ -1,7 +1,7 @@
 version: "3.1"
 services:
   db:
-    image: postgres:15
+    image: postgres:15.3
     container_name: poke-guesser-postgres
     restart: unless-stopped
     env_file:
@@ -11,6 +11,11 @@ services:
     volumes:
       - ${PWD}/docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
       - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   poke-guesser-bot:
     build:
       context: .
@@ -19,7 +24,8 @@ services:
     restart: unless-stopped
     image: poke-guesser-bot
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - ./docker.env
     networks:

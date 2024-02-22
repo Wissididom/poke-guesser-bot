@@ -2,9 +2,10 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches: ["master", "main", "develop"]
   pull_request:
-    branches: [ "master", "develop" ]
+    branches: ["master", "main", "develop"]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -12,10 +13,10 @@ jobs:
     env:
       COMPOSE_FILE: .ci/docker-compose.yml
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker-compose build --no-cache
-    - name: Test the Docker image
-      run: docker-compose up --abort-on-container-exit
-      timeout-minutes: 30
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: docker-compose build --no-cache
+      - name: Test the Docker image
+        run: docker-compose up --abort-on-container-exit
+        timeout-minutes: 30

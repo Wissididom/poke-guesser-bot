@@ -21,7 +21,13 @@ Each role has access to certain commands. You can find out more from [this wiki 
 ### Guessing / Catching
 
 You can simply guess the pokémon name by clicking or tapping on `Catch This Pokémon!`-button below the message that shows the pokémon that needs to be guessed. After that a modal opens up that asks you for the name where you need to enter it and press or tap on `Submit`.
-![catch](images/catch.png)
+![catch](docs/images/catch.png)
+
+### Lightning Round
+
+You can start a lightning round, meaning one explore after each other for a given amount of loops, by doing `/lightning start` instead of `/explore`.
+
+It will then automatically explore a new pokemon if the current one was caught or revealed.
 
 ## Channel configuration
 
@@ -55,7 +61,7 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
     </li>
     <li>
         Create the <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links">Bot Invite Link</a>, but select the below permissions before using the invite link:
-        <img src="images/bot-4.png" alt="bot-4">
+        <img src="docs/images/bot-4.png" alt="bot-4">
     </li>
 </ol>
 
@@ -110,17 +116,16 @@ This bot was written to run locally or on docker with NodeJS and PostgreSQL and 
 
 ### Run in Docker
 
-**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first.*
+**Important:** _You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first._
 
 <ol>
     <li>
         <a href="https://docs.docker.com/get-started/">Set up Docker</a> if you haven't already.
     </li>
     <li>
-        Run the bot with Docker Compose. You can do this by running either: <br><code>sudo docker-compose up -d</code><br> or if that doesn't work, then try: <br><code>sudo docker-compose --env-file docker.env up -d</code>
+        Run the bot with Docker Compose: <br><code>docker compose up -d</code><br>
     </li>
 </ol>
-
 
 ### Run Locally
 
@@ -146,7 +151,7 @@ The database.
 
 ## node.js
 
-This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment. 
+This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment.
 
 ## discord.js
 
@@ -158,11 +163,11 @@ This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API 
 
 # Contributions
 
-If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`. 
+If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`.
 
 # Terms of Conduct
 
-Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`. 
+Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`.
 
 # License
 
