@@ -12,7 +12,7 @@ Poké-guesser Bot is hosted on Github and Replit. To visit the repositories, see
 
 ## Background
 
-A few months ago, one of my friends Pokketmuse reached out to me about a coding idea. She is a Twitch streamer who has a discord server where she runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game she ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. She wanted a bot that could automate this process.
+A few months ago, one of my friends Valley Orion reached out to me about a coding idea. He is a Twitch streamer who has a discord server where he runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game he ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. He wanted a bot that could automate this process.
 
 I fell in love with this idea immediately. I have wanted to build a discord bot for a very long time. I also have wanted to apply my JavaScript knowledge for a while as well as I have not completed any javascript projects yet. This project gave me an opportunity to kill two birds with one stone!
 
@@ -152,11 +152,9 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 
 ## Running locally
 
-This bot was written to run on Replit and utilize the Replit Secrets (Environment Variables). I didn't look into this too much to see how well it works in just nodeJS and outside of Replit. 
+This bot was written to run on Replit and utilize the Replit Secrets (Environment Variables). I didn't look into this too much to see how well it works in just nodeJS and outside of Replit.
 
-If running the `index.js` file doesn't work or outputs errors about the TOKEN missing, you will need to update the code to use your local TOKEN variable. 
-
-As this wasn't intended to run locally, I haven't tested this so I can't go into too much detail about how to run the bot this way.
+To run it in NodeJS and outside of Replit, you'd need to have a database implementation (like for example my implementation which is vulnerable to path traversal stuff: https://github.com/Wissididom/replit-db-server-remake) and additionally specify `TOKEN` and `REPLIT_DB_URL` either as environment variable or as value inside of `.env`
 
 # Technology
 
