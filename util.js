@@ -14,7 +14,6 @@ function checkDatabase() {
   .then(instantiated => {
 
     console.log(`Instantiated: ${instantiated}`);
-    console.log(instantiated);
 
     if (instantiated === true) {
 
