@@ -1,4 +1,4 @@
-const Database = require("@replit/database");
+const Database = require("./database.js");
 
 const db = new Database();
 

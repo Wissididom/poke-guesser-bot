@@ -1,5 +1,5 @@
 const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
-const Database = require("@replit/database");
+const Database = require("./database.js");
 
 const db = new Database();
 
@@ -14,6 +14,7 @@ function checkDatabase() {
   .then(instantiated => {
 
     console.log(`Instantiated: ${instantiated}`);
+    console.log(instantiated);
 
     if (instantiated === true) {
 

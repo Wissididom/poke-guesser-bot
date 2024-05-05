@@ -4,7 +4,7 @@ LIBRARIES
 */
 
 const { Client, GatewayIntentBits, Partials } = require("discord.js");
-const Database = require("@replit/database");
+const Database = require("./database.js");
 
 /*
 IMPORTED FUNCTIONS

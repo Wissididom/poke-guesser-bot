@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const Database = require("@replit/database");
+const Database = require("./database.js");
 const util = require("./util");
 
 const db = new Database();
