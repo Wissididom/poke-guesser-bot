@@ -9,7 +9,6 @@ const Database = require("./database.js");
 /*
 IMPORTED FUNCTIONS
 */
-const keepAlive = require("./server");
 const util = require("./util");
 const pokeFetch = require("./pokemon");
 const leaderBoard = require("./leaderboard");
@@ -694,9 +693,6 @@ if (mySecret === undefined) {
 } else {
   // Check database on start (prevents null errors)
   util.checkDatabase();
-
-  // Keeps server alive
-  //keepAlive();
 
   // Logs in with secret TOKEN
   client.login(mySecret);
