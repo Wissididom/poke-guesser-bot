@@ -1,4 +1,4 @@
-const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
+const { EmbedBuilder, AttachmentBuilder, Message } = require("discord.js");
 const Database = require("./database.js");
 
 const db = new Database();
@@ -10,38 +10,32 @@ UTILITIES
 // Check Replit database on start to make sure no values are set as null
 function checkDatabase() {
   // Check if database has been instantiated
-  db.get("instantiated")
-  .then(instantiated => {
+  db.get("instantiated").then((instantiated) => {
+    console.log(`Instantiated: ${JSON.stringify(instantiated)}`);
 
-    console.log(`Instantiated: ${instantiated}`);
-
-    if (instantiated === true) {
-
+    if (instantiated === true || instantiated.ok === true) {
       console.log("Database is ready.");
-
     } else if (instantiated === null) {
-
-      instantiateDatabase();  // Set Database Keys
-
+      instantiateDatabase(); // Set Database Keys
     } else {
-
-      console.log("ERROR: Unexpected error occurred when performing startup check on database.")
-
+      console.log(
+        "ERROR: Unexpected error occurred when performing startup check on database.",
+      );
+      instantiateDatabase(); // Set Database Keys
     }
-  })
+  });
 }
 
 // Set first values in database
 function instantiateDatabase() {
-
   console.log("Instantiating database for the first time.");
 
   // Set blank configuration
   const configuration = {
-    "configuration": {
-      "channels": [],
-      "roles": []
-    }
+    configuration: {
+      channels: [],
+      roles: [],
+    },
   };
 
   db.set("configuration", JSON.stringify(configuration));
@@ -54,40 +48,51 @@ function instantiateDatabase() {
 
   // Set instantiated to True
   db.set("instantiated", true);
-
 }
 
 // Wraps reply in poke-guesser themed embed
-function embedReply(title, description, msg, image=null) {
-
+function embedReply(title, description, msg, image = null) {
   // Creates new embedded message
   let embed = new EmbedBuilder()
-    .setTitle(title)  // Adds title
-    .setAuthor({name: 'POKé-GUESSER BOT', iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png', url: 'https://github.com/GeorgeCiesinski/poke-guesser-bot'})
-    .setColor(0x00AE86)
+    .setTitle(title) // Adds title
+    .setAuthor({
+      name: "POKé-GUESSER BOT",
+      iconURL:
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+      url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+    })
+    .setColor(0x00ae86)
     .setDescription(description) // Adds message
-    .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
-    .setFooter({text: 'By borreLore, Wissididom and Valley Orion', iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png'});
+    .setThumbnail(
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+    )
+    .setFooter({
+      text: "By borreLore, Wissididom and Valley Orion",
+      iconURL:
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+    });
 
   if (image) {
-    const attachment = new AttachmentBuilder(image, { name: 'pokemon.png' });
-    embed.setImage('attachment://pokemon.png');
-    msg.channel.send({embeds: [embed], files: [attachment]});  // Sends the embedded message back to channel
+    const attachment = new AttachmentBuilder(image, { name: "pokemon.png" });
+    embed.setImage("attachment://pokemon.png");
+    if (msg instanceof Message)
+      msg.channel.send({ embeds: [embed], files: [attachment] }); // Sends the embedded message back to channel
+    else msg.editReply({ embeds: [embed], files: [attachment] }); // Sends the embedded message back to channel
     return;
   }
 
-  msg.channel.send({embeds: [embed]});  // Sends the embedded message back to channel
-
+  if (msg instanceof Message)
+    msg.channel.send({ embeds: [embed] }); // Sends the embedded message back to channel
+  else msg.editReply({ embeds: [embed] });
 }
 
 // Capitalizes first letter of pokemon name
-function capitalize(string){
+function capitalize(string) {
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
 
 // Sends an embedded message with the Admin Help Instructions
 function adminHelp(msg) {
-
   const title = "Admin Help";
   const message = `Bot moderation instructions and commands:
 
@@ -114,7 +119,6 @@ function adminHelp(msg) {
 
 // Sends an embedded message with the Configuration Help Instructions
 function configurationHelp(msg) {
-
   const title = "Configuration Help";
   const message = `It is not recommended to use the bot without configuring roles and channels first.
 
@@ -144,7 +148,6 @@ function configurationHelp(msg) {
 
 // Sends an embedded message with the Player Help Instructions
 function playerHelp(msg) {
-  
   const title = "Player Help";
   const message = `Welcome to Poké-Guesser ${msg.author}!
 
@@ -157,7 +160,6 @@ function playerHelp(msg) {
   \`$leaderboard\` - Displays the leaderboard.`;
 
   embedReply(title, message, msg);
-
 }
 
 module.exports.checkDatabase = checkDatabase;

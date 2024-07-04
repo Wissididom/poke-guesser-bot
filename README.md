@@ -1,6 +1,6 @@
 # Poké-guesser Bot
 
-Poké-guesser Bot is a discord bot which selects random pokémon and asks the user to guess the pokémon name. The bot automatically tracks the score of participating users. It also recognizes a number of admin commands, and player commands such as catching pokémon, and displaying the leaderboard. 
+Poké-guesser Bot is a discord bot which selects random pokémon and asks the user to guess the pokémon name. The bot automatically tracks the score of participating users. It also recognizes a number of admin commands, and player commands such as catching pokémon, and displaying the leaderboard.
 
 ## Repositories
 
@@ -32,11 +32,11 @@ Poké-guesser Bot supports guesses containing pokemon names in other languages a
 
 ## Dynamic Leaderboard
 
-Poké-guesser Bot keeps track of scores and generates a nice looking leaderboard 
+Poké-guesser Bot keeps track of scores and generates a nice looking leaderboard
 
 ## Player commands
 
-Besides the usual admin commands, there are also many player commands which can be used to get the leaderboard, get their own or another player's score, guess pokemon, and more. 
+Besides the usual admin commands, there are also many player commands which can be used to get the leaderboard, get their own or another player's score, guess pokemon, and more.
 
 ## Hosted by YOU on Replit
 
@@ -52,7 +52,7 @@ Poke-guesser bot recognizes commands from Admins and Mods (make sure that you ad
 
 Admin commands have the prefix `!`
 
-Full list of admin commands is shown below. Do not type the < > characters. 
+Full list of admin commands is shown below. Do not type the < > characters.
 
 #### Gameplay
 
@@ -64,7 +64,7 @@ Full list of admin commands is shown below. Do not type the < > characters.
 
 #### Score and leaderboard correction
 
-*Note: The below commands require you to use @user mentions*
+_Note: The below commands require you to use @user mentions_
 
 `!addscore <@user>`: (caution) Adds the user to the leaderboard with 0 points. Cannot be used if the user is already on leaderboard.
 
@@ -78,11 +78,11 @@ Full list of admin commands is shown below. Do not type the < > characters.
 
 `!configure`: Shows configure helper.
 
-`!add role <role name>`: Adds the role as a bot moderator. The role name must be exactly what it is in Discord, including any emojis. 
+`!add role <role name>`: Adds the role as a bot moderator. The role name must be exactly what it is in Discord, including any emojis.
 
 `!remove role <role name>`: Removes the role from bot moderator.
 
-`!add channel <channel name>`: Adds the channel to list of channels the bot replies to. 
+`!add channel <channel name>`: Adds the channel to list of channels the bot replies to.
 
 `!remove channel <channel name>`: Removes the channel from list of channels the bot replies to.
 
@@ -94,9 +94,9 @@ Full list of admin commands is shown below. Do not type the < > characters.
 
 Player commands have the prefix `$`
 
-Full list of player commands is shown below. Do not include the < > characters. 
+Full list of player commands is shown below. Do not include the < > characters.
 
-`$help`: Shows Admin and Player commands. 
+`$help`: Shows Admin and Player commands.
 
 `$catch <pokémon-name>`: Allows player to guess the pokémon. Guessing correctly adds the player to the leaderboard and adds one point.
 
@@ -104,7 +104,7 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 `$position`: See your current position.
 
-*Note: The below command requires you to use @user mentions*
+_Note: The below command requires you to use @user mentions_
 
 `$position <@user>`: See another user's position.
 
@@ -114,7 +114,7 @@ Full list of player commands is shown below. Do not include the < > characters.
 
 This bot was intented to run in [replit](https://replit.com) so my installation instructions will cover this method.
 
-**Important:** *You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first.*
+**Important:** _You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first._
 
 1. Go to the Replit link for the project: https://replit.com/@GeorgeKhan/poke-guesser-bot
 
@@ -122,7 +122,7 @@ This bot was intented to run in [replit](https://replit.com) so my installation 
 
 ![replit-3](images/replit-3.png)
 
-3. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret. 
+3. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret.
 
 ![replit-4](images/replit-4.png)
 
@@ -160,23 +160,23 @@ To run it in NodeJS and outside of Replit, you'd need to have a database impleme
 
 ## Replit
 
-We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot is intended to be ran straight from Replit so that it is hosted in the cloud. 
+We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot is intended to be ran straight from Replit so that it is hosted in the cloud.
 
 ## node.js
 
-This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment. 
+This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment.
 
 ## discord.js
 
-All interactions with discord were handled thanks to the [discord.js](https://discord.js.org/#/) library. 
+All interactions with discord were handled thanks to the [discord.js](https://discord.js.org/#/) library.
 
 ## API
 
-This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot. 
+This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot.
 
 # Contributions
 
-To contribute to the bot, please fork this repository and open up a pull request to merge changes back into the repository. 
+To contribute to the bot, please fork this repository and open up a pull request to merge changes back into the repository.
 
 If your change adds a feature, please include proof that the feature is working as intended. Make sure you also test the bot to ensure other features aren't broken. I will expand this section soon to be more detailed, and add Pull Request templates to follow as well.
 
