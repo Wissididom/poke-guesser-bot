@@ -1,4 +1,4 @@
-const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
+const { EmbedBuilder, AttachmentBuilder, Message } = require("discord.js");
 const Database = require("./database.js");
 
 const db = new Database();
@@ -73,11 +73,13 @@ function embedReply(title, description, msg, image=null) {
   if (image) {
     const attachment = new AttachmentBuilder(image, { name: 'pokemon.png' });
     embed.setImage('attachment://pokemon.png');
-    msg.channel.send({embeds: [embed], files: [attachment]});  // Sends the embedded message back to channel
+    if (msg instanceof Message) msg.channel.send({embeds: [embed], files: [attachment]}); // Sends the embedded message back to channel
+    else msg.editReply({embeds: [embed], files: [attachment]}); // Sends the embedded message back to channel
     return;
   }
 
-  msg.channel.send({embeds: [embed]});  // Sends the embedded message back to channel
+  if (msg instanceof Message) msg.channel.send({embeds: [embed]}); // Sends the embedded message back to channel
+  else msg.editReply({embeds: [embed]});
 
 }
 

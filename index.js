@@ -515,6 +515,58 @@ client.on(Events.MessageCreate, msg => {
   })
 })
 
+client.on(Events.InteractionCreate, async interaction => {
+	await interaction.deferReply();
+	await interactionCreate(interaction);
+})
+
+let interactionCreate = async interaction => {
+	let channelAllowed = await configure.authenticateChannel(interaction);
+	if (channelAllowed) {
+		let roleAllowed = await configure.authenticateRole(interaction);
+		switch (interaction.commandName) {
+			case 'explore':
+				console.log("Generating a new pokemon.");
+			    // Returns pokemon json object
+			    let pokemon = await pokeFetch.generatePokemon();
+			    let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, '$1')];
+			    let names = await pokeFetch.fetchNames(pokemonNames[0]);
+			    if (!names) {
+			    	console.log(`Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`);
+			    	interactionCreate(interaction);
+			    	return;
+			    }
+			    for (let name of names) {
+			    	pokemonNames.push(name); // available properties: name, languageName and languageUrl
+			    }
+			    console.log(pokemonNames);
+			    db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
+			    // Gets sprite url, and replies to the channel with newly generated pokemon
+			    let sprites = await pokeFetch.fetchSprite(pokemon.url);
+			    const spriteUrl = sprites.front_default;
+			    if (!spriteUrl) {
+			    	console.log(`Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`);
+			    	interactionCreate(interaction);
+			    	return;
+			    }
+			    const officialArtUrl = sprites.other['official-artwork'].front_default;
+			    console.log(spriteUrl);
+			    console.log(officialArtUrl);
+			    // Set official artwork url in database
+			    db.set("artwork", officialArtUrl); // Sets official art url in database
+			    const title = "A wild POKEMON appeared!";
+			    const message = "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
+			    util.embedReply(title, message, interaction, spriteUrl);
+			    db.set("lastExplore", Date.now());
+				break;
+		}
+	} else {
+		await interaction.editReply({
+			content: 'Channel not allowed'
+		});
+	}
+}
+
 /*
 BOT START CODE (login, start server, etc)
 
