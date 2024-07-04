@@ -524,11 +524,12 @@ let interactionCreate = async interaction => {
 	let channelAllowed = await configure.authenticateChannel(interaction);
 	if (channelAllowed) {
 		let roleAllowed = await configure.authenticateRole(interaction);
+		let pokemon = null;
 		switch (interaction.commandName) {
 			case 'explore':
 				console.log("Generating a new pokemon.");
 			    // Returns pokemon json object
-			    let pokemon = await pokeFetch.generatePokemon();
+			    pokemon = await pokeFetch.generatePokemon();
 			    let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, '$1')];
 			    let names = await pokeFetch.fetchNames(pokemonNames[0]);
 			    if (!names) {
@@ -559,6 +560,42 @@ let interactionCreate = async interaction => {
 			    util.embedReply(title, message, interaction, spriteUrl);
 			    db.set("lastExplore", Date.now());
 				break;
+			case 'reveal':
+				pokemon = await db.get("pokemon");
+				if (pokemon === "") {
+					console.log("Admin requested reveal, but no pokemon is currently set.");
+					const title = "There is no pokemon to reveal";
+					const message = "You have to explore to find a pokemon. Type \`!explore\` to find a new pokemon.";
+					util.embedReply(title, message, interaction);
+				} else {
+					let pokemonNames = [pokemon[0]];
+					for (let i = 1; i < pokemon.length; i++) {
+			          let lowercaseName = pokemon[i].name.toLowerCase();
+			          if (!pokemonNames.includes(lowercaseName))
+			            pokemonNames.push(lowercaseName.toLowerCase());
+			        }
+			
+			        let englishIndex = 0; // Find english index
+			        for (let i = 1; i < pokemon.length; i++) {
+			          if (pokemon[i].languageName === 'en')
+			            englishIndex = i;
+			        }
+
+			        // build string to put in between brackets
+   			        let inBrackets = '';
+   			        for (let i = 0; i < pokemonNames.length; i++) {
+   			          if (inBrackets == '')
+   			            inBrackets = util.capitalize(pokemonNames[i]);
+   			          else
+   			            inBrackets += ', ' + util.capitalize(pokemonNames[i]);
+   			        }
+   			        console.log(`Admin requested reveal: ${pokemon[englishIndex].name} (${inBrackets})`);
+   			        const title = "Pokemon escaped!";
+   			        const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
+   			        util.embedReply(title, message, interaction);
+   			        db.set("pokemon", "");  // Sets current pokemon to empty string
+				}
+			    break;
 		}
 	} else {
 		await interaction.editReply({
