@@ -13,9 +13,9 @@ function checkDatabase() {
   db.get("instantiated")
   .then(instantiated => {
 
-    console.log(`Instantiated: ${instantiated}`);
+    console.log(`Instantiated: ${JSON.stringify(instantiated)}`);
 
-    if (instantiated === true) {
+    if (instantiated === true || instantiated.ok === true) {
 
       console.log("Database is ready.");
 
@@ -26,6 +26,7 @@ function checkDatabase() {
     } else {
 
       console.log("ERROR: Unexpected error occurred when performing startup check on database.")
+      instantiateDatabase();  // Set Database Keys
 
     }
   })

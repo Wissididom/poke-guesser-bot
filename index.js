@@ -3,7 +3,7 @@ require('dotenv').config();
 LIBRARIES
 */
 
-const { Client, GatewayIntentBits, Partials } = require("discord.js");
+const { Client, Events, GatewayIntentBits, Partials } = require("discord.js");
 const Database = require("./database.js");
 
 /*
@@ -474,14 +474,14 @@ This section runs when the bot is logged in and listening for commands. First, i
 */
 
 // Outputs console log when bot is logged in
-client.on("ready", () => {
+client.on(Events.ClientReady, () => {
 
   console.log(`Logged in as ${client.user.tag}!`);  // Logging
 
 })
 
 // Reads user messages, interprets commands & guesses, and authenticates channels/roles
-client.on("messageCreate", msg => {
+client.on(Events.MessageCreate, msg => {
 
   // Returns if message is from bot
   if (msg.author.bot) return;
