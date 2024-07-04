@@ -15,8 +15,7 @@
   "dependencies": {
     "@replit/database": "^3.0.1",
     "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "prettier": "^3.3.2"
