@@ -4,17 +4,18 @@ Poké-guesser Bot is a discord bot which selects random pokémon and asks the us
 
 ## Repositories
 
-Poké-guesser Bot is hosted on Github and Replit. To visit the repositories, see the links below.
+Poké-guesser Bot is hosted on Github.
 
-1. Github - https://github.com/GeorgeCiesinski/poke-guesser-bot
-
-2. Replit - https://replit.com/@GeorgeKhan/poke-guesser-bot
+- The most recent version is here: https://github.com/GeorgeCiesinski/poke-guesser-bot
+- The version that used to run on Replit and is being maintained until the original version is ready to be used in prod is hosted in the legacy branch on here: https://github.com/Wissididom/poke-guesser-bot
 
 ## Background
 
-A few months ago, one of my friends Valley Orion reached out to me about a coding idea. He is a Twitch streamer who has a discord server where he runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game he ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. He wanted a bot that could automate this process.
+One of my friends Valley Orion reached out to GeorgeCiesinski about a coding idea. He is a Twitch streamer who has a discord server where he runs a few custom events for the users in the channel. One of these events is a Pokémon Guessing game he ran on pen & paper. In a nutshell, the game was to guess a daily pokémon, and the players were tracked on a leaderboard. He wanted a bot that could automate this process.
 
-I fell in love with this idea immediately. I have wanted to build a discord bot for a very long time. I also have wanted to apply my JavaScript knowledge for a while as well as I have not completed any javascript projects yet. This project gave me an opportunity to kill two birds with one stone!
+GeorgeCiesinski fell in love with this idea immediately. He wanted to build a discord bot for a very long time. He also have wanted to apply his JavaScript knowledge for a while as well as he has not completed any javascript projects yet. This project gave him an opportunity to kill two birds with one stone!
+
+Later Wissididom joined and wrote a lot of code/further features.
 
 # Features
 
@@ -29,6 +30,7 @@ You can set which channels the bot is allowed to reply in. Setting no channels a
 ## Multi-language Support
 
 Poké-guesser Bot supports guesses containing pokemon names in other languages as supported by Poké-API. This makes it great for an international discord server with players from many different regions.
+It does not have a multi-language UX though.
 
 ## Dynamic Leaderboard
 
@@ -41,6 +43,7 @@ Besides the usual admin commands, there are also many player commands which can 
 ## Hosted by YOU on Replit
 
 Thanks to this bot being written in Replit, you can clone this and run it yourself so you know exactly what this bot is doing. You can also make any custom modifications you want!
+This bot was intended to run on Replit, but is being rewritten in TypeScript using a Postgres database. It can still be cloned and hosted by you though, but you need to have a device that runs whenever the bot should be online, likely a vServer.
 
 # Usage
 
@@ -110,27 +113,20 @@ _Note: The below command requires you to use @user mentions_
 
 # Installation
 
-## Forking and Running Bot using Replit
-
-This bot was intented to run in [replit](https://replit.com) so my installation instructions will cover this method.
+## Cloning and running Bot locally
 
 **Important:** _You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#setup-discord-bot) section first._
 
-1. Go to the Replit link for the project: https://replit.com/@GeorgeKhan/poke-guesser-bot
-
-2. Click Fork to fork it to your own Replit account.
-
-![replit-3](images/replit-3.png)
-
-3. Click the Secrets button (lock icon). Create a new secret with the key `TOKEN` and the value set to your Discord bot token. Click `Add new secret` to finish creating the secret.
-
-![replit-4](images/replit-4.png)
-
-4. Click the **Run** button at the top of the Replit page to start the bot.
+1. Clone this repository: `git clone https://github.com/Wissididom/poke-guesser-bot`
+2. Switch to the `legacy` branch: `git checkout legacy`
+3. Copy the example.env to .env and fill out it's values: `cp example.env .env` - Fill out `.env` - It needs to have at least `TOKEN` and `REPLIT_DB_URL`.
+4. Install dependencies: `npm i` or `npm ci`
+5. Start the database server, if you haven't already (for example: [this one](https://github.com/Wissididom/replit-db-server-remake) if you don't mind path traversal vulnerabilities)
+6. Run the bot using either `npm start` or `node index.js`
 
 ## Setup Discord Bot
 
-In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
+In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal. (TODO: Screenshots (and/or instructions) probably need to be updated)
 
 1. Login to the Discord Developer portal and create a bot using [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
@@ -150,19 +146,13 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 
 6. Choose a server to invite the bot to, then click authorize.
 
-## Running locally
-
-This bot was written to run on Replit and utilize the Replit Secrets (Environment Variables). I didn't look into this too much to see how well it works in just nodeJS and outside of Replit.
-
-To run it in NodeJS and outside of Replit, you'd need to have a database implementation (like for example my implementation which is vulnerable to path traversal stuff: https://github.com/Wissididom/replit-db-server-remake) and additionally specify `TOKEN` and `REPLIT_DB_URL` either as environment variable or as value inside of `.env`
-
 # Technology
 
 ## Replit
 
-We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot is intended to be ran straight from Replit so that it is hosted in the cloud.
+We used the online IDE [Replit](https://replit.com/~) to create Poke-guesser Bot. The bot was intended to be ran straight from Replit so that it is hosted in the cloud.
 
-## node.js
+## NodeJS
 
 This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment.
 
@@ -178,7 +168,7 @@ This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API 
 
 To contribute to the bot, please fork this repository and open up a pull request to merge changes back into the repository.
 
-If your change adds a feature, please include proof that the feature is working as intended. Make sure you also test the bot to ensure other features aren't broken. I will expand this section soon to be more detailed, and add Pull Request templates to follow as well.
+If your change adds a feature, please include proof that the feature is working as intended. Make sure you also test the bot to ensure other features aren't broken.
 
 # License
 
