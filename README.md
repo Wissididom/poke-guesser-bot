@@ -126,7 +126,7 @@ _Note: The below command requires you to use @user mentions_
 
 ## Setup Discord Bot
 
-In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal. (TODO: Screenshots (and/or instructions) probably need to be updated)
+In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
 
 1. Login to the Discord Developer portal and create a bot using [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
@@ -142,7 +142,7 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
 
 ![bot-4](images/bot-4.png)
 
-5. Click copy above the bot permissions, and paste it into your browser.
+5. Click copy below the bot permissions, next to the `GENERATED URL` textbox and paste it into your browser. Make sure, you choose `Guild Install`, because a User Install doesn't make sense and might break the bot.
 
 6. Choose a server to invite the bot to, then click authorize.
 
