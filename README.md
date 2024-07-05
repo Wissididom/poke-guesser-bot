@@ -30,6 +30,7 @@ You can set which channels the bot is allowed to reply in. Setting no channels a
 ## Multi-language Support
 
 Poké-guesser Bot supports guesses containing pokemon names in other languages as supported by Poké-API. This makes it great for an international discord server with players from many different regions.
+
 It does not have a multi-language UX though.
 
 ## Dynamic Leaderboard
@@ -42,7 +43,6 @@ Besides the usual admin commands, there are also many player commands which can 
 
 ## Hosted by YOU on Replit
 
-Thanks to this bot being written in Replit, you can clone this and run it yourself so you know exactly what this bot is doing. You can also make any custom modifications you want!
 This bot was intended to run on Replit, but is being rewritten in TypeScript using a Postgres database. It can still be cloned and hosted by you though, but you need to have a device that runs whenever the bot should be online, likely a vServer.
 
 # Usage
