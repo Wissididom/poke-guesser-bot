@@ -9,5 +9,8 @@ module.exports.getRegisterArray = () => {
     new SlashCommandBuilder()
       .setName("reveal")
       .setDescription("Reveals the current pokemon"),
+    new SlashCommandBuilder()
+      .setName("leaderboard")
+      .setDescription("Shows the Leaderboard"),
   ];
 };

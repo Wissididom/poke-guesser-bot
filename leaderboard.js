@@ -87,12 +87,21 @@ function showLeaderboard(msg, debug = false) {
   1) !leaderboard/$leaderboard: outputs regular leaderboard 
   2) !leaderboard debug: generates a dummy leaderboard with 20 randomly generated user/scores. 
   */
+  let isText = !msg.commandId;
 
   // Retrieve leaderboard from database
   db.get("leaderboard")
     .then((leaderboard) => {
       if (!leaderboard) {
-        msg.reply("The Leaderboard has not yet been initialized!");
+        if (isText) {
+          msg.reply({
+            content: "The Leaderboard has not yet been initialized!",
+          });
+        } else {
+          msg.editReply({
+            content: "The Leaderboard has not yet been initialized!",
+          });
+        }
         return;
       }
       // Checks if debugging has been passed
@@ -247,9 +256,15 @@ function showLeaderboard(msg, debug = false) {
       }
 
       // Sends the completed Embed
-      msg.channel.send({
-        embeds: [leaderboardEmbed],
-      });
+      if (isText) {
+        await msg.channel.send({
+          embeds: [leaderboardEmbed],
+        });
+      } else {
+        await msg.editReply({
+          embeds: [leaderboardEmbed],
+        });
+      }
 
       // Update leaderboard with sanitized leaderboard
       db.set("leaderboard", sanitizedLeaderboard);

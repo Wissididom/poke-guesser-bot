@@ -670,6 +670,9 @@ let interactionCreate = async (interaction) => {
           db.set("pokemon", ""); // Sets current pokemon to empty string
         }
         break;
+      case "leaderboard":
+        leaderBoard.showLeaderboard(interaction);
+        break;
     }
   } else {
     await interaction.editReply({
