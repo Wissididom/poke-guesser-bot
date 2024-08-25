@@ -640,7 +640,7 @@ let interactionCreate = async (interaction) => {
     }
     return;
   }
-  await interaction.deferReply();
+  if (!interaction.deferred) await interaction.deferReply();
   let channelAllowed = await configure.authenticateChannel(interaction);
   if (channelAllowed) {
     let roleAllowed = await configure.authenticateRole(interaction);
@@ -656,7 +656,7 @@ let interactionCreate = async (interaction) => {
           console.log(
             `Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`,
           );
-          interactionCreate(interaction);
+          await interactionCreate(interaction);
           return;
         }
         for (let name of names) {
