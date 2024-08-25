@@ -195,7 +195,7 @@ function checkCommand(command, msg) {
 
   // Reveals pokemon
   if (command === "reveal") {
-    db.get("pokemon").then((pokemon) => {
+    db.get("pokemon").then(async (pokemon) => {
       // If no pokemon is set
       if (pokemon === "") {
         console.log("Admin requested reveal, but no pokemon is currently set.");
@@ -234,9 +234,28 @@ function checkCommand(command, msg) {
         // Message
         title = "Pokemon escaped!";
         message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
-        util.embedReply(title, message, msg);
-
-        db.set("pokemon", ""); // Sets current pokemon to empty string
+        await db.set("pokemon", ""); // Sets current pokemon to empty string
+        await interaction.channel.messages
+                    .fetch({ limit: 100 })
+                    .then((messages) => {
+                      const botMessage = messages.find(
+                        (msg) =>
+                          msg.author.id == interaction.client.user.id,
+                      );
+                      console.log(botMessage);
+                      if (botMessage) {
+                        botMessage.edit({
+                          components: [],
+                        });
+                      }
+                    })
+                    .catch((err) => {
+                      console.error(
+                        "Failed to fetch most recent messages to remove the components:",
+                        err,
+                      );
+                    });
+        await util.embedReply(title, message, msg);
       }
     });
   }
@@ -725,8 +744,34 @@ let interactionCreate = async (interaction) => {
           );
           const title = "Pokemon escaped!";
           const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
-          util.embedReply(title, message, interaction);
-          db.set("pokemon", ""); // Sets current pokemon to empty string
+          await db.set("pokemon", ""); // Sets current pokemon to empty string
+          await interaction.channel.messages
+            .fetch({ limit: 100 })
+            .then(async (messages) => {
+              const botMessage = messages.find(
+                (msg) =>
+                  msg.author.id == interaction.client.user.id &&
+                  msg.interaction?.commandName != "reveal",
+              );
+              console.log(botMessage);
+              if (botMessage) {
+                try {
+	                await botMessage.edit({
+	                  components: [],
+	                });
+                } catch (err) {
+                	// Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                	// Assuming it is a deferred interaction message
+                }
+              }
+            })
+            .catch((err) => {
+              console.error(
+                "Failed to fetch most recent messages to remove the components:",
+                err,
+              );
+            });
+          await util.embedReply(title, message, interaction);
         }
         break;
       case "leaderboard":
