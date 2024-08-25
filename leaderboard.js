@@ -20,9 +20,11 @@ Each row represents a user. The key is the id of the user in discord, and the va
 // Add score to user
 function addScore(msg) {
   // Get userId from msg
-  let userId = msg.author.id;
-  console.log(`leaderboard.addScore received userId: ${msg.author.id}`);
-  console.log(`Adding score to user: ${msg.author.username}`);
+  let userId = msg instanceof Discord.Message ? msg.author.id : msg.user.id;
+  let userName =
+    msg instanceof Discord.Message ? msg.author.username : msg.user.username;
+  console.log(`leaderboard.addScore received userId: ${userId}`);
+  console.log(`Adding score to user: ${userName}`);
 
   // Check the leaderboard if id already exists
   db.get("leaderboard").then((leaderboard) => {

@@ -3,7 +3,19 @@ require("dotenv").config();
 LIBRARIES
 */
 
-const { Client, Events, GatewayIntentBits, Partials } = require("discord.js");
+const {
+  Client,
+  Events,
+  GatewayIntentBits,
+  Partials,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  TextInputStyle,
+  TextInputBuilder,
+  ModalBuilder,
+} = require("discord.js");
 const Database = require("./database.js");
 
 /*
@@ -168,7 +180,13 @@ function checkCommand(command, msg) {
           const title = "A wild POKEMON appeared!";
           const message =
             "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
-          util.embedReply(title, message, msg, spriteUrl);
+          let actionRow = new ActionRowBuilder().setComponents(
+            new ButtonBuilder()
+              .setCustomId("catchBtn")
+              .setLabel("Catch This Pokémon!")
+              .setStyle(ButtonStyle.Primary),
+          );
+          util.embedReply(title, message, msg, spriteUrl, actionRow);
           db.set("lastExplore", Date.now());
         });
       });
@@ -177,7 +195,7 @@ function checkCommand(command, msg) {
 
   // Reveals pokemon
   if (command === "reveal") {
-    db.get("pokemon").then((pokemon) => {
+    db.get("pokemon").then(async (pokemon) => {
       // If no pokemon is set
       if (pokemon === "") {
         console.log("Admin requested reveal, but no pokemon is currently set.");
@@ -216,9 +234,31 @@ function checkCommand(command, msg) {
         // Message
         title = "Pokemon escaped!";
         message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
-        util.embedReply(title, message, msg);
-
-        db.set("pokemon", ""); // Sets current pokemon to empty string
+        await db.set("pokemon", ""); // Sets current pokemon to empty string
+        await msg.channel.messages
+          .fetch({ limit: 100 })
+          .then(async (messages) => {
+            const botMessage = messages.find(
+              (innerMsg) => innerMsg.author.id == msg.client.user.id,
+            );
+            if (botMessage) {
+              try {
+                botMessage.edit({
+                  components: [],
+                });
+              } catch (err) {
+                // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                // Assuming it is a deferred interaction message
+              }
+            }
+          })
+          .catch((err) => {
+            console.error(
+              "Failed to fetch most recent messages to remove the components:",
+              err,
+            );
+          });
+        await util.embedReply(title, message, msg);
       }
     });
   }
@@ -583,11 +623,46 @@ client.on(Events.MessageCreate, (msg) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  await interaction.deferReply();
   await interactionCreate(interaction);
 });
 
 let interactionCreate = async (interaction) => {
+  if (interaction.isModalSubmit()) return;
+  if (interaction.isButton()) {
+    if (interaction.customId == "catchBtn") {
+      let modal = new ModalBuilder()
+        .setTitle("Catch This Pokémon!")
+        .setCustomId("catchModal")
+        .setComponents(
+          new ActionRowBuilder().setComponents(
+            new TextInputBuilder()
+              .setCustomId("guess")
+              .setLabel("Pokémon Name")
+              .setStyle(TextInputStyle.Short),
+          ),
+        );
+      await interaction.showModal(modal);
+      let submitted = await interaction
+        .awaitModalSubmit({
+          filter: (i) =>
+            i.customId == "catchModal" && i.user.id == interaction.user.id,
+          time: 60000,
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      if (submitted) {
+        if (await catchModalSubmitted(interaction, submitted, db)) {
+          await interaction.editReply({
+            //embeds: interaction.message.embeds,
+            components: [],
+          });
+        }
+      }
+    }
+    return;
+  }
+  if (!interaction.deferred) await interaction.deferReply();
   let channelAllowed = await configure.authenticateChannel(interaction);
   if (channelAllowed) {
     let roleAllowed = await configure.authenticateRole(interaction);
@@ -603,7 +678,7 @@ let interactionCreate = async (interaction) => {
           console.log(
             `Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`,
           );
-          interactionCreate(interaction);
+          await interactionCreate(interaction);
           return;
         }
         for (let name of names) {
@@ -629,7 +704,13 @@ let interactionCreate = async (interaction) => {
         const title = "A wild POKEMON appeared!";
         const message =
           "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
-        util.embedReply(title, message, interaction, spriteUrl);
+        let actionRow = new ActionRowBuilder().setComponents(
+          new ButtonBuilder()
+            .setCustomId("catchBtn")
+            .setLabel("Catch This Pokémon!")
+            .setStyle(ButtonStyle.Primary),
+        );
+        util.embedReply(title, message, interaction, spriteUrl, actionRow);
         db.set("lastExplore", Date.now());
         break;
       case "reveal":
@@ -666,8 +747,33 @@ let interactionCreate = async (interaction) => {
           );
           const title = "Pokemon escaped!";
           const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
-          util.embedReply(title, message, interaction);
-          db.set("pokemon", ""); // Sets current pokemon to empty string
+          await db.set("pokemon", ""); // Sets current pokemon to empty string
+          await interaction.channel.messages
+            .fetch({ limit: 100 })
+            .then(async (messages) => {
+              const botMessage = messages.find(
+                (msg) =>
+                  msg.author.id == interaction.client.user.id &&
+                  msg.interaction?.commandName != "reveal",
+              );
+              if (botMessage) {
+                try {
+                  await botMessage.edit({
+                    components: [],
+                  });
+                } catch (err) {
+                  // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                  // Assuming it is a deferred interaction message
+                }
+              }
+            })
+            .catch((err) => {
+              console.error(
+                "Failed to fetch most recent messages to remove the components:",
+                err,
+              );
+            });
+          await util.embedReply(title, message, interaction);
         }
         break;
       case "leaderboard":
@@ -680,6 +786,201 @@ let interactionCreate = async (interaction) => {
     });
   }
 };
+
+async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
+  await modalInteraction.deferUpdate(); //PokeBot is thinking
+  guessEntered = true;
+  const guess = modalInteraction.fields.getTextInputValue("guess");
+  console.log(`${modalInteraction.user.tag} guessed ${guess}`);
+  if (
+    (modalInteraction.guild && !modalInteraction.guild.available) ||
+    !modalInteraction.guild
+  )
+    return;
+  let promises = [
+    disadvantages.getDelayInSeconds(btnInteraction.user.id),
+    disadvantages.getTimeout(btnInteraction.user.id),
+    db.get("lastExplore"),
+  ];
+  Promise.all(promises).then(([delay, timeout, lastExplore]) => {
+    console.log(`delay:${delay};lastExplore:${lastExplore}`);
+    if (Date.now() - lastExplore < delay * 1000) {
+      let embed = new EmbedBuilder()
+        .setTitle("Delayed")
+        .setAuthor({
+          name: "POKé-GUESSER BOT",
+          iconURL:
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+          url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+        })
+        .setColor(0x00ae86)
+        .setDescription(
+          "You are delayed for another " +
+            (delay * 1000 - (Date.now() - lastExplore)) / 1000 +
+            " seconds!",
+        )
+        .setThumbnail(
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+        )
+        .setFooter({
+          text: "By borreLore, Wissididom and Valley Orion",
+          iconURL:
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+        });
+      btnInteraction.followUp({
+        embeds: [embed],
+      });
+      guessEntered = false;
+      return;
+    }
+    if (timeout) {
+      const splittedStart = timeout.start.split(/\//g);
+      const now = new Date();
+      const defaults = {
+        year: 0 /*now.getUTCFullYear()*/,
+        month: 0 /*now.getUTCMonth()*/,
+        day: 1 /*now.getUTCDate()*/,
+        hour: 0 /*now.getUTCHours()*/,
+        minute: 0 /*now.getUTCMinutes()*/,
+        second: 0 /*now.getUTCSeconds()*/,
+        millisecond: 0 /*now.getUTCMilliseconds()*/,
+      };
+      const start = {
+        year: parseInt(splittedStart[0]) | defaults.year,
+        month: (parseInt(splittedStart[1]) - 1) | defaults.month,
+        day: parseInt(splittedStart[2]) | defaults.day,
+        hour: parseInt(splittedStart[3]) | defaults.hour,
+        minute: parseInt(splittedStart[4]) | defaults.minute,
+        second: parseInt(splittedStart[5]) | defaults.second,
+        millisecond: parseInt(splittedStart[6]) | defaults.millisecond,
+      };
+      const startTime = Date.UTC(
+        start.year,
+        start.month,
+        start.day,
+        start.hour,
+        start.minute,
+        start.second,
+        start.millisecond,
+      );
+      const splittedEnd = timeout.end.split(/\//g);
+      const end = {
+        year: parseInt(splittedEnd[0]) | defaults.year,
+        month: (parseInt(splittedEnd[1]) - 1) | defaults.month,
+        day: parseInt(splittedEnd[2]) | defaults.day,
+        hour: parseInt(splittedEnd[3]) | defaults.hour,
+        minute: parseInt(splittedEnd[4]) | defaults.minute,
+        second: parseInt(splittedEnd[5]) | defaults.second,
+        millisecond: parseInt(splittedEnd[6]) | defaults.millisecond,
+      };
+      const endTime = Date.UTC(
+        end.year,
+        end.month,
+        end.day,
+        end.hour,
+        end.minute,
+        end.second,
+        end.millisecond,
+      );
+      const nowTime = now.getTime();
+      if (nowTime > startTime && nowTime < endTime) {
+        // In Timeout
+        console.log(
+          `In Timeout: ${nowTime} > ${startTime} && ${nowTime} < ${endTime}`,
+        );
+        util.embedReply(
+          "Timeouted",
+          "You are still timeouted until " + timeout.end,
+          msg,
+        );
+        msg.delete();
+        guessEntered = false;
+        return;
+      } else {
+        // Out of Timeout
+        console.log(
+          `Out of Timeout: !(${nowTime} > ${startTime} && ${nowTime} < ${endTime})`,
+        );
+        disadvantages.unsetTimeout(msg.author.id);
+      }
+    }
+    // Checks if the guess is part of the pokemon name
+    db.get("pokemon").then(async (pokemon) => {
+      // If no pokemon set
+      if (pokemon === "") {
+        console.log("No pokemon set.");
+
+        guessEntered = false; // Reset guessEntered
+
+        return;
+      }
+      // Loop through pokemon names and check against guess
+      console.log(`pokemon:${JSON.stringify(pokemon)}`);
+      let correct = false;
+      for (let i = 0; i < pokemon.length; i++) {
+        if (
+          pokemon[i].name
+            ? pokemon[i].name.toLowerCase() === guess.toLowerCase()
+            : pokemon[i].toLowerCase() === guess.toLowerCase()
+        ) {
+          db.set("pokemon", ""); // Sets current pokemon to empty string
+          await db.get("artwork").then(async (artwork) => {
+            // Send msg to addScore - id will be extrapolated
+            leaderBoard.addScore(btnInteraction);
+            // Find english index
+            let englishIndex = 1;
+            for (let i = 0; i < pokemon.length; i++) {
+              if (pokemon[i].languageName === "en") englishIndex = i;
+            }
+            // Send message that guess is correct
+            if (
+              (pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() ===
+              pokemon[englishIndex].name.toLowerCase()
+            )
+              title = `${util.capitalize(pokemon[englishIndex].name)} has been caught!`;
+            else
+              title = `${util.capitalize(pokemon[englishIndex].name)} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+            message = `1 point added to ${btnInteraction.user}'s score.'
+                          
+                          \`$position\`: see your current position
+                          \`$leaderboard\`: see the updated leaderboard`;
+            let embed = new EmbedBuilder()
+              .setTitle(title)
+              .setAuthor({
+                name: "POKé-GUESSER BOT",
+                iconURL:
+                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+                url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+              })
+              .setColor(0x00ae86)
+              .setDescription(message)
+              .setThumbnail(
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+              )
+              .setFooter({
+                text: "By borreLore, Wissididom and Valley Orion",
+                iconURL:
+                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+              });
+            await util.embedReply(title, message, btnInteraction, artwork);
+            await btnInteraction.followUp({
+              embeds: [embed],
+            });
+            correct = true;
+          });
+          break; // To avoid scoring multiple times
+        }
+      }
+      guessEntered = false; // Reset gues
+      if (!correct) {
+        await btnInteraction.followUp({
+          content: "Incorrect guess",
+          ephemeral: true,
+        });
+      }
+    });
+  });
+}
 
 /*
 BOT START CODE (login, start server, etc)

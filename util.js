@@ -51,7 +51,7 @@ function instantiateDatabase() {
 }
 
 // Wraps reply in poke-guesser themed embed
-function embedReply(title, description, msg, image = null) {
+function embedReply(title, description, msg, image = null, actionRow = null) {
   // Creates new embedded message
   let embed = new EmbedBuilder()
     .setTitle(title) // Adds title
@@ -75,15 +75,33 @@ function embedReply(title, description, msg, image = null) {
   if (image) {
     const attachment = new AttachmentBuilder(image, { name: "pokemon.png" });
     embed.setImage("attachment://pokemon.png");
-    if (msg instanceof Message)
-      msg.channel.send({ embeds: [embed], files: [attachment] }); // Sends the embedded message back to channel
-    else msg.editReply({ embeds: [embed], files: [attachment] }); // Sends the embedded message back to channel
+    if (msg instanceof Message) {
+      msg.channel.send({
+        embeds: [embed],
+        files: [attachment],
+        components: actionRow ? [actionRow] : [],
+      }); // Sends the embedded message back to channel
+    } else {
+      msg.editReply({
+        embeds: [embed],
+        files: [attachment],
+        components: actionRow ? [actionRow] : [],
+      }); // Sends the embedded message back to channel
+    }
     return;
   }
 
   if (msg instanceof Message)
-    msg.channel.send({ embeds: [embed] }); // Sends the embedded message back to channel
-  else msg.editReply({ embeds: [embed] });
+    msg.channel.send({
+      embeds: [embed],
+      components: actionRow ? [actionRow] : [],
+    });
+  // Sends the embedded message back to channel
+  else
+    msg.editReply({
+      embeds: [embed],
+      components: actionRow ? [actionRow] : [],
+    });
 }
 
 // Capitalizes first letter of pokemon name
