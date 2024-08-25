@@ -186,7 +186,7 @@ function checkCommand(command, msg) {
               .setLabel("Catch This Pokémon!")
               .setStyle(ButtonStyle.Primary),
           );
-          util.embedReply(title, message, msg, spriteUrl);
+          util.embedReply(title, message, msg, spriteUrl, actionRow);
           db.set("lastExplore", Date.now());
         });
       });
@@ -235,26 +235,29 @@ function checkCommand(command, msg) {
         title = "Pokemon escaped!";
         message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
         await db.set("pokemon", ""); // Sets current pokemon to empty string
-        await interaction.channel.messages
-                    .fetch({ limit: 100 })
-                    .then((messages) => {
-                      const botMessage = messages.find(
-                        (msg) =>
-                          msg.author.id == interaction.client.user.id,
-                      );
-                      console.log(botMessage);
-                      if (botMessage) {
-                        botMessage.edit({
-                          components: [],
-                        });
-                      }
-                    })
-                    .catch((err) => {
-                      console.error(
-                        "Failed to fetch most recent messages to remove the components:",
-                        err,
-                      );
-                    });
+        await msg.channel.messages
+          .fetch({ limit: 100 })
+          .then(async (messages) => {
+            const botMessage = messages.find(
+              (innerMsg) => innerMsg.author.id == msg.client.user.id,
+            );
+            if (botMessage) {
+              try {
+                botMessage.edit({
+                  components: [],
+                });
+              } catch (err) {
+                // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                // Assuming it is a deferred interaction message
+              }
+            }
+          })
+          .catch((err) => {
+            console.error(
+              "Failed to fetch most recent messages to remove the components:",
+              err,
+            );
+          });
         await util.embedReply(title, message, msg);
       }
     });
@@ -753,15 +756,14 @@ let interactionCreate = async (interaction) => {
                   msg.author.id == interaction.client.user.id &&
                   msg.interaction?.commandName != "reveal",
               );
-              console.log(botMessage);
               if (botMessage) {
                 try {
-	                await botMessage.edit({
-	                  components: [],
-	                });
+                  await botMessage.edit({
+                    components: [],
+                  });
                 } catch (err) {
-                	// Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
-                	// Assuming it is a deferred interaction message
+                  // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                  // Assuming it is a deferred interaction message
                 }
               }
             })
