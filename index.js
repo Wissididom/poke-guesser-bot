@@ -862,7 +862,6 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
                 iconURL:
                   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
               });
-            await util.embedReply(title, message, btnInteraction, artwork);
             await btnInteraction.followUp({
               embeds: [embed],
             });
