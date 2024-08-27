@@ -863,9 +863,34 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
                 iconURL:
                   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
               });
-            await btnInteraction.followUp({
+            let followUpMsg = await btnInteraction.followUp({
               embeds: [embed],
             });
+            await btnInteraction.channel.messages
+              .fetch({ limit: 100 })
+              .then(async (messages) => {
+                const botMessage = messages.find(
+                  (msg) =>
+                    msg.author.id == btnInteraction.client.user.id &&
+                    msg.id != followUpMsg.id,
+                );
+                if (botMessage) {
+                  try {
+                    await botMessage.edit({
+                      components: [],
+                    });
+                  } catch (err) {
+                    // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                    // Assuming it is a deferred interaction message
+                  }
+                }
+              })
+              .catch((err) => {
+                console.error(
+                  "Failed to fetch most recent messages to remove the components:",
+                  err,
+                );
+              });
             correct = true;
           });
           break; // To avoid scoring multiple times
@@ -874,7 +899,7 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
       guessEntered = false; // Reset gues
       if (!correct) {
         await btnInteraction.followUp({
-          content: "Incorrect guess",
+          content: `Incorrect guess (\`${guess}\`)`,
           ephemeral: true,
         });
       }
