@@ -857,6 +857,7 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
               .setThumbnail(
                 "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
               )
+              .setImage(artwork)
               .setFooter({
                 text: "By borreLore, Wissididom and Valley Orion",
                 iconURL:
