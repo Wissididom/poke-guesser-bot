@@ -538,7 +538,7 @@ function checkInput(inputRequest, msg) {
           ) {
             db.set("pokemon", ""); // Sets current pokemon to empty string
 
-            db.get("artwork").then((artwork) => {
+            db.get("artwork").then(async (artwork) => {
               // Send msg to addScore - id will be extrapolated
               leaderBoard.addScore(msg);
               // Find english index
@@ -560,7 +560,30 @@ function checkInput(inputRequest, msg) {
               
               \`$position\`: see your current position
               \`$leaderboard\`: see the updated leaderboard`;
-              util.embedReply(title, message, msg, artwork);
+              await util.embedReply(title, message, msg, artwork);
+              await msg.channel.messages
+                .fetch({ limit: 100 })
+                .then(async (messages) => {
+                  const botMessage = messages.find(
+                    (innerMsg) => innerMsg.author.id == msg.client.user.id,
+                  );
+                  if (botMessage) {
+                    try {
+                      botMessage.edit({
+                        components: [],
+                      });
+                    } catch (err) {
+                      // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                      // Assuming it is a deferred interaction message
+                    }
+                  }
+                })
+                .catch((err) => {
+                  console.error(
+                    "Failed to fetch most recent messages to remove the components:",
+                    err,
+                  );
+                });
             });
             break; // To avoid scoring multiple times
           }
