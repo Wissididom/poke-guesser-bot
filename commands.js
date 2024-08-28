@@ -53,7 +53,7 @@ module.exports.getRegisterArray = () => {
               .setDescription(
                 "The amount of points you want to add/remove/set from the user's score",
               )
-              .setRequired(true),
+              .setRequired(false),
           ),
       ),
   ];

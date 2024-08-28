@@ -679,6 +679,9 @@ let interactionCreate = async (interaction) => {
       case "leaderboard":
         leaderBoard.showLeaderboard(interaction);
         break;
+      case "mod":
+        await mod(interaction, db);
+        break;
     }
   } else {
     await interaction.editReply({
@@ -686,6 +689,70 @@ let interactionCreate = async (interaction) => {
     });
   }
 };
+
+async function mod(interaction, db) {
+  const subcommandgroup = interaction.options.getSubcommandGroup();
+  const subcommand = interaction.options.getSubcommand();
+  switch (subcommandgroup) {
+    case "score": // /mod score ?
+      // See default case
+      break;
+    case "delay": // /mod delay ?
+      // TODO
+      break;
+    case "timeout": // /mod timeout ?
+      // TODO
+      break;
+    case "championship": // /mod championship ?
+      // TODO
+      break;
+    default:
+      switch (subcommand) {
+        case "score":
+          let user = interaction.options.getUser("user") || interaction.user;
+          let action = interaction.options.getString("action");
+          let amount = interaction.options.getInteger("amount");
+          switch (action) {
+            case "add":
+              await leaderBoard.addUser(interaction);
+              break;
+            case "remove":
+              await leaderBoard.removeUser(interaction);
+              break;
+            case "set":
+              // TODO
+              break;
+            default:
+              let defaultEmbed = new EmbedBuilder()
+                .setTitle("Invalid action")
+                .setAuthor({
+                  name: "POKé-GUESSER BOT",
+                  iconURL:
+                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+                  url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+                })
+                .setColor(0x00ae86)
+                .setDescription(
+                  `You used an invalid \`/mod score <action>\` action (${action})`,
+                )
+                .setThumbnail(
+                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+                )
+                .setImage(artwork)
+                .setFooter({
+                  text: "By borreLore, Wissididom and Valley Orion",
+                  iconURL:
+                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+                });
+              await interaction.editReply({
+                embeds: [embed],
+              });
+              break;
+          }
+      }
+      break;
+  }
+}
 
 async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
   await modalInteraction.deferUpdate(); //PokeBot is thinking

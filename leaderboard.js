@@ -18,7 +18,7 @@ Each row represents a user. The key is the id of the user in discord, and the va
 */
 
 // Add score to user
-function addScore(msg) {
+async function addScore(msg) {
   // Get userId from msg
   let userId = msg instanceof Discord.Message ? msg.author.id : msg.user.id;
   let userName =
@@ -27,7 +27,7 @@ function addScore(msg) {
   console.log(`Adding score to user: ${userName}`);
 
   // Check the leaderboard if id already exists
-  db.get("leaderboard").then((leaderboard) => {
+  await db.get("leaderboard").then(async (leaderboard) => {
     // Add score if user is in leaderboard, add user to leaderboard if not
     if (!leaderboard) leaderboard = [];
     if (userId in leaderboard) {
@@ -36,7 +36,7 @@ function addScore(msg) {
       leaderboard[userId] = 1;
     }
     // Set database with changes
-    db.set("leaderboard", leaderboard);
+    await db.set("leaderboard", leaderboard);
   });
 }
 
@@ -388,99 +388,99 @@ function emptyLeaderboard(msg) {
   console.log("Emptied leaderboard.");
 }
 
-function addUser(message) {
-  const authorId = message.author.id;
-  // Transforms from "!addscore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and is the userId and splits at the "-"
-  const info = message.content
-    .replace(/!addscore +<@!?(\d+)> *(\d+)?/g, "$1-$2")
-    .split("-");
-  // info[0]: userId
-  // info[1]: score
-  db.get("leaderboard").then((leaderboard) => {
+async function addUser(interaction) {
+  const authorId = interaction.user.id;
+  const userId = interaction.options.getUser("user").id;
+  const action = interaction.options.getString("action");
+  const score = interaction.options.getInteger("amount");
+  await db.get("leaderboard").then(async (leaderboard) => {
     if (!leaderboard) leaderboard = [];
-    if (info[0]) {
-      // mention exists
-      if (info[1]) {
+    if (userId) {
+      // user exists
+      if (score) {
         // score given -> add to players score
-        let score = parseInt(info[1]);
-        if (info[0] in leaderboard) {
-          leaderboard[info[0]] += score;
-          message.reply(`Added ${score} points to <@!${info[0]}>'s score!`);
+        if (userId in leaderboard) {
+          leaderboard[userId] += score;
+          await interaction.editReply(
+            `Added ${score} points to <@${userId}>'s score!`,
+          );
         } else {
-          leaderboard[info[0]] = score;
-          message.reply(`Set <@!${info[0]}>'s score to ${score}!`);
+          leaderboard[userId] = score;
+          await interaction.editReply(`Set <@${userId}>'s score to ${score}!`);
         }
       } else {
         // score omitted -> error message if user exists else add to leaderboard with 0 points
-        if (info[0] in leaderboard) {
-          message.reply(
-            `<@!${info[0]}> already exists on the leaderboard. Please specify how much points should be added!`,
+        if (userId in leaderboard) {
+          await interaction.editReply(
+            `<@!${userId}> already exists on the leaderboard. Please specify how much points should be added!`,
           );
         } else {
-          leaderboard[info[0]] = 0;
-          message.reply(`<@!${info[0]}> added to leaderboard with 0 points`);
+          leaderboard[userId] = 0;
+          await interaction.editReply(
+            `<@${userId}> added to leaderboard with 0 points`,
+          );
         }
       }
       // Set database with changes
-      db.set("leaderboard", leaderboard);
+      await db.set("leaderboard", leaderboard);
     } else {
       // mention does not exist
-      message.reply("Please use !addscore <@user> [<score>]");
+      await interaction.editReply("Please use !addscore <@user> [<score>]");
     }
   });
 }
 
-function removeUser(message) {
-  // Transforms from "!removescore <@!583803514493337611> 100" to "583803514493337611-100" where 100 is optional and is the userId and splits at the "-"
-  const info = message.content
-    .replace(/!removescore +<@!?(\d+)> *(\d+)?/g, "$1-$2")
-    .split("-");
-  // info[0]: userId
-  // info[1]: score
-  db.get("leaderboard").then((leaderboard) => {
+async function removeUser(interaction) {
+  const userId = interaction.options.getUser("user").id;
+  const action = interaction.options.getString("action");
+  const score = interaction.options.getInteger("amount");
+  await db.get("leaderboard").then(async (leaderboard) => {
     if (!leaderboard) leaderboard = [];
-    if (info[0]) {
-      // mention exists
-      if (info[1]) {
+    if (userId) {
+      // user exists
+      if (score) {
         // score given -> subtract score (removing if substract would go negative)
-        let score = parseInt(info[1]);
-        if (info[0] in leaderboard) {
-          leaderboard[info[0]] -= score;
-          if (leaderboard[info[0]] < 0) {
-            delete leaderboard[info[0]];
-            message.reply(`Removed <@!${info[0]}>'s score!`);
+        if (userId in leaderboard) {
+          leaderboard[userId] -= score;
+          if (leaderboard[userId] < 0) {
+            delete leaderboard[userId];
+            await interaction.editReply(`Removed <@${userId}>'s score!`);
           } else {
-            message.reply(
-              `Removed ${score} points from <@!${info[0]}>'s score!`,
+            await interaction.editReply(
+              `Removed ${score} points from <@${userId}>'s score!`,
             );
           }
         } else {
-          message.reply(`<@!${info[0]}> does not exist on the leaderboard!`);
+          await interaction.editReply(
+            `<@${userId}> does not exist on the leaderboard!`,
+          );
         }
       } else {
         // score omitted -> removing user from leaderboard if existing on leaderboard
-        if (info[0] in leaderboard) {
-          delete leaderboard[info[0]];
-          message.reply(`Removed <@!${info[0]}>'s score!`);
+        if (userId in leaderboard) {
+          delete leaderboard[userId];
+          await interaction.editReply(`Removed <@${userId}>'s score!`);
         } else {
-          message.reply(`<@!${info[0]}> does not exist on the leaderboard!`);
+          await interaction.editReply(
+            `<@${userId}> does not exist on the leaderboard!`,
+          );
         }
       }
       // Set database with changes
-      db.set("leaderboard", leaderboard);
+      await db.set("leaderboard", leaderboard);
     } else {
       // mention does not exist
-      message.reply("Please use !removescore <@user> [<score>]");
+      await interaction.editReply("Please use !removescore <@user> [<score>]");
     }
   });
-  if (info[0]) {
-    if (info[1]) {
+  if (userId) {
+    if (score) {
       // score given -> subtract score (removing if substract would go negative)
     } else {
       // score omitted -> removing player completely
     }
   }
-  console.log(`removeUser: ${info[1] ? "true" : "false"}`);
+  console.log(`removeUser: ${score ? "true" : "false"}`);
 }
 
 // Finds the GuildMember by User-IDs (either string or array)
