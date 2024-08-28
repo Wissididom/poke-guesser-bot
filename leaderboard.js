@@ -66,18 +66,8 @@ function sanitizeLeaderboard(msg, leaderboard) {
   });
 }
 
-// DEBUGGING - Adds dummy users to leaderboard - for testing leaderboard embed with different numbers of users
-function generateLeaderboard(leaderboard) {
-  for (i = 0; i < 20; i++) {
-    let userName = `user${i + 1}`;
-    let score = Math.floor(Math.random() * 10);
-    leaderboard[userName] = score;
-  }
-  return leaderboard;
-}
-
 // Shows Leaderboard by creating a new Embed
-function showLeaderboard(msg, debug = false) {
+function showLeaderboard(msg, useFollowup = false) {
   /*
   Dynamically generates leaderboard embed depending on the number of users:
   1) 0 users: Generates empty leaderboard with champion and elite four slots showing TBA
@@ -87,13 +77,12 @@ function showLeaderboard(msg, debug = false) {
 
   Function is called using:
   1) !leaderboard/$leaderboard: outputs regular leaderboard 
-  2) !leaderboard debug: generates a dummy leaderboard with 20 randomly generated user/scores. 
   */
   let isText = !msg.commandId;
 
   // Retrieve leaderboard from database
-  db.get("leaderboard")
-    .then((leaderboard) => {
+  await db.get("leaderboard")
+    .then(async (leaderboard) => {
       if (!leaderboard) {
         if (isText) {
           msg.reply({
@@ -106,15 +95,7 @@ function showLeaderboard(msg, debug = false) {
         }
         return;
       }
-      // Checks if debugging has been passed
-      if (!debug) {
-        sanitizedLeaderboard = sanitizeLeaderboard(msg, leaderboard);
-      } else {
-        // Generates debug leaderboard
-        sanitizedLeaderboard = generateLeaderboard(leaderboard);
-      }
-
-      return sanitizedLeaderboard;
+      return sanitizeLeaderboard(msg, leaderboard);
     })
     .then(async (sanitizedLeaderboard) => {
       console.log(sanitizedLeaderboard);
@@ -222,14 +203,10 @@ function showLeaderboard(msg, debug = false) {
         // Creates table header for overflow leaderboard
         if (i == 5) {
           // Creates an array of usernames in items starting from index 5
-          if (!debug) {
-            usernames = Array.from(
-              items.slice(5),
-              async (x) => await findUser(msg, x[0]),
-            );
-          } else {
-            usernames = Array.from(items.slice(5), (x) => x[0]);
-          }
+          usernames = Array.from(
+                        items.slice(5),
+                        async (x) => await findUser(msg, x[0]),
+                      );
           // Get the longest username in the array
           const longestUsername = usernames.sort((a, b) => {
             return b.length - a.length;
@@ -332,11 +309,11 @@ function replyPosition(msg, userName, userPosition, mention) {
 }
 
 // Formally resets leaderboard and announces the end of the championship
-function newChampionship(msg) {
+async function newChampionship(interaction) {
   // Output message that the championship has ended and x is the victor
-  db.get("leaderboard").then(async (leaderboard) => {
+  await db.get("leaderboard").then(async (leaderboard) => {
     if (!leaderboard) {
-      msg.reply("The Leaderboard has not yet been initialized!");
+      interaction.editReply("The Leaderboard has not yet been initialized!");
       return;
     }
 
