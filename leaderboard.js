@@ -67,7 +67,7 @@ function sanitizeLeaderboard(msg, leaderboard) {
 }
 
 // Shows Leaderboard by creating a new Embed
-function showLeaderboard(msg, useFollowup = false) {
+async function showLeaderboard(msg, useFollowup = false) {
   /*
   Dynamically generates leaderboard embed depending on the number of users:
   1) 0 users: Generates empty leaderboard with champion and elite four slots showing TBA
@@ -81,7 +81,8 @@ function showLeaderboard(msg, useFollowup = false) {
   let isText = !msg.commandId;
 
   // Retrieve leaderboard from database
-  await db.get("leaderboard")
+  await db
+    .get("leaderboard")
     .then(async (leaderboard) => {
       if (!leaderboard) {
         if (isText) {
@@ -204,9 +205,9 @@ function showLeaderboard(msg, useFollowup = false) {
         if (i == 5) {
           // Creates an array of usernames in items starting from index 5
           usernames = Array.from(
-                        items.slice(5),
-                        async (x) => await findUser(msg, x[0]),
-                      );
+            items.slice(5),
+            async (x) => await findUser(msg, x[0]),
+          );
           // Get the longest username in the array
           const longestUsername = usernames.sort((a, b) => {
             return b.length - a.length;
@@ -240,9 +241,15 @@ function showLeaderboard(msg, useFollowup = false) {
           embeds: [leaderboardEmbed],
         });
       } else {
-        await msg.editReply({
-          embeds: [leaderboardEmbed],
-        });
+        if (useFollowup) {
+          await msg.followUp({
+            embeds: [leaderboardEmbed],
+          });
+        } else {
+          await msg.editReply({
+            embeds: [leaderboardEmbed],
+          });
+        }
       }
 
       // Update leaderboard with sanitized leaderboard
@@ -313,12 +320,14 @@ async function newChampionship(interaction) {
   // Output message that the championship has ended and x is the victor
   await db.get("leaderboard").then(async (leaderboard) => {
     if (!leaderboard) {
-      interaction.editReply("The Leaderboard has not yet been initialized!");
+      await interaction.editReply(
+        "The Leaderboard has not yet been initialized!",
+      );
       return;
     }
 
     // Output leaderboard
-    showLeaderboard(msg);
+    showLeaderboard(msg, true);
 
     // Create items array
     let items = Object.keys(leaderboard).map(function (key) {
