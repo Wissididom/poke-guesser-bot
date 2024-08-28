@@ -344,7 +344,7 @@ async function newChampionship(interaction) {
     var delayInMilliseconds = 500; // 0.5 seconds
 
     // Output Championship Victor with delay to allow leaderboard to send first
-    setTimeout(function () {
+    setTimeout(async () => {
       const title = "Champion Decided!";
       const message = `As the Championship draws to a close, the victor stands out from the rest of the competitors!
       
@@ -359,18 +359,18 @@ async function newChampionship(interaction) {
       The championship begins anew!`;
       const image =
         "https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png";
-      util.embedReply(title, message, msg, image);
+      await util.embedReply(title, message, msg, image);
 
       // Erase leaderboard
-      emptyLeaderboard(msg);
+      await emptyLeaderboard(interaction);
     }, delayInMilliseconds);
   });
 }
 
 // Empties leaderboard
-function emptyLeaderboard(msg) {
+async function emptyLeaderboard(msg) {
   const leaderboard = {};
-  db.set("leaderboard", leaderboard);
+  await db.set("leaderboard", leaderboard);
   console.log("Emptied leaderboard.");
 }
 
