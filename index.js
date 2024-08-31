@@ -545,7 +545,13 @@ let interactionCreate = async (interaction) => {
     }
     return;
   }
-  if (!interaction.deferred) await interaction.deferReply();
+  if (!interaction.deferred) {
+    if (interaction.commandName == "mod") {
+      await interaction.deferReply({ ephemeral: true });
+    } else {
+      await interaction.deferReply({ ephemeral: false });
+    }
+  }
   let channelAllowed = await configure.authenticateChannel(interaction);
   if (channelAllowed) {
     let roleAllowed = await configure.authenticateRole(interaction);
@@ -703,7 +709,7 @@ async function mod(interaction, db) {
               await leaderBoard.removeUser(interaction);
               break;
             case "set":
-              // TODO
+              await leaderBoard.setUser(interaction);
               break;
             default:
               let defaultEmbed = new EmbedBuilder()

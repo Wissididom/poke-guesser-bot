@@ -398,7 +398,7 @@ async function addUser(interaction) {
         // score omitted -> error message if user exists else add to leaderboard with 0 points
         if (userId in leaderboard) {
           await interaction.editReply(
-            `<@!${userId}> already exists on the leaderboard. Please specify how much points should be added!`,
+            `<@${userId}> already exists on the leaderboard. Please specify how much points should be added!`,
           );
         } else {
           leaderboard[userId] = 0;
@@ -469,6 +469,36 @@ async function removeUser(interaction) {
   console.log(`removeUser: ${score ? "true" : "false"}`);
 }
 
+async function setUser(interaction) {
+  const authorId = interaction.user.id;
+  const userId = interaction.options.getUser("user").id;
+  const action = interaction.options.getString("action");
+  const score = interaction.options.getInteger("amount");
+  await db.get("leaderboard").then(async (leaderboard) => {
+    if (!leaderboard) leaderboard = [];
+    if (userId) {
+      // user exists
+      if (score) {
+        // score given -> add to players score
+        leaderboard[userId] = score;
+        await interaction.editReply(
+          `Set <@${userId}>'s score to ${score} points!`,
+        );
+        // Set database with changes
+        await db.set("leaderboard", leaderboard);
+      } else {
+        // score omitted -> error message if user exists else add to leaderboard with 0 points
+        await interaction.editReply(
+          `\`/mod score set\` command can only be used with an amount given! Please use \`/mod score add\` if you want to add someone to the leaderboard with 0 points!`,
+        );
+      }
+    } else {
+      // mention does not exist
+      await interaction.editReply("Please use !addscore <@user> [<score>]");
+    }
+  });
+}
+
 // Finds the GuildMember by User-IDs (either string or array)
 function findMember(message, ids) {
   // Return member or undefined if not found (force specifies if cache should be checked)
@@ -498,3 +528,4 @@ module.exports.newChampionship = newChampionship;
 module.exports.emptyLeaderboard = emptyLeaderboard;
 module.exports.addUser = addUser;
 module.exports.removeUser = removeUser;
+module.exports.setUser = setUser;
