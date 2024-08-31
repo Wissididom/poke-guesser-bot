@@ -145,11 +145,6 @@ function checkCommand(command, msg) {
     leaderBoard.showLeaderboard(msg);
   }
 
-  // Output the leaderboard with debug
-  if (command === "leaderboard debug") {
-    leaderBoard.showLeaderboard(msg, true);
-  }
-
   // Start a new championship
   if (command === "new championship") {
     leaderBoard.newChampionship(msg);
@@ -163,18 +158,6 @@ function checkCommand(command, msg) {
   // DEBUGGING - resets leaderboard to default (empty) values
   if (command === "empty") {
     leaderBoard.emptyLeaderboard(msg);
-  }
-
-  // Adds score to leaderboard or updates their current score
-  if (command.startsWith("addscore ")) {
-    // This is different from the issue #17 because else Rythm or MEE6 think they are meant
-    leaderBoard.addUser(msg);
-  }
-
-  // Removes score from leaderboard
-  if (command.startsWith("removescore ")) {
-    // This is different from the issue #17 because else Rythm or MEE6 think they are meant
-    leaderBoard.removeUser(msg);
   }
 
   // Sets a delay before guessing
@@ -562,7 +545,13 @@ let interactionCreate = async (interaction) => {
     }
     return;
   }
-  if (!interaction.deferred) await interaction.deferReply();
+  if (!interaction.deferred) {
+    if (interaction.commandName == "mod") {
+      await interaction.deferReply({ ephemeral: true });
+    } else {
+      await interaction.deferReply({ ephemeral: false });
+    }
+  }
   let channelAllowed = await configure.authenticateChannel(interaction);
   if (channelAllowed) {
     let roleAllowed = await configure.authenticateRole(interaction);
@@ -679,6 +668,9 @@ let interactionCreate = async (interaction) => {
       case "leaderboard":
         leaderBoard.showLeaderboard(interaction);
         break;
+      case "mod":
+        await mod(interaction, db);
+        break;
     }
   } else {
     await interaction.editReply({
@@ -686,6 +678,70 @@ let interactionCreate = async (interaction) => {
     });
   }
 };
+
+async function mod(interaction, db) {
+  const subcommandgroup = interaction.options.getSubcommandGroup();
+  const subcommand = interaction.options.getSubcommand();
+  switch (subcommandgroup) {
+    case "score": // /mod score ?
+      // See default case
+      break;
+    case "delay": // /mod delay ?
+      // TODO
+      break;
+    case "timeout": // /mod timeout ?
+      // TODO
+      break;
+    case "championship": // /mod championship ?
+      // TODO
+      break;
+    default:
+      switch (subcommand) {
+        case "score":
+          let user = interaction.options.getUser("user") || interaction.user;
+          let action = interaction.options.getString("action");
+          let amount = interaction.options.getInteger("amount");
+          switch (action) {
+            case "add":
+              await leaderBoard.addUser(interaction);
+              break;
+            case "remove":
+              await leaderBoard.removeUser(interaction);
+              break;
+            case "set":
+              await leaderBoard.setUser(interaction);
+              break;
+            default:
+              let defaultEmbed = new EmbedBuilder()
+                .setTitle("Invalid action")
+                .setAuthor({
+                  name: "POKé-GUESSER BOT",
+                  iconURL:
+                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+                  url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+                })
+                .setColor(0x00ae86)
+                .setDescription(
+                  `You used an invalid \`/mod score <action>\` action (${action})`,
+                )
+                .setThumbnail(
+                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+                )
+                .setImage(artwork)
+                .setFooter({
+                  text: "By borreLore, Wissididom and Valley Orion",
+                  iconURL:
+                    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+                });
+              await interaction.editReply({
+                embeds: [embed],
+              });
+              break;
+          }
+      }
+      break;
+  }
+}
 
 async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
   await modalInteraction.deferUpdate(); //PokeBot is thinking
