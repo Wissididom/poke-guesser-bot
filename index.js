@@ -69,16 +69,6 @@ function checkCommand(command, msg) {
     util.embedReply(title, message, msg);
   }
 
-  // Admin Help
-  if (command === "help") {
-    util.adminHelp(msg);
-  }
-
-  // Configuration Help
-  if (command === "configure") {
-    util.configurationHelp(msg);
-  }
-
   /*
   Configuration Utilities
   */
@@ -165,11 +155,6 @@ Any functions called by checkInput() should either be organized in one of the im
 
 // Checks pokemon guess
 function checkInput(inputRequest, msg) {
-  // Player Help
-  if (inputRequest === "help") {
-    util.playerHelp(msg);
-  }
-
   // Player Guess
   if (inputRequest.startsWith("catch ") && guessEntered === false) {
     guessEntered = true; // Lock catch until complete

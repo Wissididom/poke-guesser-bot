@@ -59,8 +59,6 @@ Full list of admin commands is shown below. Do not type the < > characters.
 
 #### Gameplay
 
-`!help`: Shows Admin commands.
-
 `!leaderboard`: Shows a leaderboard of top players.
 
 `!new championship`: (caution) Outputs the Leaderboard one last time, reveals winner, and starts new championship with a blank leaderboard.
@@ -98,8 +96,6 @@ _Note: The below commands require you to use @user mentions_
 Player commands have the prefix `$`
 
 Full list of player commands is shown below. Do not include the < > characters.
-
-`$help`: Shows Admin and Player commands.
 
 `$catch <pokémon-name>`: Allows player to guess the pokémon. Guessing correctly adds the player to the leaderboard and adds one point.
 
