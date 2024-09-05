@@ -9,8 +9,6 @@ Poké-guesser Bot is hosted on Github.
 - The most recent version is here: https://github.com/GeorgeCiesinski/poke-guesser-bot
 - The version that used to run on Replit and is being maintained until the original version is ready to be used in prod is hosted in the legacy branch on here: https://github.com/Wissididom/poke-guesser-bot
 
-# Installation
-
 # Technology
 
 ## Replit
