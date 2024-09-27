@@ -67,7 +67,7 @@ function embedReply(title, description, msg, image = null, actionRow = null) {
       "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
     )
     .setFooter({
-      text: "By borreLore, Wissididom and Valley Orion",
+      text: "By borreLore, Wissididom and Crue Peregrine",
       iconURL:
         "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
     });

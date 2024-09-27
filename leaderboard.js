@@ -139,7 +139,7 @@ async function showLeaderboard(msg, useFollowup = false) {
           "https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png",
         )
         .setFooter({
-          text: "By borreLore, Wissididom and Valley Orion",
+          text: "By borreLore, Wissididom and Crue Peregrine",
           iconURL:
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
         });

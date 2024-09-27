@@ -514,7 +514,7 @@ async function mod(interaction, db) {
                 )
                 .setImage(artwork)
                 .setFooter({
-                  text: "By borreLore, Wissididom and Valley Orion",
+                  text: "By borreLore, Wissididom and Crue Peregrine",
                   iconURL:
                     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
                 });
@@ -595,7 +595,7 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
               )
               .setImage(artwork)
               .setFooter({
-                text: "By borreLore, Wissididom and Valley Orion",
+                text: "By borreLore, Wissididom and Crue Peregrine",
                 iconURL:
                   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
               });
