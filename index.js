@@ -300,7 +300,7 @@ let interactionCreate = async (interaction) => {
     if (interaction.customId == "catchBtn") {
       let modal = new ModalBuilder()
         .setTitle("Catch This Pokémon!")
-        .setCustomId("catchModal")
+        .setCustomId(`catchModal-${interaction.id}`)
         .setComponents(
           new ActionRowBuilder().setComponents(
             new TextInputBuilder()
@@ -310,22 +310,32 @@ let interactionCreate = async (interaction) => {
           ),
         );
       await interaction.showModal(modal);
-      let submitted = await interaction
-        .awaitModalSubmit({
-          filter: (i) =>
-            i.customId == "catchModal" && i.user.id == interaction.user.id,
-          time: 60000,
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-      if (submitted) {
-        if (await catchModalSubmitted(interaction, submitted, db)) {
-          await interaction.editReply({
-            //embeds: interaction.message.embeds,
-            components: [],
+      try {
+        let submitted = await interaction
+          .awaitModalSubmit({
+            filter: (i) =>
+              i.customId == `catchModal-${interaction.id}` &&
+              i.user.id == interaction.user.id,
+            time: 60000,
+          })
+          .catch((err) => {
+            console.error(err);
           });
+        if (submitted) {
+          if (await catchModalSubmitted(interaction, submitted, db)) {
+            await interaction.editReply({
+              //embeds: interaction.message.embeds,
+              components: [],
+            });
+          }
         }
+        console.log(`Submitted Type: ${submitted.type}`);
+      } catch (e) {
+        console.error("Timed out", e);
+        interaction.followUp({
+          content: "Modal timed out (> 60 seconds)",
+          ephemeral: true,
+        });
       }
     }
     return;
