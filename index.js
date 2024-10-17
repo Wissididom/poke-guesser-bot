@@ -332,6 +332,10 @@ let interactionCreate = async (interaction) => {
         console.log(`Submitted Type: ${submitted.type}`);
       } catch (e) {
         console.error("Timed out", e);
+        interaction.followUp({
+          content: "Modal timed out (> 60 seconds)",
+          ephemeral: true,
+        });
       }
     }
     return;
