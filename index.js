@@ -300,7 +300,7 @@ let interactionCreate = async (interaction) => {
     if (interaction.customId == "catchBtn") {
       let modal = new ModalBuilder()
         .setTitle("Catch This Pokémon!")
-        .setCustomId("catchModal")
+        .setCustomId(`catchModal-${interaction.id}`)
         .setComponents(
           new ActionRowBuilder().setComponents(
             new TextInputBuilder()
@@ -313,7 +313,8 @@ let interactionCreate = async (interaction) => {
       let submitted = await interaction
         .awaitModalSubmit({
           filter: (i) =>
-            i.customId == "catchModal" && i.user.id == interaction.user.id,
+            i.customId == `catchModal-${interaction.id}` &&
+            i.user.id == interaction.user.id,
           time: 60000,
         })
         .catch((err) => {
