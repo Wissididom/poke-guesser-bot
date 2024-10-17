@@ -310,23 +310,28 @@ let interactionCreate = async (interaction) => {
           ),
         );
       await interaction.showModal(modal);
-      let submitted = await interaction
-        .awaitModalSubmit({
-          filter: (i) =>
-            i.customId == `catchModal-${interaction.id}` &&
-            i.user.id == interaction.user.id,
-          time: 60000,
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-      if (submitted) {
-        if (await catchModalSubmitted(interaction, submitted, db)) {
-          await interaction.editReply({
-            //embeds: interaction.message.embeds,
-            components: [],
+      try {
+        let submitted = await interaction
+          .awaitModalSubmit({
+            filter: (i) =>
+              i.customId == `catchModal-${interaction.id}` &&
+              i.user.id == interaction.user.id,
+            time: 60000,
+          })
+          .catch((err) => {
+            console.error(err);
           });
+        if (submitted) {
+          if (await catchModalSubmitted(interaction, submitted, db)) {
+            await interaction.editReply({
+              //embeds: interaction.message.embeds,
+              components: [],
+            });
+          }
         }
+        console.log(`Submitted Type: ${submitted.type}`);
+      } catch (e) {
+        console.error("Timed out", e);
       }
     }
     return;
