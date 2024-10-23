@@ -1,8 +1,6 @@
 class Database {
   #db = null;
 
-  constructor() {}
-
   async initDb() {
     this.#db = await new Promise((resolve, reject) => {
       let db = new sqlite3.Database("./database.db", (err) => {
