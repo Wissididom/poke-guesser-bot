@@ -1,3 +1,5 @@
+const sqlite3 = require("sqlite3");
+
 class Database {
   #db = null;
 
@@ -17,7 +19,7 @@ class Database {
 
   async get(key) {
     let rows = await new Promise((resolve, reject) => {
-      db.all(`SELECT * FROM kv WHERE key = ?`, [key], (err, rows) => {
+      this.#db.all(`SELECT * FROM kv WHERE key = ?`, [key], (err, rows) => {
         if (err) {
           reject(err);
           return;
@@ -34,7 +36,7 @@ class Database {
 
   async set(key, value) {
     await new Promise((resolve, reject) => {
-      db.run(
+      this.#db.run(
         `CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT)`,
         [],
         (err) => {
@@ -49,7 +51,7 @@ class Database {
       );
     });
     await new Promise((resolve, reject) => {
-      db.run(
+      this.#db.run(
         `INSERT INTO kv (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
         [key, value],
         (err) => {
@@ -69,7 +71,7 @@ class Database {
 
   async delete(key) {
     let rows = await new Promise((resolve, reject) => {
-      db.all(`SELECT * FROM kv WHERE key = ?`, [key], (err, rows) => {
+      this.#db.all(`SELECT * FROM kv WHERE key = ?`, [key], (err, rows) => {
         if (err) {
           reject(err);
           return;
@@ -79,7 +81,7 @@ class Database {
     });
     if (rows.length > 0) {
       await new Promise((resolve, reject) => {
-        db.run(`DELETE FROM kv WHERE key = ?`, [key], (err) => {
+        this.#db.run(`DELETE FROM kv WHERE key = ?`, [key], (err) => {
           if (err) {
             console.error(err.message);
             reject(err);
@@ -94,7 +96,7 @@ class Database {
 
   async list() {
     let rows = await new Promise((resolve, reject) => {
-      db.all(`SELECT * FROM kv`, [], (err, rows) => {
+      this.#db.all(`SELECT * FROM kv`, [], (err, rows) => {
         if (err) {
           reject(err);
           return;

@@ -46,7 +46,7 @@ const client = new Client({
   ],
 }); // Discord Object
 
-const db = new Database(); // Replit Database
+const db = new Database(); // SQLite Database
 
 const mySecret = process.env["TOKEN"]; // Discord Token
 
@@ -666,8 +666,9 @@ if (mySecret === undefined) {
 
   process.kill(process.pid, "SIGTERM"); // Kill Bot
 } else {
+  await db.initDb();
   // Check database on start (prevents null errors)
-  util.checkDatabase();
+  util.checkDatabase(db);
 
   // Logs in with secret TOKEN
   client.login(mySecret);

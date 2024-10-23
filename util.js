@@ -1,14 +1,11 @@
 const { EmbedBuilder, AttachmentBuilder, Message } = require("discord.js");
-const Database = require("./database.js");
-
-const db = new Database();
 
 /*
 UTILITIES
 */
 
 // Check Replit database on start to make sure no values are set as null
-function checkDatabase() {
+function checkDatabase(db) {
   // Check if database has been instantiated
   db.get("instantiated").then((instantiated) => {
     console.log(`Instantiated: ${JSON.stringify(instantiated)}`);
@@ -27,7 +24,7 @@ function checkDatabase() {
 }
 
 // Set first values in database
-function instantiateDatabase() {
+function instantiateDatabase(db) {
   console.log("Instantiating database for the first time.");
 
   // Set blank configuration
