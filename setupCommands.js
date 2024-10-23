@@ -1,9 +1,6 @@
-require("dotenv").config();
-const { REST, Routes, SlashCommandBuilder } = require("discord.js");
-const Commands = require("./commands");
-//import "dotenv/config";
-//import { REST, Routes, SlashCommandBuilder } from "discord.js";
-//import Commands from "./commands";
+import "dotenv/config";
+import { REST, Routes, SlashCommandBuilder } from "discord.js";
+import Commands from "./commands";
 
 const token = process.env.TOKEN;
 if (!token) {

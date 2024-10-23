@@ -1,8 +1,6 @@
-const Discord = require("discord.js");
-const Database = require("./database.js");
-const util = require("./util");
-
-const db = new Database();
+import Discord from "discord.js";
+import Database from "./database.js";
+import util from "./util.js";
 
 /*
 CONFIGURATION UTILITIES
@@ -10,7 +8,7 @@ This section includes utilities related to the configuration, but not specific t
 */
 
 // Sends a message to the channel with the server configuration.
-function showConfig(msg) {
+export function showConfig(msg, db) {
   db.get("configuration").then((configuration) => {
     // Console Logging
     console.log("Showing configuration.");
@@ -49,7 +47,7 @@ function showConfig(msg) {
 }
 
 // Resets the bot configuration
-function resetConfig(msg) {
+export function resetConfig(msg, db) {
   console.log("Resetting bot configuration.");
 
   const configuration = {
@@ -74,15 +72,6 @@ ROLES
 This section includes any role specific functions
 */
 
-// Outputs server roles (name & id)
-function roles(msg) {
-  let availableRoles = "";
-  msg.guild.roles.cache.each(
-    (role) => (availableRoles += role.name + " - " + role.id + "\n"),
-  );
-  util.embedReply("Available Roles", availableRoles, msg);
-}
-
 // Checks if role exists, returns true or false
 function roleExists(roleName, msg) {
   console.log(`Checking if role exists: >${roleName}<`); // Logging
@@ -98,7 +87,7 @@ function getRole(roleName, msg) {
 }
 
 // Adds role to bot moderator roles
-function addRole(role, msg) {
+export function addRole(role, msg, db) {
   // If role exists in server
   if (roleExists(role, msg)) {
     // Logging
@@ -169,7 +158,7 @@ function addRole(role, msg) {
 }
 
 // Remove role from bot moderator roles
-function removeRole(role, msg) {
+export function removeRole(role, msg, db) {
   const roleId = getRole(role, msg).id;
 
   // Get the configuration from the database
@@ -227,7 +216,7 @@ function removeRole(role, msg) {
 }
 
 // Returns true if user role is in config, or if configuration.roles is empty
-function authenticateRole(msg) {
+export function authenticateRole(msg, db) {
   // Get the configuration from the database
   return db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
@@ -262,7 +251,7 @@ This section includes any channel specific functions
 */
 
 // Outputs server channels (name & id)
-function channels(msg) {
+export function channels(msg) {
   // String representation of available channels in the server
   let availableChannels = "";
 
@@ -297,7 +286,7 @@ function getChannel(channelName, msg) {
 }
 
 // Add channel to bot allowed channels
-function addChannel(channel, msg) {
+export function addChannel(channel, msg, db) {
   // If channel exists in server
   if (channelExists(channel, msg)) {
     // Logging
@@ -367,7 +356,7 @@ function addChannel(channel, msg) {
 }
 
 // Remove channel from bot allowed channels
-function removeChannel(channel, msg) {
+export function removeChannel(channel, msg, db) {
   const channelId = getChannel(channel, msg).id;
 
   // Get the configuration from the database
@@ -427,7 +416,7 @@ function removeChannel(channel, msg) {
 }
 
 // Returns true if channel is in config, or if configuration.channels is empty
-function authenticateChannel(msg) {
+export function authenticateChannel(msg, db) {
   // Get the configuration from the database
   return db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
@@ -457,15 +446,3 @@ function authenticateChannel(msg) {
     }
   });
 }
-
-// Function Exports
-module.exports.showConfig = showConfig;
-module.exports.resetConfig = resetConfig;
-module.exports.roles = roles;
-module.exports.addRole = addRole;
-module.exports.removeRole = removeRole;
-module.exports.authenticateRole = authenticateRole;
-module.exports.channels = channels;
-module.exports.addChannel = addChannel;
-module.exports.removeChannel = removeChannel;
-module.exports.authenticateChannel = authenticateChannel;

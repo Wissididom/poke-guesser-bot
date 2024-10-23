@@ -1,8 +1,7 @@
-const Discord = require("discord.js");
-const Database = require("./database.js");
+import Discord from "discord.js";
+import Database from "./database.js";
 
-const util = require("./util");
-const db = new Database();
+import util from "./util.js";
 
 /*
 LEADERBOARD
@@ -18,7 +17,7 @@ Each row represents a user. The key is the id of the user in discord, and the va
 */
 
 // Add score to user
-async function addScore(msg) {
+export async function addScore(msg, db) {
   // Get userId from msg
   let userId = msg instanceof Discord.Message ? msg.author.id : msg.user.id;
   let userName =
@@ -67,7 +66,7 @@ function sanitizeLeaderboard(msg, leaderboard) {
 }
 
 // Shows Leaderboard by creating a new Embed
-async function showLeaderboard(msg, useFollowup = false) {
+export async function showLeaderboard(msg, db, useFollowup = false) {
   /*
   Dynamically generates leaderboard embed depending on the number of users:
   1) 0 users: Generates empty leaderboard with champion and elite four slots showing TBA
@@ -258,7 +257,7 @@ async function showLeaderboard(msg, useFollowup = false) {
 }
 
 // Shows User Position
-function position(msg) {
+export function position(msg, db) {
   db.get("leaderboard").then((leaderboard) => {
     if (!leaderboard) {
       msg.reply("The Leaderboard has not yet been initialized!");
@@ -316,7 +315,7 @@ function replyPosition(msg, userName, userPosition, mention) {
 }
 
 // Formally resets leaderboard and announces the end of the championship
-async function newChampionship(interaction) {
+export async function newChampionship(interaction, db) {
   // Output message that the championship has ended and x is the victor
   await db.get("leaderboard").then(async (leaderboard) => {
     if (!leaderboard) {
@@ -368,13 +367,13 @@ async function newChampionship(interaction) {
 }
 
 // Empties leaderboard
-async function emptyLeaderboard(msg) {
+export async function emptyLeaderboard(msg, db) {
   const leaderboard = {};
   await db.set("leaderboard", leaderboard);
   console.log("Emptied leaderboard.");
 }
 
-async function addUser(interaction) {
+export async function addUser(interaction, db) {
   const authorId = interaction.user.id;
   const userId = interaction.options.getUser("user").id;
   const action = interaction.options.getString("action");
@@ -416,7 +415,7 @@ async function addUser(interaction) {
   });
 }
 
-async function removeUser(interaction) {
+export async function removeUser(interaction, db) {
   const userId = interaction.options.getUser("user").id;
   const action = interaction.options.getString("action");
   const score = interaction.options.getInteger("amount");
@@ -469,7 +468,7 @@ async function removeUser(interaction) {
   console.log(`removeUser: ${score ? "true" : "false"}`);
 }
 
-async function setUser(interaction) {
+export async function setUser(interaction, db) {
   const authorId = interaction.user.id;
   const userId = interaction.options.getUser("user").id;
   const action = interaction.options.getString("action");
@@ -519,13 +518,3 @@ function findUser(message, id) {
     }
   });
 }
-
-// Exports each function separately
-module.exports.addScore = addScore;
-module.exports.showLeaderboard = showLeaderboard;
-module.exports.position = position;
-module.exports.newChampionship = newChampionship;
-module.exports.emptyLeaderboard = emptyLeaderboard;
-module.exports.addUser = addUser;
-module.exports.removeUser = removeUser;
-module.exports.setUser = setUser;

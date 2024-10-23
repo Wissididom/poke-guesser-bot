@@ -1,6 +1,6 @@
-const sqlite3 = require("sqlite3");
+import sqlite3 from "sqlite3";
 
-class Database {
+export default class Database {
   #db = null;
 
   async initDb() {
@@ -111,5 +111,3 @@ class Database {
     }
   }
 }
-
-module.exports = Database;

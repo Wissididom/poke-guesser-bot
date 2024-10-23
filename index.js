@@ -1,9 +1,9 @@
-require("dotenv").config();
+import "dotenv/config";
 /*
 LIBRARIES
 */
 
-const {
+import {
   Client,
   Events,
   GatewayIntentBits,
@@ -15,16 +15,16 @@ const {
   TextInputStyle,
   TextInputBuilder,
   ModalBuilder,
-} = require("discord.js");
-const Database = require("./database.js");
+} from "discord.js";
+import Database from "./database.js";
 
 /*
 IMPORTED FUNCTIONS
 */
-const util = require("./util");
-const pokeFetch = require("./pokemon");
-const leaderBoard = require("./leaderboard");
-const configure = require("./configure");
+import util from "./util.js";
+import pokeFetch from "./pokemon.js";
+import leaderBoard from "./leaderboard.js";
+import configure from "./configure.js";
 
 /*
 OBJECTS, TOKENS, GLOBAL VARIABLES
@@ -86,11 +86,6 @@ function checkCommand(command, msg) {
   /*
   Configuration Roles
   */
-
-  // Replies to channel with available roles
-  if (command === "roles") {
-    configure.roles(msg);
-  }
 
   // Adds role to configuration
   if (command.startsWith("add role ")) {

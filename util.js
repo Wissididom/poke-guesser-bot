@@ -1,4 +1,4 @@
-const { EmbedBuilder, AttachmentBuilder, Message } = require("discord.js");
+import { EmbedBuilder, AttachmentBuilder, Message } from "discord.js";
 
 /*
 UTILITIES
