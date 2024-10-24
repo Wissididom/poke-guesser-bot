@@ -1,26 +1,24 @@
 import { EmbedBuilder, AttachmentBuilder, Message } from "discord.js";
 
+const databaseKeys = [
+  "artwork",
+  "configuration",
+  "leaderboard",
+  "pokemon",
+];
+
 /*
 UTILITIES
 */
 
 // Check Replit database on start to make sure no values are set as null
-export function checkDatabase(db) {
-  // Check if database has been instantiated
-  db.get("instantiated").then((instantiated) => {
-    console.log(`Instantiated: ${JSON.stringify(instantiated)}`);
-
-    if (instantiated === true || instantiated.ok === true) {
-      console.log("Database is ready.");
-    } else if (instantiated === null) {
-      instantiateDatabase(); // Set Database Keys
-    } else {
-      console.log(
-        "ERROR: Unexpected error occurred when performing startup check on database.",
-      );
-      instantiateDatabase(db); // Set Database Keys
-    }
-  });
+export async function checkDatabase(db) {
+  let list = (await db.list()).split("\n");
+  if (databaseKeys.every((item) => list.includes(item))) {
+    console.log("Database is ready.");
+  } else {
+    instantiateDatabase(db); // Set Database Keys
+  }
 }
 
 // Set first values in database
@@ -42,9 +40,6 @@ function instantiateDatabase(db) {
 
   // Set blank leaderboard
   db.set("leaderboard", {});
-
-  // Set instantiated to True
-  db.set("instantiated", true);
 }
 
 // Wraps reply in poke-guesser themed embed

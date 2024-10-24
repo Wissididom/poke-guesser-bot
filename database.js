@@ -60,7 +60,9 @@ export default class Database {
             reject(err);
             return;
           }
-          console.log(`Successfully upserted value '${key}'='${value}'`);
+          console.log(
+            `Successfully upserted value '${key}'='${JSON.stringify(value)}'`,
+          );
           resolve();
         },
       );
