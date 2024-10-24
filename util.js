@@ -101,3 +101,11 @@ export function embedReply(
 export function capitalize(string) {
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
+
+export function parseIfJson(str) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return str;
+  }
+}

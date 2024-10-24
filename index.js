@@ -21,7 +21,7 @@ import Database from "./database.js";
 /*
 IMPORTED FUNCTIONS
 */
-import { checkDatabase, embedReply, capitalize } from "./util.js";
+import { checkDatabase, embedReply, capitalize, parseIfJson } from "./util.js";
 import { generatePokemon, fetchSprite, fetchNames } from "./pokemon.js";
 import {
   addScore,
@@ -167,78 +167,104 @@ function checkInput(inputRequest, msg) {
   if (inputRequest.startsWith("catch ") && guessEntered === false) {
     guessEntered = true; // Lock catch until complete
 
-    guess = msg.content.split("catch ")[1]; // Splits at the command, gets pokemon name guess
+    const guess = msg.content.split("catch ")[1]; // Splits at the command, gets pokemon name guess
     console.log(`${msg.author} guessed ${guess}.`);
     // Checks if the guess is part of the pokemon name
-    db.get("pokemon").then((pokemon) => {
-      // If no pokemon set
-      if (pokemon === "") {
-        console.log("No pokemon set.");
+    db.get("pokemon")
+      .then((pokemon) => parseIfJson(pokemon))
+      .then(async (pokemon) => {
+        // If no pokemon set
+        if (pokemon === "") {
+          console.log("No pokemon set.");
+          guessEntered = false; // Reset guessEntered
+          await msg.channel.messages
+            .fetch({ limit: 100 })
+            .then(async (messages) => {
+              const botMessage = messages.find(
+                (message) => message.author.id == msg.client.user.id,
+              );
+              if (botMessage) {
+                try {
+                  await botMessage.edit({
+                    components: [],
+                  });
+                } catch (err) {
+                  // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                  // Assuming it is a deferred interaction message
+                }
+              }
+            })
+            .catch((err) => {
+              console.error(
+                "Failed to fetch most recent messages to remove the components:",
+                err,
+              );
+            });
+          return;
+        }
+        // Loop through pokemon names and check against guess
+        console.log(`pokemon:${JSON.stringify(pokemon)}`);
+        for (let i = 0; i < pokemon.length; i++) {
+          if (
+            pokemon[i].name
+              ? pokemon[i].name.toLowerCase() === guess.toLowerCase()
+              : pokemon[i].toLowerCase() === guess.toLowerCase()
+          ) {
+            db.set("pokemon", ""); // Sets current pokemon to empty string
 
-        guessEntered = false; // Reset guessEntered
-
-        return;
-      }
-      // Loop through pokemon names and check against guess
-      console.log(`pokemon:${JSON.stringify(pokemon)}`);
-      for (let i = 0; i < pokemon.length; i++) {
-        if (
-          pokemon[i].name
-            ? pokemon[i].name.toLowerCase() === guess.toLowerCase()
-            : pokemon[i].toLowerCase() === guess.toLowerCase()
-        ) {
-          db.set("pokemon", ""); // Sets current pokemon to empty string
-
-          db.get("artwork").then(async (artwork) => {
-            // Send msg to addScore - id will be extrapolated
-            addScore(msg);
-            // Find english index
-            let englishIndex = 1;
-            for (let i = 0; i < pokemon.length; i++) {
-              if (pokemon[i].languageName === "en") englishIndex = i;
-            }
-            // Send message that guess is correct
-            if (
-              (pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() ===
-              pokemon[englishIndex].name.toLowerCase()
-            )
-              title = `${capitalize(pokemon[englishIndex].name)} has been caught!`;
-            else
-              title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
-            message = `1 point added to ${msg.author}'s score.'
+            db.get("artwork").then(async (artwork) => {
+              let title, message;
+              // Send msg to addScore - id will be extrapolated
+              addScore(msg, db);
+              // Find english index
+              let englishIndex = 1;
+              for (let i = 0; i < pokemon.length; i++) {
+                if (pokemon[i].languageName === "en") englishIndex = i;
+              }
+              // Send message that guess is correct
+              if (
+                (pokemon[i].name
+                  ? pokemon[i].name
+                  : pokemon[i]
+                ).toLowerCase() === pokemon[englishIndex].name.toLowerCase()
+              )
+                title = `${capitalize(pokemon[englishIndex].name)} has been caught!`;
+              else
+                title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+              message = `1 point added to ${msg.author}'s score.'
               
               \`$position\`: see your current position
               \`$leaderboard\`: see the updated leaderboard`;
-            await embedReply(title, message, msg, artwork);
-            await msg.channel.messages
-              .fetch({ limit: 100 })
-              .then(async (messages) => {
-                const botMessage = messages.find(
-                  (innerMsg) => innerMsg.author.id == msg.client.user.id,
-                );
-                if (botMessage) {
-                  try {
-                    botMessage.edit({
-                      components: [],
-                    });
-                  } catch (err) {
-                    // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
-                    // Assuming it is a deferred interaction message
+              await embedReply(title, message, msg, artwork);
+              await msg.channel.messages
+                .fetch({ limit: 100 })
+                .then(async (messages) => {
+                  const botMessage = messages.find(
+                    (innerMsg) => innerMsg.author.id == msg.client.user.id,
+                  );
+                  if (botMessage) {
+                    try {
+                      botMessage.edit({
+                        components: [],
+                      });
+                    } catch (err) {
+                      // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                      // Assuming it is a deferred interaction message
+                    }
                   }
-                }
-              })
-              .catch((err) => {
-                console.error(
-                  "Failed to fetch most recent messages to remove the components:",
-                  err,
-                );
-              });
-          });
-          break; // To avoid scoring multiple times
+                })
+                .catch((err) => {
+                  console.error(
+                    "Failed to fetch most recent messages to remove the components:",
+                    err,
+                  );
+                });
+            });
+            break; // To avoid scoring multiple times
+          }
         }
-      }
-      guessEntered = false; // Reset guessEntered
-    });
+        guessEntered = false; // Reset guessEntered
+      });
   }
 
   // Display Leaderboard
@@ -278,7 +304,7 @@ client.on(Events.MessageCreate, (msg) => {
       // Authenticate if user is authorized
       authenticateRole(msg, db).then((authorized) => {
         if (authorized) {
-          command = msg.content.split("!")[1];
+          const command = msg.content.split("!")[1];
           checkCommand(command, msg);
         }
       });
@@ -286,7 +312,7 @@ client.on(Events.MessageCreate, (msg) => {
 
     // Check if user message starts with $ indicating guess, call checkGuess
     if (msg.content.startsWith("$")) {
-      inputRequest = msg.content.split("$")[1];
+      const inputRequest = msg.content.split("$")[1];
       console.log(`player command:${inputRequest}`);
       checkInput(inputRequest, msg);
     }
@@ -372,7 +398,7 @@ let interactionCreate = async (interaction) => {
           pokemonNames.push(name); // available properties: name, languageName and languageUrl
         }
         console.log(pokemonNames);
-        db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
+        db.set("pokemon", JSON.stringify(pokemonNames)); // Sets current pokemon (different languages) names in database
         // Gets sprite url, and replies to the channel with newly generated pokemon
         let sprites = await fetchSprite(pokemon.url);
         const spriteUrl = sprites.front_default;
@@ -551,105 +577,155 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
   )
     return;
   // Checks if the guess is part of the pokemon name
-  db.get("pokemon").then(async (pokemon) => {
-    // If no pokemon set
-    if (pokemon === "") {
-      console.log("No pokemon set.");
-
-      guessEntered = false; // Reset guessEntered
-
-      return;
-    }
-    // Loop through pokemon names and check against guess
-    console.log(`pokemon:${JSON.stringify(pokemon)}`);
-    let correct = false;
-    for (let i = 0; i < pokemon.length; i++) {
-      if (
-        pokemon[i].name
-          ? pokemon[i].name.toLowerCase() === guess.toLowerCase()
-          : pokemon[i].toLowerCase() === guess.toLowerCase()
-      ) {
-        db.set("pokemon", ""); // Sets current pokemon to empty string
-        await db.get("artwork").then(async (artwork) => {
-          // Send msg to addScore - id will be extrapolated
-          addScore(btnInteraction);
-          // Find english index
-          let englishIndex = 1;
-          for (let i = 0; i < pokemon.length; i++) {
-            if (pokemon[i].languageName === "en") englishIndex = i;
-          }
-          // Send message that guess is correct
-          if (
-            (pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() ===
-            pokemon[englishIndex].name.toLowerCase()
+  db.get("pokemon")
+    .then((pokemon) => parseIfJson(pokemon))
+    .then(async (pokemon) => {
+      // If no pokemon set
+      if (pokemon === "") {
+        console.log("No pokemon set.");
+        guessEntered = false; // Reset guessEntered
+        let embed = new EmbedBuilder()
+          .setTitle("No pokemon set")
+          .setAuthor({
+            name: "POKé-GUESSER BOT",
+            iconURL:
+              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+            url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+          })
+          .setColor(0x00ae86)
+          .setDescription(
+            "There is no pokemon set. A person with the appropriate permissions needs to explore first",
           )
-            title = `${capitalize(pokemon[englishIndex].name)} has been caught!`;
-          else
-            title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
-          message = `1 point added to ${btnInteraction.user}'s score.'
+          .setThumbnail(
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+          )
+          .setFooter({
+            text: "By borreLore, Wissididom and Crue Peregrine",
+            iconURL:
+              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+          });
+        let followUpMsg = await btnInteraction.followUp({
+          embeds: [embed],
+          ephemeral: true,
+        });
+        await btnInteraction.channel.messages
+          .fetch({ limit: 100 })
+          .then(async (messages) => {
+            const botMessage = messages.find(
+              (msg) =>
+                msg.author.id == btnInteraction.client.user.id &&
+                msg.id != followUpMsg.id,
+            );
+            if (botMessage) {
+              try {
+                await botMessage.edit({
+                  components: [],
+                });
+              } catch (err) {
+                // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                // Assuming it is a deferred interaction message
+              }
+            }
+          })
+          .catch((err) => {
+            console.error(
+              "Failed to fetch most recent messages to remove the components:",
+              err,
+            );
+          });
+        return;
+      }
+      // Loop through pokemon names and check against guess
+      console.log(`pokemon:${JSON.stringify(pokemon)}`);
+      let correct = false;
+      for (let i = 0; i < pokemon.length; i++) {
+        if (
+          pokemon[i].name
+            ? pokemon[i].name.toLowerCase() === guess.toLowerCase()
+            : pokemon[i].toLowerCase() === guess.toLowerCase()
+        ) {
+          db.set("pokemon", ""); // Sets current pokemon to empty string
+          await db.get("artwork").then(async (artwork) => {
+            let title, message;
+            // Send msg to addScore - id will be extrapolated
+            addScore(btnInteraction, db);
+            // Find english index
+            let englishIndex = 1;
+            for (let i = 0; i < pokemon.length; i++) {
+              if (pokemon[i].languageName === "en") englishIndex = i;
+            }
+            // Send message that guess is correct
+            if (
+              (pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() ===
+              pokemon[englishIndex].name.toLowerCase()
+            )
+              title = `${capitalize(pokemon[englishIndex].name)} has been caught!`;
+            else
+              title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+            message = `1 point added to ${btnInteraction.user}'s score.'
                           
                           \`$position\`: see your current position
                           \`$leaderboard\`: see the updated leaderboard`;
-          let embed = new EmbedBuilder()
-            .setTitle(title)
-            .setAuthor({
-              name: "POKé-GUESSER BOT",
-              iconURL:
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
-              url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
-            })
-            .setColor(0x00ae86)
-            .setDescription(message)
-            .setThumbnail(
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
-            )
-            .setImage(artwork)
-            .setFooter({
-              text: "By borreLore, Wissididom and Crue Peregrine",
-              iconURL:
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+            let embed = new EmbedBuilder()
+              .setTitle(title)
+              .setAuthor({
+                name: "POKé-GUESSER BOT",
+                iconURL:
+                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+                url: "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+              })
+              .setColor(0x00ae86)
+              .setDescription(message)
+              .setThumbnail(
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+              )
+              .setImage(artwork)
+              .setFooter({
+                text: "By borreLore, Wissididom and Crue Peregrine",
+                iconURL:
+                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+              });
+            let followUpMsg = await btnInteraction.followUp({
+              embeds: [embed],
             });
-          let followUpMsg = await btnInteraction.followUp({
-            embeds: [embed],
-          });
-          await btnInteraction.channel.messages
-            .fetch({ limit: 100 })
-            .then(async (messages) => {
-              const botMessage = messages.find(
-                (msg) =>
-                  msg.author.id == btnInteraction.client.user.id &&
-                  msg.id != followUpMsg.id,
-              );
-              if (botMessage) {
-                try {
-                  await botMessage.edit({
-                    components: [],
-                  });
-                } catch (err) {
-                  // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
-                  // Assuming it is a deferred interaction message
+            await btnInteraction.channel.messages
+              .fetch({ limit: 100 })
+              .then(async (messages) => {
+                const botMessage = messages.find(
+                  (msg) =>
+                    msg.author.id == btnInteraction.client.user.id &&
+                    msg.id != followUpMsg.id,
+                );
+                if (botMessage) {
+                  try {
+                    await botMessage.edit({
+                      components: [],
+                    });
+                  } catch (err) {
+                    // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                    // Assuming it is a deferred interaction message
+                  }
                 }
-              }
-            })
-            .catch((err) => {
-              console.error(
-                "Failed to fetch most recent messages to remove the components:",
-                err,
-              );
-            });
-          correct = true;
-        });
-        break; // To avoid scoring multiple times
+              })
+              .catch((err) => {
+                console.error(
+                  "Failed to fetch most recent messages to remove the components:",
+                  err,
+                );
+              });
+            correct = true;
+          });
+          break; // To avoid scoring multiple times
+        }
       }
-    }
-    guessEntered = false; // Reset gues
-    if (!correct) {
-      await btnInteraction.followUp({
-        content: `Incorrect guess (\`${guess}\`)`,
-        ephemeral: true,
-      });
-    }
-  });
+      guessEntered = false; // Reset gues
+      if (!correct) {
+        await btnInteraction.followUp({
+          content: `Incorrect guess (\`${guess}\`)`,
+          ephemeral: true,
+        });
+      }
+    });
 }
 
 /*
