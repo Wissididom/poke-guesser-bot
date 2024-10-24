@@ -1,11 +1,6 @@
 import { EmbedBuilder, AttachmentBuilder, Message } from "discord.js";
 
-const databaseKeys = [
-  "artwork",
-  "configuration",
-  "leaderboard",
-  "pokemon",
-];
+const databaseKeys = ["artwork", "configuration", "leaderboard", "pokemon"];
 
 /*
 UTILITIES
@@ -39,7 +34,7 @@ function instantiateDatabase(db) {
   db.set("pokemon", "");
 
   // Set blank leaderboard
-  db.set("leaderboard", {});
+  db.set("leaderboard", JSON.stringify({}));
 }
 
 // Wraps reply in poke-guesser themed embed

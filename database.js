@@ -15,6 +15,21 @@ export default class Database {
         resolve(db);
       });
     });
+    await new Promise((resolve, reject) => {
+      this.#db.run(
+        `CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT)`,
+        [],
+        (err) => {
+          if (err) {
+            console.error(err.message);
+            reject(err);
+            return;
+          }
+          console.log(`Successfully made sure table 'kv' exists`);
+          resolve();
+        },
+      );
+    });
   }
 
   async get(key) {
@@ -35,21 +50,6 @@ export default class Database {
   }
 
   async set(key, value) {
-    await new Promise((resolve, reject) => {
-      this.#db.run(
-        `CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT)`,
-        [],
-        (err) => {
-          if (err) {
-            console.error(err.message);
-            reject(err);
-            return;
-          }
-          console.log(`Successfully made sure table 'kv' exists`);
-          resolve();
-        },
-      );
-    });
     await new Promise((resolve, reject) => {
       this.#db.run(
         `INSERT INTO kv (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
