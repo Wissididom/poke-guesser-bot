@@ -426,7 +426,9 @@ let interactionCreate = async (interaction) => {
         embedReply(title, message, interaction, spriteUrl, actionRow);
         break;
       case "reveal":
-        pokemon = await db.get("pokemon");
+        pokemon = await db
+          .get("pokemon")
+          .then((pokemon) => parseIfJson(pokemon));
         if (pokemon === "") {
           console.log(
             "Admin requested reveal, but no pokemon is currently set.",
