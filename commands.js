@@ -1,7 +1,6 @@
-const { SlashCommandBuilder } = require("discord.js");
-//import { SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-module.exports.getRegisterArray = () => {
+export function getRegisterArray() {
   return [
     new SlashCommandBuilder()
       .setName("explore")
@@ -57,4 +56,4 @@ module.exports.getRegisterArray = () => {
           ),
       ),
   ];
-};
+}
