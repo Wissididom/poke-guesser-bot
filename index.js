@@ -21,10 +21,28 @@ import Database from "./database.js";
 /*
 IMPORTED FUNCTIONS
 */
-import util from "./util.js";
-import pokeFetch from "./pokemon.js";
-import leaderBoard from "./leaderboard.js";
-import configure from "./configure.js";
+import { checkDatabase, embedReply, capitalize } from "./util.js";
+import { generatePokemon, fetchSprite, fetchNames } from "./pokemon.js";
+import {
+  addScore,
+  showLeaderboard,
+  position,
+  newChampionship,
+  emptyLeaderboard,
+  addUser,
+  removeUser,
+  setUser,
+} from "./leaderboard.js";
+import {
+  showConfig,
+  resetConfig,
+  addRole,
+  removeRole,
+  authenticateRole,
+  addChannel,
+  removeChannel,
+  authenticateChannel,
+} from "./configure.js";
 
 /*
 OBJECTS, TOKENS, GLOBAL VARIABLES
@@ -66,7 +84,7 @@ function checkCommand(command, msg) {
   if (command === "ping") {
     const title = "Pong!";
     const message = "Beep-boop! Poke-guesser-bot is running!";
-    util.embedReply(title, message, msg);
+    embedReply(title, message, msg);
   }
 
   /*
@@ -75,12 +93,12 @@ function checkCommand(command, msg) {
 
   // Displays configuration settings
   if (command === "show config") {
-    configure.showConfig(msg);
+    showConfig(msg, db);
   }
 
   // Resets configuration to default settings
   if (command === "reset config") {
-    configure.resetConfig(msg);
+    resetConfig(msg, db);
   }
 
   /*
@@ -90,34 +108,29 @@ function checkCommand(command, msg) {
   // Adds role to configuration
   if (command.startsWith("add role ")) {
     role = msg.content.split("add role ")[1];
-    configure.addRole(role, msg);
+    addRole(role, msg, db);
   }
 
   // Removes role from configuration
   if (command.startsWith("remove role ")) {
     role = msg.content.split("remove role ")[1];
-    configure.removeRole(role, msg);
+    removeRole(role, msg, db);
   }
 
   /*
   Configuration Channels
   */
 
-  // Replies to channel with available text channels
-  if (command === "channels") {
-    configure.channels(msg);
-  }
-
   // Adds channel to configuration
   if (command.startsWith("add channel ")) {
     channel = msg.content.split("add channel ")[1];
-    configure.addChannel(channel, msg);
+    addChannel(channel, msg, db);
   }
 
   // Removes channel from configuration
   if (command.startsWith("remove channel ")) {
     channel = msg.content.split("remove channel ")[1];
-    configure.removeChannel(channel, msg);
+    removeChannel(channel, msg, db);
   }
 
   /*
@@ -126,17 +139,17 @@ function checkCommand(command, msg) {
 
   // Output the leaderboard
   if (command === "leaderboard") {
-    leaderBoard.showLeaderboard(msg);
+    showLeaderboard(msg, db);
   }
 
   // Start a new championship
   if (command === "new championship") {
-    leaderBoard.newChampionship(msg);
+    newChampionship(msg, db);
   }
 
   // DEBUGGING - resets leaderboard to default (empty) values
   if (command === "empty") {
-    leaderBoard.emptyLeaderboard(msg);
+    emptyLeaderboard(msg, db);
   }
 }
 
@@ -180,7 +193,7 @@ function checkInput(inputRequest, msg) {
 
             db.get("artwork").then(async (artwork) => {
               // Send msg to addScore - id will be extrapolated
-              leaderBoard.addScore(msg);
+              addScore(msg);
               // Find english index
               let englishIndex = 1;
               for (let i = 0; i < pokemon.length; i++) {
@@ -193,14 +206,14 @@ function checkInput(inputRequest, msg) {
                   : pokemon[i]
                 ).toLowerCase() === pokemon[englishIndex].name.toLowerCase()
               )
-                title = `${util.capitalize(pokemon[englishIndex].name)} has been caught!`;
+                title = `${capitalize(pokemon[englishIndex].name)} has been caught!`;
               else
-                title = `${util.capitalize(pokemon[englishIndex].name)} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+                title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
               message = `1 point added to ${msg.author}'s score.'
               
               \`$position\`: see your current position
               \`$leaderboard\`: see the updated leaderboard`;
-              await util.embedReply(title, message, msg, artwork);
+              await embedReply(title, message, msg, artwork);
               await msg.channel.messages
                 .fetch({ limit: 100 })
                 .then(async (messages) => {
@@ -235,12 +248,12 @@ function checkInput(inputRequest, msg) {
 
   // Display Leaderboard
   if (inputRequest === "leaderboard") {
-    leaderBoard.showLeaderboard(msg);
+    showLeaderboard(msg, db);
   }
 
   // Display Position
   if (inputRequest.startsWith("position")) {
-    leaderBoard.position(msg);
+    position(msg, db);
   }
 }
 
@@ -261,14 +274,14 @@ client.on(Events.MessageCreate, (msg) => {
   if (msg.author.bot) return;
 
   // Authenticate if bot is allowed to reply on this channel
-  configure.authenticateChannel(msg).then((authorized) => {
+  authenticateChannel(msg, db).then((authorized) => {
     // Returns if channel is not in config
     if (authorized === false) return;
 
     // Check if user message starts with ! indicating command, call checkCommand
     if (msg.content.startsWith("!")) {
       // Authenticate if user is authorized
-      configure.authenticateRole(msg).then((authorized) => {
+      authenticateRole(msg, db).then((authorized) => {
         if (authorized) {
           command = msg.content.split("!")[1];
           checkCommand(command, msg);
@@ -342,17 +355,17 @@ let interactionCreate = async (interaction) => {
       await interaction.deferReply({ ephemeral: false });
     }
   }
-  let channelAllowed = await configure.authenticateChannel(interaction);
+  let channelAllowed = await authenticateChannel(interaction, db);
   if (channelAllowed) {
-    let roleAllowed = await configure.authenticateRole(interaction);
+    let roleAllowed = await authenticateRole(interaction, db);
     let pokemon = null;
     switch (interaction.commandName) {
       case "explore":
         console.log("Generating a new pokemon.");
         // Returns pokemon json object
-        pokemon = await pokeFetch.generatePokemon();
+        pokemon = await generatePokemon();
         let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, "$1")];
-        let names = await pokeFetch.fetchNames(pokemonNames[0]);
+        let names = await fetchNames(pokemonNames[0]);
         if (!names) {
           console.log(
             `Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`,
@@ -366,7 +379,7 @@ let interactionCreate = async (interaction) => {
         console.log(pokemonNames);
         db.set("pokemon", pokemonNames); // Sets current pokemon (different languages) names in database
         // Gets sprite url, and replies to the channel with newly generated pokemon
-        let sprites = await pokeFetch.fetchSprite(pokemon.url);
+        let sprites = await fetchSprite(pokemon.url);
         const spriteUrl = sprites.front_default;
         if (!spriteUrl) {
           console.log(
@@ -389,7 +402,7 @@ let interactionCreate = async (interaction) => {
             .setLabel("Catch This Pokémon!")
             .setStyle(ButtonStyle.Primary),
         );
-        util.embedReply(title, message, interaction, spriteUrl, actionRow);
+        embedReply(title, message, interaction, spriteUrl, actionRow);
         db.set("lastExplore", Date.now());
         break;
       case "reveal":
@@ -401,7 +414,7 @@ let interactionCreate = async (interaction) => {
           const title = "There is no pokemon to reveal";
           const message =
             "You have to explore to find a pokemon. Type `!explore` to find a new pokemon.";
-          util.embedReply(title, message, interaction);
+          embedReply(title, message, interaction);
         } else {
           let pokemonNames = [pokemon[0]];
           for (let i = 1; i < pokemon.length; i++) {
@@ -418,14 +431,14 @@ let interactionCreate = async (interaction) => {
           // build string to put in between brackets
           let inBrackets = "";
           for (let i = 0; i < pokemonNames.length; i++) {
-            if (inBrackets == "") inBrackets = util.capitalize(pokemonNames[i]);
-            else inBrackets += ", " + util.capitalize(pokemonNames[i]);
+            if (inBrackets == "") inBrackets = capitalize(pokemonNames[i]);
+            else inBrackets += ", " + capitalize(pokemonNames[i]);
           }
           console.log(
             `Admin requested reveal: ${pokemon[englishIndex].name} (${inBrackets})`,
           );
           const title = "Pokemon escaped!";
-          const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${util.capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
+          const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
           await db.set("pokemon", ""); // Sets current pokemon to empty string
           await interaction.channel.messages
             .fetch({ limit: 100 })
@@ -452,11 +465,11 @@ let interactionCreate = async (interaction) => {
                 err,
               );
             });
-          await util.embedReply(title, message, interaction);
+          await embedReply(title, message, interaction);
         }
         break;
       case "leaderboard":
-        leaderBoard.showLeaderboard(interaction);
+        showLeaderboard(interaction, db);
         break;
       case "mod":
         await mod(interaction, db);
@@ -493,13 +506,13 @@ async function mod(interaction, db) {
           let amount = interaction.options.getInteger("amount");
           switch (action) {
             case "add":
-              await leaderBoard.addUser(interaction);
+              await addUser(interaction, db);
               break;
             case "remove":
-              await leaderBoard.removeUser(interaction);
+              await removeUser(interaction, db);
               break;
             case "set":
-              await leaderBoard.setUser(interaction);
+              await setUser(interaction, db);
               break;
             default:
               let defaultEmbed = new EmbedBuilder()
@@ -567,7 +580,7 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
           db.set("pokemon", ""); // Sets current pokemon to empty string
           await db.get("artwork").then(async (artwork) => {
             // Send msg to addScore - id will be extrapolated
-            leaderBoard.addScore(btnInteraction);
+            addScore(btnInteraction);
             // Find english index
             let englishIndex = 1;
             for (let i = 0; i < pokemon.length; i++) {
@@ -578,9 +591,9 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
               (pokemon[i].name ? pokemon[i].name : pokemon[i]).toLowerCase() ===
               pokemon[englishIndex].name.toLowerCase()
             )
-              title = `${util.capitalize(pokemon[englishIndex].name)} has been caught!`;
+              title = `${capitalize(pokemon[englishIndex].name)} has been caught!`;
             else
-              title = `${util.capitalize(pokemon[englishIndex].name)} (${util.capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
+              title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
             message = `1 point added to ${btnInteraction.user}'s score.'
                           
                           \`$position\`: see your current position
@@ -663,7 +676,7 @@ if (mySecret === undefined) {
 } else {
   await db.initDb();
   // Check database on start (prevents null errors)
-  util.checkDatabase(db);
+  checkDatabase(db);
 
   // Logs in with secret TOKEN
   client.login(mySecret);

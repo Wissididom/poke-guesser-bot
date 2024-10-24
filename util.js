@@ -5,7 +5,7 @@ UTILITIES
 */
 
 // Check Replit database on start to make sure no values are set as null
-function checkDatabase(db) {
+export function checkDatabase(db) {
   // Check if database has been instantiated
   db.get("instantiated").then((instantiated) => {
     console.log(`Instantiated: ${JSON.stringify(instantiated)}`);
@@ -18,7 +18,7 @@ function checkDatabase(db) {
       console.log(
         "ERROR: Unexpected error occurred when performing startup check on database.",
       );
-      instantiateDatabase(); // Set Database Keys
+      instantiateDatabase(db); // Set Database Keys
     }
   });
 }
@@ -48,7 +48,13 @@ function instantiateDatabase(db) {
 }
 
 // Wraps reply in poke-guesser themed embed
-function embedReply(title, description, msg, image = null, actionRow = null) {
+export function embedReply(
+  title,
+  description,
+  msg,
+  image = null,
+  actionRow = null,
+) {
   // Creates new embedded message
   let embed = new EmbedBuilder()
     .setTitle(title) // Adds title
@@ -102,10 +108,6 @@ function embedReply(title, description, msg, image = null, actionRow = null) {
 }
 
 // Capitalizes first letter of pokemon name
-function capitalize(string) {
+export function capitalize(string) {
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
-
-module.exports.checkDatabase = checkDatabase;
-module.exports.embedReply = embedReply;
-module.exports.capitalize = capitalize;

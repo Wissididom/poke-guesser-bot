@@ -45,7 +45,7 @@ export default class Database {
             reject(err);
             return;
           }
-          console.log(`Successfully created table 'kv'`);
+          console.log(`Successfully made sure table 'kv' exists`);
           resolve();
         },
       );
@@ -60,9 +60,7 @@ export default class Database {
             reject(err);
             return;
           }
-          console.log(
-            `Successfully upserted value '${keys[i]}'='${req.body[keys[i]]}'`,
-          );
+          console.log(`Successfully upserted value '${key}'='${value}'`);
           resolve();
         },
       );

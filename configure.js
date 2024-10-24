@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 import Database from "./database.js";
-import util from "./util.js";
+import { embedReply } from "./util.js";
 
 /*
 CONFIGURATION UTILITIES
@@ -42,7 +42,7 @@ export function showConfig(msg, db) {
     ${channelText}`;
 
     // Embeds message
-    util.embedReply("Configuration Settings:", message, msg);
+    embedReply("Configuration Settings:", message, msg);
   });
 }
 
@@ -64,7 +64,7 @@ export function resetConfig(msg, db) {
   const message = `The configuration has been reset. The bot will listen on all channels and accept commands from all roles. It is recommended to configure moderator roles before using this bot.
   
   Type \`!help\` to see how to configure the bot.`;
-  util.embedReply(title, message, msg);
+  embedReply(title, message, msg);
 }
 
 /*
@@ -115,7 +115,7 @@ export function addRole(role, msg, db) {
         const message = `The role >${role}< is already included in the configuration.
         
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
 
         // If role doesn't exist in configuration
       } else {
@@ -138,7 +138,7 @@ export function addRole(role, msg, db) {
         ${roleObject.name} (ID: ${roleObject.id})
 
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     });
 
@@ -153,7 +153,7 @@ export function addRole(role, msg, db) {
     const message = `The role >${role}< does not exist and could not be added.
 
     Type \`!roles\` to see the available roles on this server.`;
-    util.embedReply(title, message, msg);
+    embedReply(title, message, msg);
   }
 }
 
@@ -195,13 +195,13 @@ export function removeRole(role, msg, db) {
         There are no roles set to moderate the bot. It is recommended to set at least one role.
         
         Type \`!help\` to see how to add roles.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
         // Show regular message if not
       } else {
         console.log("Role removed successfully.");
         const title = "Role removed from configuration.";
         const message = `The role >${role}< was removed from configuration successfully!`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     } else {
       console.log("Failed to remove role: doesn't exist in configuration."); // Logging
@@ -210,7 +210,7 @@ export function removeRole(role, msg, db) {
       const message = `The role >${role}< is missing from the configuration and could not be removed.
       
       Type \`!show config\` to see the roles currently in the configuration.`;
-      util.embedReply(title, message, msg);
+      embedReply(title, message, msg);
     }
   });
 }
@@ -249,24 +249,6 @@ export function authenticateRole(msg, db) {
 CHANNELS
 This section includes any channel specific functions
 */
-
-// Outputs server channels (name & id)
-export function channels(msg) {
-  // String representation of available channels in the server
-  let availableChannels = "";
-
-  // For each channel in the channel cache
-  msg.guild.channels.cache.each((channel) => {
-    // If the channel is a text channel
-    if (channel.type === "text") {
-      // Add it to the available channels
-      availableChannels += channel.name + " - " + channel.id + "\n";
-    }
-  });
-
-  // Message server
-  util.embedReply("Available Channels in this Server", availableChannels, msg);
-}
 
 // Check if channel exists, return true or false
 function channelExists(channelName, msg) {
@@ -313,7 +295,7 @@ export function addChannel(channel, msg, db) {
         const message = `The channel >${channel}< is already in the configuration.
         
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
 
         // If channel doesn't exist in configuration
       } else {
@@ -336,7 +318,7 @@ export function addChannel(channel, msg, db) {
         ${channelObject.name} (ID: ${channelObject.id})
 
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     });
 
@@ -351,7 +333,7 @@ export function addChannel(channel, msg, db) {
     const message = `The channel >${channel}< does not exist and could not be added.
 
     Type \`!channels\` to see the available channels on this server.`;
-    util.embedReply(title, message, msg);
+    embedReply(title, message, msg);
   }
 }
 
@@ -395,13 +377,13 @@ export function removeChannel(channel, msg, db) {
         The bot will respond on every channel on this server. If you don't want this, set at least one channel.
         
         Type \`!help\` to see how to add channels.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
         // Show regular message if not
       } else {
         console.log("Channel has been removed successfully.");
         const title = "Channel removed from configuration";
         const message = `The channel >${channel}< was removed from configuration successfully!`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     } else {
       console.log("Failed to remove channel: doesn't exist in configuration."); // Logging
@@ -410,7 +392,7 @@ export function removeChannel(channel, msg, db) {
       const message = `The channel >${channel}< is missing from the configuration and could not be removed.
       
       Type \`!show config\` to see the channels currently in the configuration.`;
-      util.embedReply(title, message, msg);
+      embedReply(title, message, msg);
     }
   });
 }

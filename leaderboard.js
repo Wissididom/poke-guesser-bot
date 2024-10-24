@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import Database from "./database.js";
 
-import util from "./util.js";
+import { embedReply } from "./util.js";
 
 /*
 LEADERBOARD
@@ -358,7 +358,7 @@ export async function newChampionship(interaction, db) {
       The championship begins anew!`;
       const image =
         "https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png";
-      await util.embedReply(title, message, msg, image);
+      await embedReply(title, message, msg, image);
 
       // Erase leaderboard
       await emptyLeaderboard(interaction);
