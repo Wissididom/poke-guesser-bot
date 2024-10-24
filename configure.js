@@ -15,7 +15,7 @@ export function showConfig(msg, db) {
     console.log(configuration);
 
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Extract roles and channels from array
     const roles = configJson.configuration.roles;
@@ -98,7 +98,7 @@ export function addRole(role, msg, db) {
       const roleObject = getRole(role, msg); // Get role object
 
       // Parse Json into javascript object
-      configJson = JSON.parse(configuration);
+      const configJson = JSON.parse(configuration);
 
       // If role exists in configuration
       if (
@@ -164,7 +164,7 @@ export function removeRole(role, msg, db) {
   // Get the configuration from the database
   db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the role is in the database
     // If role exists in configuration
@@ -220,7 +220,7 @@ export function authenticateRole(msg, db) {
   // Get the configuration from the database
   return db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the channel is in the database
     if (configJson == null || configJson.configuration.roles.length === 0) {
@@ -344,7 +344,7 @@ export function removeChannel(channel, msg, db) {
   // Get the configuration from the database
   db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the channel is in the database
     // If channel exists in configuration
@@ -402,7 +402,7 @@ export function authenticateChannel(msg, db) {
   // Get the configuration from the database
   return db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the channel is in the database
     if (configJson == null || configJson.configuration.channels.length === 0) {
